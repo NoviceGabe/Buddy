@@ -44,7 +44,7 @@ define(() => {
 				</div>
 				<div class="col-2">
 					<div>
-						<p>Welcome back to Buddy</p>
+						<p>Welcome to Buddy</p>
 						<h1>Create your account</h1>
 						<form id="signup-form">
 							<label for="email">Email</label>

@@ -1,14 +1,6 @@
 define(() => {
 	return class Authenticate{
 		
-		static signOut(){
-		  return auth.signOut().then(() => {
-		  	 localStorage.clear();
-		  	sessionStorage.clear();
-		  	return true;
-		  });
-		}
-
 		static async signIn(email, password){
 			
 			try {
@@ -18,15 +10,10 @@ define(() => {
 				   	return true;
 				}
 
-				try {
-					const status = await Authenticate.signOut();
-					if(status){
-						throw new Error('Email is not verified');
-					}
-				} catch(e) {
-					throw e;
-				}
-
+				auth.signOut().then(() => {
+					throw new Error('Email is not verified');
+				});
+				
 			} catch(e) {
 				throw e;
 			}		

@@ -204,7 +204,7 @@ define([
 		      				console.log('empty message.');
 		      			}else{
 		      				try {
-		      					const status = await chatModel.commitMessage(groupId, this.user.uid, input.value);
+		      					const status = await chatModel.commitMessage(groupId, auth.currentUser.uid, input.value);
 								if(status){
 									messageForm.reset();
 								}
@@ -245,7 +245,7 @@ define([
 			}
 
 			try {
-				chatListener = chatModel.prepareGroupByUser({'uid':this.user.uid, 'name':this.user.name})
+				chatListener = chatModel.prepareGroupByUser({'uid':auth.currentUser.uid, 'name':this.user.name})
 				.onSnapshot(querySnapshot => {
 					const groups = [];
 					const notifs = [];

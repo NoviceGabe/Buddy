@@ -4,27 +4,23 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
 } 
 
 require([
-	'authController',
 	'controller',
 	'userModel',
 	'routes',
 	'private-routes'
-], (AuthController, Controller, UserModel, routes, privateRoutes) => {
+], (Controller, UserModel, routes, privateRoutes) => {
 
 	auth.onAuthStateChanged(user => {
 	    if(user){
-	    		console.log('logged in user as '+user.uid);
-	    		console.log(user)
+	    	console.log('logged in user as '+user.uid);
+	    	const provider = user.providerData[0].providerId;
 
-	    	if(user.providerData[0].providerId == EMAIL_PASSWORD_SIGN_IN_METHOD){
-	    		if(user.emailVerified){
-			    	main(user.uid, Controller, UserModel, privateRoutes);
-		    	}
-	    	}else if(user.providerData[0].providerId == GOOGLE_PROVIDER){
-			    main(user.uid, Controller, UserModel, privateRoutes);
+	    	if((provider == EMAIL_PASSWORD_SIGN_IN_METHOD && user.emailVerified) ||
+	    		(provider == GOOGLE_PROVIDER) ||
+	    		 (provider == FACEBOOK_PROVIDER)){
+	    		main(Controller, UserModel, privateRoutes);
 	    	}
 
-	    	
 	    }else{
 	    	console.log('logged out');
 	    	Controller.instance(routes);
@@ -37,12 +33,17 @@ require([
 	console.log('unable to load page please try again');
 });
 
-async function main(id, Controller, UserModel, privateRoutes){
+async function main(Controller, UserModel, privateRoutes){
 	try {
 
 		const userModel = new UserModel(firestore, auth);
-		data = await userModel.getUser(id);
-		Controller.instance(privateRoutes, id, data);
+		const UID = auth.currentUser.uid;
+		const data = await userModel.getUser(UID);
+		if(data){
+			sessionStorage.setItem(UID, JSON.stringify(data));
+		}
+		
+		Controller.instance(privateRoutes);
 		Controller.routeChangeListener();
 	
 	} catch(e) {

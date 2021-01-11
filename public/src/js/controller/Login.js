@@ -41,17 +41,14 @@ define(['authController'], (AuthController) => {
 		}
 
 		static loginWithGoogle(){
-			try {
-				const googleProvider = new firebase.auth.GoogleAuthProvider();
-				return auth.signInWithPopup(googleProvider).then(() => {
-					return true;
-				}).catch(err => {
-					console.log(err);
-				});
-			} catch(e) {
-				console.log(e);
-			}
-		
+			const googleProvider = new firebase.auth.GoogleAuthProvider();
+			return auth.signInWithPopup(googleProvider);
+			
+		}
+
+		static loginWithFacebook(){
+			const facebookProvider = new firebase.auth.FacebookAuthProvider();
+			return auth.signInWithPopup(facebookProvider);
 		}
 	}
 } );
