@@ -1,4 +1,4 @@
-define(['userModel', 'validator', 'util'], (UserModel, Validator, Util) => {
+define(['userModel', 'validator', 'authController', 'util'], (UserModel, Validator,  AuthController, Util) => {
 	return class Register{
 		static initRegisterForm(ref){
 			const registerForm = document.querySelector(ref);
@@ -41,6 +41,7 @@ define(['userModel', 'validator', 'util'], (UserModel, Validator, Util) => {
 
 										if(isUserAdded){
 											console.log('Register successful');
+											const status = await AuthController.signOut();
 											document.location.href = DOMAIN+'#/login';
 										}else{
 											console.log('Unable to register user to the database');

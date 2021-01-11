@@ -13,6 +13,7 @@ define(['authController'], (AuthController) => {
 							
 							try {
 								const auth = await AuthController.signIn(email.trim(), password.trim());
+								console.log(auth)
 								if(auth){
 										console.log('Login successful');
 										document.location.href = DOMAIN;
@@ -20,7 +21,14 @@ define(['authController'], (AuthController) => {
 										console.log('Invalid email or password');
 								}
 							} catch(e) {
-								console.log('Unable to log in. Please try again later');
+								switch (e.code) {
+									case 'auth/user-not-found':
+										console.log('A user with this email address doesn\'t exist');
+										break;
+									default:
+										console.log(e.message);
+										break;
+								}
 							}
 							
 						}else{
@@ -33,12 +41,17 @@ define(['authController'], (AuthController) => {
 		}
 
 		static loginWithGoogle(){
-			const googleProvider = new firebase.auth.GoogleAuthProvider();
-			return auth.signInWithPopup(googleProvider).then(() => {
-				return true;
-			}).catch(err => {
-				console.log(err);
-			});
+			try {
+				const googleProvider = new firebase.auth.GoogleAuthProvider();
+				return auth.signInWithPopup(googleProvider).then(() => {
+					return true;
+				}).catch(err => {
+					console.log(err);
+				});
+			} catch(e) {
+				console.log(e);
+			}
+		
 		}
 	}
 } );

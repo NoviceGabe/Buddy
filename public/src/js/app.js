@@ -13,16 +13,18 @@ require([
 
 	auth.onAuthStateChanged(user => {
 	    if(user){
-	    	if(user.emailVerified){
 	    		console.log('logged in user as '+user.uid);
-		    	main(user.uid, Controller, UserModel, privateRoutes);
-	    	}else if(!user.emailVerified){
-	    		console.log('Email is not verified');
-	    		setInterval(function(){
-					AuthController.signOut();
-	    		},1000);
-		    	
+	    		console.log(user)
+
+	    	if(user.providerData[0].providerId == EMAIL_PASSWORD_SIGN_IN_METHOD){
+	    		if(user.emailVerified){
+			    	main(user.uid, Controller, UserModel, privateRoutes);
+		    	}
+	    	}else if(user.providerData[0].providerId == GOOGLE_PROVIDER){
+			    main(user.uid, Controller, UserModel, privateRoutes);
 	    	}
+
+	    	
 	    }else{
 	    	console.log('logged out');
 	    	Controller.instance(routes);
@@ -40,7 +42,7 @@ async function main(id, Controller, UserModel, privateRoutes){
 
 		const userModel = new UserModel(firestore, auth);
 		data = await userModel.getUser(id);
-		Controller.instance(privateRoutes, data);
+		Controller.instance(privateRoutes, id, data);
 		Controller.routeChangeListener();
 	
 	} catch(e) {

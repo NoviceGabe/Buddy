@@ -261,7 +261,7 @@ define([
 							notifs.push(data);
 			            }
 			    	});
-
+					console.log('group length',groups.length);
 			    	if(groups.length > 0){
 			    		_initChatWindow(groups, this.user);
 					}else if(notifs.length > 0){
@@ -276,6 +276,7 @@ define([
 				});
 			} catch(e) {
 				console.log(e);
+				messageView.hidePreloader();
 			}
 		
 		}

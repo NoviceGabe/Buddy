@@ -6,18 +6,30 @@ define(() => {
 		  	 localStorage.clear();
 		  	sessionStorage.clear();
 		  	return true;
-		  }).catch(() => {
-		  	return false;
 		  });
-		 
 		}
 
-		static signIn(email, password){
-		   	return auth.signInWithEmailAndPassword(email, password).then(cred =>{
-		    	return true;
-			}).catch(()=>{
-			    return false;
-			});
+		static async signIn(email, password){
+			
+			try {
+				const cred = await auth.signInWithEmailAndPassword(email, password);
+
+			   	if(cred.user.emailVerified){
+				   	return true;
+				}
+
+				try {
+					const status = await Authenticate.signOut();
+					if(status){
+						throw new Error('Email is not verified');
+					}
+				} catch(e) {
+					throw e;
+				}
+
+			} catch(e) {
+				throw e;
+			}		
 		}
 
 	}

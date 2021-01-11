@@ -17,14 +17,13 @@ define([
 	const _view = new View();
 
 	let _uid;
+	let _state;
 
-	const _onInitRoute = () => {
+	const _dispatch = () => {
 		const routerPath = sessionStorage.getItem('routerPath');
-		const state = JSON.parse(sessionStorage.getItem(_uid));
-		
 		switch (routerPath) {
 			case '/profile':
-				if(state){
+				if(_uid){
 					const logout = document.querySelector('#logout');
 					logout.addEventListener('click', () => {
 						(async ()=>{
@@ -41,8 +40,8 @@ define([
 				}
 				break;
 			case '/chat':
-				if(state){
-					let controller = new ChatController(state);
+				if(_uid){
+					let controller = new ChatController(_state);
 					controller.initChatGroups();
 					controller.initChatMessageEvents('#message-form', '#message-input', '#submit');
 				}
@@ -54,10 +53,10 @@ define([
 						try {
 							LoginController.loginWithGoogle().then(status => {
 								if(status){
+									sessionStorage.removeItem('method');
 									document.location.href = DOMAIN;
 									_router.setRoute(routes);
 									_router.load('/');
-									sessionStorage.removeItem('method');
 								}
 								
 							});
@@ -77,7 +76,7 @@ define([
 	}
 
 	class Controller{
-		constructor(enforcer, routes, state){
+		constructor(enforcer, routes, id, state){
 			if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
 
 			_router = new Router(routes);
@@ -90,14 +89,14 @@ define([
 				if(routerPath){
 					_router.load(routerPath);
 				}else{
-					if(state){
+					if(id){
 						_router.load('/');
 					}else{
 						_router.load('/login');
 					}
 				}
 			}else{
-				if(state){
+				if(id){
 					_router.load('/');
 				}else{
 					_router.load('/login');
@@ -105,10 +104,9 @@ define([
 				
 			}
 
-			if(state){
-				sessionStorage.setItem(state.uid, JSON.stringify(state));
-				_uid = state.uid;
-
+			if(id){
+				_uid = id;
+				_state = state;
 				const routerPath = sessionStorage.getItem('routerPath');
 				_view.renderMenu();
 				const active = document.querySelector(`#nav-menu li a[href="#${routerPath}"] i`);
@@ -116,20 +114,20 @@ define([
 				_view.onToggleMenu();
 			}
 
-			_onInitRoute();
+			_dispatch();
 		}
 
 		static routeChangeListener(){
 			window.addEventListener('hashchange', () => {
 				_router.resolve();
-				_onInitRoute();
+				_dispatch();
 				
 			});
 		}
 
-		static instance(routes, state) {
+		static instance(routes, id, state) {
 		    if(!this[singleton]) {
-		      this[singleton] = new Controller(singletonEnforcer, routes, state);
+		      this[singleton] = new Controller(singletonEnforcer, routes, id, state);
 		    }
 		    return this[singleton];
 		}
