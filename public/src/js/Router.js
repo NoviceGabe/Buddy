@@ -6,7 +6,8 @@ define([
 	'view', 
 	'routes',
 	'private-routes',
-	], (AuthController, ChatController, LoginController, RegisterController, View, routes, privateRoutes)=>{
+	'userModel'
+	], (AuthController, ChatController, LoginController, RegisterController, View, routes, privateRoutes, UserModel)=>{
 
 	let _routes;
 	const _view = new View();
@@ -55,8 +56,8 @@ define([
 			let state;
 			let uid;
 
-			if(auth.currentUser){
-				uid = auth.currentUser.uid;
+			if(firebase.auth().currentUser){
+				uid = firebase.auth().currentUser.uid;
 				const data = sessionStorage.getItem(uid);
 
 				if(data != undefined){
@@ -69,7 +70,7 @@ define([
 					if(uid){
 						const logout = document.querySelector('#logout');
 						logout.addEventListener('click', () => {
-							auth.signOut()
+							firebase.auth().signOut()
 							.then(() => {
 								const path = '/login';
 								document.location.href = `${DOMAIN}#${path}`;
@@ -98,20 +99,39 @@ define([
 					if(method){
 						(async () => {
 							try {
+								const userModel = new UserModel(firebase.firestore(), firebase.auth());
 								let status;
+
 								if(method == 'google'){
 									status = await LoginController.loginWithGoogle();
 								}else if(method == 'facebook'){
 									status = await LoginController.loginWithFacebook();
 								}
 
-								Promise.resolve(status).then(value => {
-									this.setRoute(privateRoutes);
-									document.location.href = DOMAIN;
-								});
+								const result = await Promise.resolve(status);
+								console.log('result', result)
+
+								if(result.additionalUserInfo.isNewUser && 
+									((result.additionalUserInfo.providerId == GOOGLE_PROVIDER &&
+								   result.additionalUserInfo.profile.verified_email) || 
+									(result.additionalUserInfo.providerId == FACEBOOK_PROVIDER))){
+									
+									const data = result.user.providerData[0];
+									const userData = userModel.createUser(
+										 	data.displayName, 
+										 	data.email, 
+										 	data.photoURL);
+
+									userData.uid = result.user.uid;
+									userData.timestamp = result.user.metadata.creationTime;
+
+									const isUserAdded = await userModel.addUser(userData.uid, userData);
+								}
+								this.setRoute(privateRoutes);
+								document.location.href = DOMAIN;
 
 							} catch(e) {
-								console.log(e);
+								console.log(e.message);
 							}
 								
 						})();

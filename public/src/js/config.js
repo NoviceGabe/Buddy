@@ -1,9 +1,9 @@
 const PRIVATE_CONVO = 1; 
 const MSG_COUNT = 7;
 const ORDER = 'desc';
-const DOMAIN = 'http://localhost/buddy-test/public/'; // local server 1
+//const DOMAIN = 'http://localhost/buddy-test/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2
-//const DOMAIN = 'https://chat-3db56.web.app/'; // production
+const DOMAIN = 'https://chat-3db56.web.app/'; // production
 const EMAIL_PASSWORD_SIGN_IN_METHOD = 'password';
 const GOOGLE_PROVIDER = 'google.com';
 const FACEBOOK_PROVIDER = 'facebook.com';
@@ -45,3 +45,21 @@ requirejs.config({
         'validator':'src/js/Validator'
 	}
 });
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCJLXZVc3YmsWmvp-XeptIGG9sRYvufhhs",
+    authDomain: "chat-3db56.firebaseapp.com",
+    projectId: "chat-3db56",
+    storageBucket: "chat-3db56.appspot.com",
+    messagingSenderId: "863153149044",
+    appId: "1:863153149044:web:29e37770fccabc27b66d21",
+    measurementId: "G-55X3KZXCHP"
+};
+
+try {
+    firebase.initializeApp(firebaseConfig);
+} catch(e) {
+    console.log(e);
+}
+
+

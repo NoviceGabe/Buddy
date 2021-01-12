@@ -28,7 +28,7 @@ define(['userModel', 'validator', 'authController', 'util'], (UserModel, Validat
 							}else{
 								// register
 								try {
-									const userModel = new UserModel(firestore, auth);
+									const userModel = new UserModel(firebase.firestore(), firebase.auth());
 									const name = Util.toCapitalizeString(fname+' '+surname);
 									const userdata = userModel.createUser(name, email, '', []);
 

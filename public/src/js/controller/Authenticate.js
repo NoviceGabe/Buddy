@@ -4,13 +4,13 @@ define(() => {
 		static async signIn(email, password){
 			
 			try {
-				const cred = await auth.signInWithEmailAndPassword(email, password);
+				const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
 
 			   	if(cred.user.emailVerified){
 				   	return true;
 				}
 
-				auth.signOut().then(() => {
+				firebase.auth().signOut().then(() => {
 					throw new Error('Email is not verified');
 				});
 				

@@ -6,7 +6,7 @@ define(['db'], db => {
 
 		}
 
-		createUser(name, email, photoURL, groups){
+		createUser(name, email, photoURL = '', groups = []){
 			return {
 				name: name,
 				email: email,

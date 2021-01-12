@@ -42,13 +42,13 @@ define(['authController'], (AuthController) => {
 
 		static loginWithGoogle(){
 			const googleProvider = new firebase.auth.GoogleAuthProvider();
-			return auth.signInWithPopup(googleProvider);
+			return firebase.auth().signInWithPopup(googleProvider);
 			
 		}
 
 		static loginWithFacebook(){
 			const facebookProvider = new firebase.auth.FacebookAuthProvider();
-			return auth.signInWithPopup(facebookProvider);
+			return firebase.auth().signInWithPopup(facebookProvider);
 		}
 	}
 } );

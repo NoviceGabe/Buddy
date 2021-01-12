@@ -18,8 +18,8 @@ define([
 
 			let uid;
 			
-			if(auth.currentUser){
-			 	uid = auth.currentUser.uid;
+			if(firebase.auth().currentUser){
+			 	uid = firebase.auth().currentUser.uid;
 			}
 
 			const reloading = sessionStorage.getItem('reloading');

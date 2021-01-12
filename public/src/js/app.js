@@ -10,7 +10,7 @@ require([
 	'private-routes'
 ], (Controller, UserModel, routes, privateRoutes) => {
 
-	auth.onAuthStateChanged(user => {
+	firebase.auth().onAuthStateChanged(user => {
 	    if(user){
 	    	console.log('logged in user as '+user.uid);
 	    	const provider = user.providerData[0].providerId;
@@ -36,8 +36,8 @@ require([
 async function main(Controller, UserModel, privateRoutes){
 	try {
 
-		const userModel = new UserModel(firestore, auth);
-		const UID = auth.currentUser.uid;
+		const userModel = new UserModel(firebase.firestore(), firebase.auth());
+		const UID = firebase.auth().currentUser.uid;
 		const data = await userModel.getUser(UID);
 		if(data){
 			sessionStorage.setItem(UID, JSON.stringify(data));
@@ -64,7 +64,7 @@ async function main(Controller, UserModel, privateRoutes){
 	    }
 	*/
 function signOut(){
-		  return auth.signOut().then(() => {
+		  return firebase.auth().signOut().then(() => {
 		  	 localStorage.clear();
 		  	sessionStorage.clear();
 		  	return true;

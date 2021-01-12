@@ -13,8 +13,8 @@ define([
 	let prevCount = 0;
 	let lastPage = false;
 
-	const chatModel = new ChatModel(firestore);
-	const userModel = new UserModel(firestore, auth);
+	const chatModel = new ChatModel(firebase.firestore());
+	const userModel = new UserModel(firebase.firestore(), firebase.auth());
 
 	let chatView;
 	let messageView;
@@ -204,7 +204,7 @@ define([
 		      				console.log('empty message.');
 		      			}else{
 		      				try {
-		      					const status = await chatModel.commitMessage(groupId, auth.currentUser.uid, input.value);
+		      					const status = await chatModel.commitMessage(groupId, firebase.auth().currentUser.uid, input.value);
 								if(status){
 									messageForm.reset();
 								}
@@ -245,7 +245,7 @@ define([
 			}
 
 			try {
-				chatListener = chatModel.prepareGroupByUser({'uid':auth.currentUser.uid, 'name':this.user.name})
+				chatListener = chatModel.prepareGroupByUser({'uid':firebase.auth().currentUser.uid, 'name':this.user.name})
 				.onSnapshot(querySnapshot => {
 					const groups = [];
 					const notifs = [];
@@ -261,7 +261,7 @@ define([
 							notifs.push(data);
 			            }
 			    	});
-					console.log('group length',groups.length);
+
 			    	if(groups.length > 0){
 			    		_initChatWindow(groups, this.user);
 					}else if(notifs.length > 0){
@@ -270,7 +270,7 @@ define([
 						});
 					}else{
 						messageView.hidePreloader();
-						console.log('No group associated with user '+data.uid);
+						console.log('No group associated with user '+firebase.auth().currentUser.uid);
 					}
 
 				});
