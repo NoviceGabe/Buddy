@@ -8,7 +8,6 @@ define([
 	const singletonEnforcer = Symbol();
 
 	let _router;
-	const _view = new View();
 
 	class Controller{
 		constructor(enforcer, routes){
@@ -20,6 +19,15 @@ define([
 			
 			if(firebase.auth().currentUser){
 			 	uid = firebase.auth().currentUser.uid;
+			}
+
+			if(uid){
+				const routerPath = sessionStorage.getItem('routerPath');
+				View.renderMenu();
+				const active = document.querySelector(`#nav-menu li a[href="#${routerPath}"] i`);
+				View.addActive(active);
+				View.onToggleMenu();
+
 			}
 
 			const reloading = sessionStorage.getItem('reloading');
@@ -42,14 +50,6 @@ define([
 					_router.load('/login');
 				}
 				
-			}
-
-			if(uid){
-				const routerPath = sessionStorage.getItem('routerPath');
-				_view.renderMenu();
-				const active = document.querySelector(`#nav-menu li a[href="#${routerPath}"] i`);
-				_view.addActive(active);
-				_view.onToggleMenu();
 			}
 
 		}

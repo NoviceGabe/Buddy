@@ -43,8 +43,39 @@ define(() => {
 
 	const profileComponent = {
 		render: () => {
-			return `profile
-			<button id="logout">logout</button>
+			return `
+			<div id="profile-section">
+
+				<ul class="breadcrumb" >
+				  <li><a href="#/">Buddy</a></li>
+				  <li>Profile</li>
+				</ul>
+				
+				<div id="profile-overview" class="clear-fix">
+				</div>
+
+				<div id="profile-tabs" class="clear-fix">
+					<ul>
+						<li class="active" data-content="tab-profile-content">My Profile</li>
+						<li data-content="tab-connections-content">My Connections</li>
+						<li data-content="tab-services-content">Services</li>
+						<li data-content="tab-settings-content">Account Settings</li>
+					</ul>	
+				</div>
+
+				<div id="tab-container" class="clear-fix">
+					<div id="tab-profile-content" class="float-left">
+					</div>
+
+					<div id="tab-connections-content" class="remove">
+					</div>
+
+					<div id="suggestions" class="float-right">
+					</div>
+				</div>
+				
+				<button id="logout">logout</button>
+			</div>
 			`;
 		}
 	}

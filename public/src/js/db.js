@@ -10,7 +10,7 @@ define(function(){
 		}
 
 		getById(path, id){
-			return this.firestore.collection(path).where("id", "==", id).get();
+			return this.firestore.collection(path).where("uid", "==", id).get();
 		}
 
 		getByCustom(path, custom){
@@ -30,7 +30,7 @@ define(function(){
 		}
 
 		getAllExcept(path, uid){
-			return this.firestore.collection(path).where("id", "!=", uid).get();
+			return this.firestore.collection(path).where("uid", "!=", uid).get();
 		}
 
 		prepare(path){

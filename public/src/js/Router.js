@@ -1,5 +1,6 @@
 define([
 	'authController', 
+	'profileController',
 	'chatController', 
 	'loginController', 
 	'registerController',
@@ -7,10 +8,10 @@ define([
 	'routes',
 	'private-routes',
 	'userModel'
-	], (AuthController, ChatController, LoginController, RegisterController, View, routes, privateRoutes, UserModel)=>{
+	], 
+	(AuthController, ProfileController, ChatController, LoginController, RegisterController, View, routes, privateRoutes, UserModel)=>{
 
 	let _routes;
-	const _view = new View();
 
 	return class Router{
 		constructor(routes){
@@ -68,13 +69,17 @@ define([
 			switch (path) {
 				case '/profile':
 					if(uid){
+						let controller = new ProfileController(state);
+						controller.initViews();
+						controller.initTabEvents();
+						
 						const logout = document.querySelector('#logout');
 						logout.addEventListener('click', () => {
 							firebase.auth().signOut()
 							.then(() => {
 								const path = '/login';
 								document.location.href = `${DOMAIN}#${path}`;
-								_view.removeMenu();
+								View.removeMenu();
 								this.setRoute(routes);
 								this.load(path);
 			  	 				localStorage.clear();

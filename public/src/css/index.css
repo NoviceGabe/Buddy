@@ -5,29 +5,34 @@
 
 nav {
   width: 100%;
+  padding: 0;
   margin: 0 auto;
   background: #fff;
-  padding: 10px 0;
-  box-shadow: 0px 5px 0px #dedede;
 }
 
 nav ul {
   list-style-type: none;
+  padding: 10px;
+  font-family: Arial, sans-serif;
   text-align: center;
 }
 
 nav ul li {
-  display: inline-block;
+  float: left;
+  height: 30px;
+  text-align: center;
+  margin-right: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-nav li i {
-  display: block;
-  padding: 15px;
-  color: #aaa;
-  margin: 0 10px;
+nav li a{
+  color:#222;
+  text-decoration: none;
 }
 
-nav ul li i:hover {
+nav li a:hover {
   color: #555;
   cursor: pointer;
 }
@@ -38,6 +43,15 @@ nav:after{
   clear: both;
 }
 
+nav .profile-image{
+  border:2px solid #e2202c;
+}
+
+.profile-image{
+  border-radius: 50%;
+}
+
+
 .active{
  color: #555;
 }
@@ -47,9 +61,10 @@ nav:after{
   width: 20%;
   padding: 10px;
   text-align: center;
-  float: right;
-  color: #A9A9A9;
+  float: left;
+  color: #e2202c;
   font-weight: bold;
+  font-family: Arial, sans-serif;
 }
 
 #nav-menu{
@@ -85,16 +100,218 @@ nav:after{
   margin: auto;
 }
 
-#root-container:after{
-  content: "";
-  clear: both;
-  display: block;
-}
-
 #container{
   height: 100%;
   width: 100%;
   margin: auto;
+  background: #efefef;
+}
+
+#profile-section{
+  height: 100%;
+  width: 100%;
+  background: #efefef;
+  box-sizing:border-box;
+  padding-top: 20px;
+  padding-left: 300px;
+  padding-right: 300px;
+  font-family: Arial, sans-serif;
+}
+
+#profile-overview{
+  background: #fff;
+  border-radius: 25px;
+  height: 230px;
+}
+
+#profile-overview #col-1{
+  border-right: 1px solid #efefef;
+  width:60%;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+}
+
+#profile-overview #col-2{
+   width:40%;
+   padding:30px;
+}
+
+#profile-overview #col-1, #profile-overview #col-2{
+  height:100%;
+  box-sizing:border-box;
+}
+
+#profile-overview .profile-image{
+  border: 1px solid #efefef;
+}
+
+#profile-overview #overview-general{
+  margin-left:20px;
+}
+
+#profile-overview #overview-general h1{
+   font-weight: 200;
+}
+
+#profile-overview #overview-general h1, #profile-overview #overview-general h1 + p{
+  margin-bottom: 12px;
+}
+
+#profile-overview #overview-general h1 + p {
+  font-size: 12px;
+}
+
+.info-header{
+  margin: 10px 0px;
+  color: #d9d9d9;
+  font-weight: normal;
+}
+
+
+#profile-overview #contacts p{
+  margin-bottom: 8px;
+  word-wrap: break-word;
+}
+
+#profile-tabs{
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+#profile-tabs ul{
+  list-style-type: none;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  float: left;
+}
+
+#profile-tabs ul li{
+  display: inline-block;
+  margin-right: 20px;
+  color:#222;
+  padding: 10px;
+}
+
+#profile-tabs li:hover {
+  border-bottom: 3px solid #b71c1c;
+  cursor: pointer;
+}
+
+#profile-tabs li.active {
+  border-bottom: 3px solid #b71c1c;
+  color: #e2202c;
+}
+
+#tab-profile-content{
+  background: #fff;
+  padding: 30px;
+  border-radius: 25px;
+  width: 60%;
+  min-height: 310px;
+  box-sizing:border-box;
+}
+
+#tab-profile-content > h4 + p{
+  min-height: 100px;
+}
+
+#tab-profile-content #content-general{
+  margin-bottom: 40px;
+}
+
+#tab-profile-content #content-general p{
+  margin-bottom: 10px;
+}
+
+#suggestions {
+   border-radius: 25px;
+  background: #fff;
+  width: 37%;
+  min-height: 310px;
+  height: 420px;
+  box-sizing:border-box;
+  padding: 30px;
+}
+
+#suggestions ul{
+  list-style-type: none;
+}
+
+#suggestions li img.avatar{
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  border: 1px solid #efefef;
+  margin-right: 12px;
+}
+
+#suggestions li {
+  padding: 10px;
+}
+
+#suggestions li:hover{
+  cursor: pointer;
+}
+
+
+#suggestions > div{
+  margin-bottom: 20px;
+}
+
+#follower, #following{
+  background: #fff;
+  border-radius: 25px;
+  width: 80%;
+  height: 180px;
+  padding: 30px;
+  box-sizing:border-box;
+  margin:auto;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+#follower ul, #following ul{
+  list-style-type: none;
+  margin-top: 20px;
+}
+
+.follower > div, .following > div{
+  margin-bottom: 20px;
+}
+
+#follower li img, #following li img{
+   border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  border: 1px solid #efefef;
+}
+
+#follower li, #following li{
+  display: inline-block;
+   margin-right: 30px;
+   text-align: center;
+}
+
+#follower li:hover, #following li:hover{
+  cursor: pointer;
+}
+
+
+.prev, .next {
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+}
+
+.prev{
+  left: 0;
+}
+.next {
+  right: 0;
 }
 
 .col-1{
@@ -329,15 +546,6 @@ nav:after{
 
  }
 
-
-.remove{
-  display:none;
-}
-
-.hide{
-  visibility: hidden;
-}
-
 .scrollbar{
   margin-left: 30px;
   float: left;
@@ -429,8 +637,21 @@ nav:after{
   text-decoration: none;
   border-radius: 50%;
 }
-.col-2 .fa:hover {
+.col-2 .fa:hover, #socmed-links .fa:hover {
   opacity: 0.7;
+}
+
+#socmed-links .fa{
+  padding: 9px;
+  font-size: 16px;
+  width: 18px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+}
+
+#profile-overview #socmed-links .fa{
+  margin-right:5px;
 }
 
 .fa-facebook {
@@ -440,6 +661,16 @@ nav:after{
 
 .fa-google {
   background: #dd4b39;
+  color: white;
+}
+
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.fa-linkedin {
+  background: #007bb5;
   color: white;
 }
 
@@ -471,4 +702,31 @@ nav:after{
   top: -12px;
   text-align: center;
   color: #999;
+}
+
+ul.breadcrumb {
+  margin-bottom: 20px;
+  padding: 10px 16px;
+  list-style: none;
+}
+
+ul.breadcrumb li {
+  display: inline;
+  font-size: 18px;
+}
+
+ul.breadcrumb li+li:before {
+  padding: 8px;
+  color: black;
+  content: "/\00a0";
+}
+
+ul.breadcrumb li a {
+  color: #0275d8;
+  text-decoration: none;
+}
+
+ul.breadcrumb li a:hover {
+  color: #01447e;
+  text-decoration: underline;
 }

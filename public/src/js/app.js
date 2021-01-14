@@ -30,6 +30,7 @@ require([
 	});
 
 }, err => {
+	console.log(err.message)
 	console.log('unable to load page please try again');
 });
 
