@@ -5,7 +5,7 @@ define(() => {
 		}
 
 		render(){
-			const container = document.querySelector('#tab-profile-content');
+			const container = document.querySelector('#profile');
 			let bio = '';
 			let gender = '';
 			let bday = '';

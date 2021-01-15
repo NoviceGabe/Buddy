@@ -5,7 +5,7 @@ define(['util'], (Util) => {
 		}
 
 		render(ref, users){
-			const container = document.querySelector('#tab-connections-content');
+			const container = document.querySelector('#connections');
 			let count = 0;
 			if(ref == 'follower' && this.state.followerCount){
 				count = this.state.followerCount;
@@ -22,11 +22,11 @@ define(['util'], (Util) => {
 			}
 			const template = `
 				<div id="${ref}">
-					<div class="clear-fix">
-						<h4 class="float-left">${Util.toCapitalizeString(ref)}s (${count})</h4>
-						<span class="float-right ${view}">See all</span>
+					<div style="display:flex;gap:20px">
+						<h4 style="flex:2">${Util.toCapitalizeString(ref)}s (${count})</h4>
+						<a href="#/connections/${ref}" class="${view}">See all</a>
 					</div>
-					<ul id="${ref}-dialog">
+					<ul id="${ref}-dialog" style="display:flex">
 					</ul>
 	  				<img src="src/assets/angle-pointing-to-left.png" class="prev hide" >
 	  				<img src="src/assets/angle-arrow-pointing-to-right.png" class="next ${next}" >

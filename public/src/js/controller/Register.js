@@ -1,4 +1,4 @@
-define(['userModel', 'validator', 'authController', 'util'], (UserModel, Validator,  AuthController, Util) => {
+define(['userModel', 'validator', 'authController', 'util', 'css!css/login-register'], (UserModel, Validator,  AuthController, Util) => {
 	return class Register{
 		static initRegisterForm(ref){
 			const registerForm = document.querySelector(ref);

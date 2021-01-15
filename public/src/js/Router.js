@@ -1,6 +1,7 @@
 define([
 	'authController', 
 	'profileController',
+	'connectionsController',
 	'chatController', 
 	'loginController', 
 	'registerController',
@@ -9,7 +10,18 @@ define([
 	'private-routes',
 	'userModel'
 	], 
-	(AuthController, ProfileController, ChatController, LoginController, RegisterController, View, routes, privateRoutes, UserModel)=>{
+	(
+	AuthController, 
+	ProfileController, 
+	ConnectionsController,
+	ChatController, 
+	LoginController, 
+	RegisterController, 
+	View, 
+	routes, 
+	privateRoutes, 
+	UserModel
+	)=>{
 
 	let _routes;
 
@@ -37,7 +49,6 @@ define([
 				sessionStorage.setItem('method', method);
 				path = pathSegments.join('/');
 			}
-
 			const component = this.findComponentByPath(path) || this.findComponentByPath('/error');
 			const main = document.querySelector('#container');
 			sessionStorage.setItem('routerPath', path);
@@ -88,6 +99,12 @@ define([
 						  		return err;
 						  	});
 						});
+					}
+					break;
+				case '/connections':
+					if(uid){
+						let controller = new ConnectionsController(state);
+						controller.initViews();
 					}
 					break;
 				case '/chat':

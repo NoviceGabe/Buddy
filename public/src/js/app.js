@@ -7,7 +7,9 @@ require([
 	'controller',
 	'userModel',
 	'routes',
-	'private-routes'
+	'private-routes',
+	'css!css/index',
+	'css!css/helper'
 ], (Controller, UserModel, routes, privateRoutes) => {
 
 	firebase.auth().onAuthStateChanged(user => {

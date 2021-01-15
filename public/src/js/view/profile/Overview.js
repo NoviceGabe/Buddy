@@ -20,17 +20,17 @@ define(()=>{
 				phone = this.state.phone;
 			}
 			const template = `
-				<div class="clear-fix float-left" id="col-1">
-					<img src="${imagePath}" alt="profile image" class="float-left profile-image" 
+				<div id="col-1">
+					<img src="${imagePath}" alt="profile image" class="profile-image" 
 						height="110" width="110">
-					<div class="float-left" id="overview-general">
+					<div id="overview-general">
 						<h1>${this.state.name}</h1>
 						<p>${address}</p>
-						<div id="socmed-links">
+						<div class=".social-media">
 						</div>	
 					</div>
 				</div>
-				<div class="float-left" id="col-2">
+				<div id="col-2">
 					<div id="contacts">
 						<h4 class="info-header">CONTACTS</h4>
 						<p><b>Email:</b> ${this.state.email}</p>
@@ -43,7 +43,7 @@ define(()=>{
 			
 
 			if(this.state.socialIds){
-				const socialIdList = document.querySelector('#socmed-links');
+				const socialIdList = document.querySelector('.social-media');
 				this.state.socialIds.forEach((id, index, array) => {
 			        const key = Object.keys(id)[0];
 			        let icon = '';

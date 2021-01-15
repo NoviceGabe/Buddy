@@ -1,0 +1,89 @@
+
+#connections-section{
+  height: 100%;
+  width: 80%;
+  padding-top: 20px;
+  margin:auto;
+  background: #efefef;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+
+#connections-container{
+  background: #fff;
+  padding: 30px;
+  border-radius: 25px;
+  width: 100%;
+  min-height: 310px;
+  box-sizing:border-box;
+}
+
+#connections-container > h4{
+  margin-bottom: 20px;
+}
+
+#connections-container .label p{
+  width:6%;
+  box-sizing:border-box;
+  font-size: 12px;
+  color:grey;
+  font-weight: bold;
+}
+
+#connections-container .label hr{
+  width:94%;
+  box-sizing:border-box;
+  margin: 8px 0px;
+  padding: 0;
+  background: #efefef;
+  border: 1px solid #efefef; 
+}
+
+#connections-container #follower, #connections-container #following{
+  margin-top:20px;
+  width:100%;
+}
+
+#connections-container .col-1{
+  width:50%; 
+  padding-left:20px;
+  box-sizing: border-box;
+}
+
+#connections-container .col-2{
+  width:50%; 
+  box-sizing: border-box;
+}
+
+
+#connections-container li{
+  display:block;
+  margin-bottom: 20px;
+}
+
+#connections-container li button{
+  display:inline-block; 
+  border-radius: 4px;
+  width:110px;
+  padding:8px 10px;
+}
+
+#connections-container li .view{
+  background:#e2202c;
+  color:white;
+  border:1px solid #e2202c
+}
+
+#connections-container li .unfollow{
+  background:#fff;
+  color:#222;
+  border:1px solid #222
+}
+
+#connections-container li img{
+  border-radius: 50%;
+  height: 70px;
+  width: 70px;
+  border: 1px solid #efefef;
+  margin-right: 12px;
+}

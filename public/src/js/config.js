@@ -36,19 +36,26 @@ requirejs.config({
         'overView': 'src/js/view/profile/Overview',
         'profileView': 'src/js/view/profile/Profile',
         'suggestionsView':'src/js/view/profile/Suggestions',
-        'connectionView': 'src/js/view/profile/Connections',
+        'p_connectionsView': 'src/js/view/profile/Connections',
+        'c_connectionsView': 'src/js/view/connections/Connections',
         'controller': 'src/js/controller/Controller',
         'authController': 'src/js/controller/Authenticate',
         'loginController': 'src/js/controller/Login',
         'registerController':'src/js/controller/Register',
         'profileController':'src/js/controller/Profile',
+        'connectionsController': 'src/js/controller/Connections',
         'chatController': 'src/js/controller/Chat',
         'router':'src/js/Router',
         'routes': 'src/js/routes',
         'private-routes': 'src/js/private-routes',
         'util':'src/js/Util',
         'validator':'src/js/Validator'
-	}
+	},
+     map: {
+      '*': {
+        css: 'src/require-css/css'
+      }
+    }
 });
 
 const firebaseConfig = {

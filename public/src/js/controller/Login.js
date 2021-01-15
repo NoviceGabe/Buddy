@@ -1,4 +1,4 @@
-define(['authController'], (AuthController) => {
+define(['authController', 'css!css/login-register'], (AuthController) => {
 	return class Login{
 		static initLoginForm(ref){
 			const loginForm = document.querySelector(ref);

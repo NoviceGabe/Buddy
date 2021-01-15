@@ -3,12 +3,16 @@ define([
 	'overView', 
 	'profileView', 
 	'suggestionsView', 
-	'connectionView',
-	'userModel'
+	'p_connectionsView',
+	'userModel',
+	'css!css/app',
+	'css!css/profile',
 	], (View, Overview, ProfileView, SuggestionsView, ConnectionView, UserModel)=>{
 	
 	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
-	let _contentId = 'tab-profile-content';
+	const HOME_TAB = 'tab-1';
+	let _contentId = HOME_TAB;
+
 
 	return class Profile{
 		constructor(state){
@@ -42,20 +46,20 @@ define([
 
 		async initConnections(){
 			try {
-				const connectionView = new ConnectionView(this.state);
+				const p_connectionsView = new ConnectionView(this.state);
 
 				const following = await _userModel.getAllFollowing(firebase.auth().currentUser.uid);
 				const followingUsers = await _userModel.fetchMembers(following);
 
 				if(followingUsers){
-					connectionView.render('following', followingUsers);
+					p_connectionsView.render('following', followingUsers);
 				}
 
 				const follower = await _userModel.getAllFollowers(firebase.auth().currentUser.uid);
 				const followerUsers = await _userModel.fetchMembers(follower);
 
 				if(followerUsers){
-					connectionView.render('follower', followerUsers);
+					p_connectionsView.render('follower', followerUsers);
 				}
 
 			} catch(e) {
@@ -64,7 +68,7 @@ define([
 		}
 
 		initTabEvents(){
-			const tabs = document.querySelectorAll('#profile-tabs li');
+			const tabs = document.querySelectorAll('#tabs li');
 			tabs.forEach(tab => {
 				tab.addEventListener('click', e => {
 					const currentTab = e.target;
@@ -75,12 +79,12 @@ define([
 						document.querySelector(`#${_contentId}`).style.display = 'none';
 					}
 					const suggestions = document.querySelector('#suggestions');
-					if(contentId != 'tab-profile-content'){
+					if(contentId != HOME_TAB){
 						suggestions.style.display = 'none';
 					}else{
 						suggestions.style.display = 'block';
 					}
-					tabContent.style.display = 'block';
+					tabContent.style.display = 'flex';
 					_contentId = contentId;
 				});
 			});

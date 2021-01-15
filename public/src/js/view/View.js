@@ -12,12 +12,12 @@ define(() => {
 		}
 
 		static onToggleMenu(){
-			const navMenuItems = document.querySelectorAll('#nav-menu a > i');
+			const navMenuItems = document.querySelectorAll('#nav-menu a');
 
 			navMenuItems.forEach(item => {
-			  item.addEventListener('click', (e) => {
+			  	item.addEventListener('click', (e) => {
 			  		this.addActive(e.target);
-			  });
+			  	});
 			});
 		}
 

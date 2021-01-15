@@ -8,7 +8,19 @@ define(() => {
 
 	const connectionComponent = {
 		render: () => {
-			return `connections`;
+			return `
+			<div id="connections-section">
+
+				<ul class="breadcrumb" >
+				  <li><a href="#/">Buddy</a></li>
+				  <li>Connections</li>
+				</ul>
+				
+				<div id="connections-container" class="clear-fix">
+				</div>
+
+			</div>
+			`;
 		}
 	}
 
@@ -54,23 +66,26 @@ define(() => {
 				<div id="profile-overview" class="clear-fix">
 				</div>
 
-				<div id="profile-tabs" class="clear-fix">
+				<div id="tabs" class="clear-fix">
 					<ul>
-						<li class="active" data-content="tab-profile-content">My Profile</li>
-						<li data-content="tab-connections-content">My Connections</li>
-						<li data-content="tab-services-content">Services</li>
-						<li data-content="tab-settings-content">Account Settings</li>
+						<li class="active" data-content="tab-1">My Profile</li>
+						<li data-content="tab-2">My Connections</li>
+						<li data-content="tab-3">Services</li>
+						<li data-content="tab-4">Account Settings</li>
 					</ul>	
 				</div>
 
-				<div id="tab-container" class="clear-fix">
-					<div id="tab-profile-content" class="float-left">
-					</div>
+				<div id="tab-content">
+					<div id="tab-1">
+						<div id="profile">
+						</div>
 
-					<div id="tab-connections-content" class="remove">
+						<div id="suggestions">
+						</div>
 					</div>
-
-					<div id="suggestions" class="float-right">
+					<div id="tab-2" class="remove">
+						<div id="connections">
+						</div>
 					</div>
 				</div>
 				

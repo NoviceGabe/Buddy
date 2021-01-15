@@ -10,9 +10,9 @@ define(['userModel'], (UserModel)=>{
 			const container = document.querySelector('#suggestions');
 
 			const template = `
-				<div class="clear-fix">
-					<h4 class="float-left">People you may know</h4>
-					<span class="float-right">See all</span>
+				<div style="display:flex;gap:20px">
+					<h4 style="flex:2">People you may know</h4>
+					<span>See all</span>
 				</div>
 				<ul id="suggestion-dialog">
 							
