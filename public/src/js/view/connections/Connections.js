@@ -1,9 +1,10 @@
 define(['util'],(Util)=>{
-	let _init = false;
+	let _init;
 
 	return class Connections{
-		constructor(){
-
+		constructor(state){
+			this.state = state;
+			_init = false;
 		}
 
 		render(ref, users, filter){
@@ -96,23 +97,49 @@ define(['util'],(Util)=>{
 			if(user.service && user.service.length > 0){
 				service = user.service[0].name;
 			}
+			let chat = '';
 
-			const li = `
-				<li id="${user.uid}" class="clear-fix">
-					<div class="col-1 float-left clear-fix">
-						<img src="${imgPath}" class="float-left">
-						<div class="float-left">
-							<h5 >${user.name}</h5>
-							<p>${service}</p>
-						</div>
+			if(firebase.auth().currentUser.uid != user.uid){
+				chat = '<img src="src/assets/invite_chat.png" height="30" width="30" class="chat">';
+			}
+
+			let li = '';
+			let content = `
+				<div class="col-1 float-left" style="display:flex; gap: 10px;">
+					<img src="${imgPath}">
+					<div>
+						<h5 >${user.name}</h5>
+						<p>${service}</p>
 					</div>
+					${chat}
+				</div>`;
+			
+			if(firebase.auth().currentUser.uid == this.state.uid){
+				content += `
 					<div class="col-2 float-right">
 						<button class="view">View Profile</button>
 						<button class="unfollow">Unfollow</button>
-					</div>
+					</div>`;
+			}else{
+
+				let buttons = '<button class="view">View Profile</button>';
+
+				if(firebase.auth().currentUser.uid != user.uid){
+					buttons += `<button class="follow">Follow</button>`;
+				}
+
+				content += `
+					<div class="col-2 float-right">
+						${buttons}
+					</div>`;
+			}
+
+			li = `
+				<li id="${user.uid}" class="clear-fix" data-chat="invite">
+					${content}
 				</li>
-				
 			`;
+
 			return li;
 		}
 	}

@@ -1,5 +1,13 @@
 define(() => {
+	const singleton = Symbol();
+	const singletonEnforcer = Symbol();
+	let _state;
 	return class View{
+
+		constructor(enforcer, state){
+			if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
+			_state = state;
+		}
 
 		static addActive(element){
 		  const current = document.querySelector('.active');
@@ -23,6 +31,12 @@ define(() => {
 
 		static renderMenu(){
 			const container = document.querySelector('#root-container');
+			let imagePath = 'src/assets/man.jpg';
+
+			if(_state.photoURL){
+				imagePath = _state.photoURL;
+			}	
+
 			const menu = `
 			<nav>
 				<div id="logo">
@@ -34,8 +48,8 @@ define(() => {
 				  <li><a href="#/chat">Message</a></li>
 				  <li><a href="#/about">How it works</a></li>
 				  <li>
-				  <a href="#/profile">
-				  <img src="src/assets/man.jpg" alt="profile image" class="profile-image" heigh="30" width="30">
+				  <a href="#/profile/${firebase.auth().currentUser.uid}">
+				  <img src="${imagePath}" alt="profile image" class="profile-image" heigh="30" width="30">
 				  </a></li>
 				</ul>
 			</nav>`;
@@ -48,6 +62,13 @@ define(() => {
 			if(nav){
 				container.removeChild(nav);
 			}
+		}
+
+		static instance(state) {
+		    if(!this[singleton]) {
+		      this[singleton] = new View(singletonEnforcer, state);
+		    }
+		    return this[singleton];
 		}
 	}
 });

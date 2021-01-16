@@ -2,6 +2,7 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
 	sessionStorage.setItem('reloading', 'true');
   	document.location.href = DOMAIN;
 } 
+//signOut();
 
 require([
 	'controller',
@@ -36,6 +37,7 @@ require([
 	console.log('unable to load page please try again');
 });
 
+
 async function main(Controller, UserModel, privateRoutes){
 	try {
 
@@ -54,7 +56,7 @@ async function main(Controller, UserModel, privateRoutes){
 	}
 }
 
-//signOut();
+
 //signIn('lazymacs017@gmail.com', 'Password123');
 
 

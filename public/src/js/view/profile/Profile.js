@@ -45,7 +45,7 @@ define(() => {
 					${education}
 				</div>
 				<h4 class="info-header">ABOUT</h4>
-				<p></p>
+				<p>${bio}</p>
 				`;
 
 			container.innerHTML = template;

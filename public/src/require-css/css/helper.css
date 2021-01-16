@@ -31,3 +31,10 @@
 	display: block;
 	clear: both;
 }
+
+.flex-container {
+    display: -webkit-flex;
+    display: flex;
+    background-color: red;
+    min-height: 100%;
+}

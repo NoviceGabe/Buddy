@@ -3,7 +3,11 @@ define([
 	'userModel', 
 	'chatModel', 
 	'chatView', 
-	'messageView'], (Util, UserModel, ChatModel, ChatView, MessageView) => {
+	'messageView',
+	'css!css/chat',
+	'css!css/bubble'
+
+	], (Util, UserModel, ChatModel, ChatView, MessageView) => {
 	
 	let lastVisible = null;
 	let loaded = false;
@@ -71,6 +75,8 @@ define([
 			selected = true;
 			_initMessages(groups[0].id.trim(), user);
 		}
+
+		// get invitation
 
 	}
 

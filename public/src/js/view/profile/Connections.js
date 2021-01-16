@@ -24,7 +24,7 @@ define(['util'], (Util) => {
 				<div id="${ref}">
 					<div style="display:flex;gap:20px">
 						<h4 style="flex:2">${Util.toCapitalizeString(ref)}s (${count})</h4>
-						<a href="#/connections/${ref}" class="${view}">See all</a>
+						<a href="#/connections/${ref}/${this.state.uid}" class="${view}">See all</a>
 					</div>
 					<ul id="${ref}-dialog" style="display:flex">
 					</ul>
@@ -38,7 +38,6 @@ define(['util'], (Util) => {
 			const dialog = document.querySelector(`#${ref}-dialog`);
 
 			users.forEach(user => {
-				console.log(user)
 				fragment.appendChild(this.template(user));
 			});
 
@@ -48,9 +47,15 @@ define(['util'], (Util) => {
 		template(user){
 			const li = document.createElement('li');
 			const avatar = document.createElement('img');
+			const link = document.createElement('a');
 			const div = document.createElement('div');
 			const name = document.createElement('h5');
 			const tag = document.createElement('p');
+
+			li.setAttribute('id', user.uid);
+			avatar.classList.add('avatar');
+
+			link.setAttribute('href', `#/profile/${user.uid}`);
 
 			let imgPath = 'src/assets/man.jpg';
 
@@ -72,8 +77,11 @@ define(['util'], (Util) => {
 			div.appendChild(name);
 			div.appendChild(tag);
 
-			li.appendChild(avatar);
+			link.appendChild(avatar);
+
+			li.appendChild(link);
 			li.appendChild(div);
+			
 			return li;
 		}
 	}

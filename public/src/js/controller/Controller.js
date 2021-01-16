@@ -23,6 +23,8 @@ define([
 
 			if(uid){
 				const routerPath = sessionStorage.getItem('routerPath');
+				const data = sessionStorage.getItem(firebase.auth().currentUser.uid);
+				View.instance(JSON.parse(data));
 				View.renderMenu();
 				const active = document.querySelector(`#nav-menu li a[href="#${routerPath}"] i`);
 				View.addActive(active);
@@ -49,7 +51,6 @@ define([
 				}else{
 					_router.load('/login');
 				}
-				
 			}
 
 		}

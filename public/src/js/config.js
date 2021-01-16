@@ -1,9 +1,9 @@
 const PRIVATE_CONVO = 1; 
 const MSG_COUNT = 7;
 const ORDER = 'desc';
-//const DOMAIN = 'http://localhost/buddy-test/public/'; // local server 1
+const DOMAIN = 'http://localhost/buddy-test/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2
-const DOMAIN = 'https://chat-3db56.web.app/'; // production
+//const DOMAIN = 'https://chat-3db56.web.app/'; // production
 const EMAIL_PASSWORD_SIGN_IN_METHOD = 'password';
 const GOOGLE_PROVIDER = 'google.com';
 const FACEBOOK_PROVIDER = 'facebook.com';
@@ -51,7 +51,7 @@ requirejs.config({
         'util':'src/js/Util',
         'validator':'src/js/Validator'
 	},
-     map: {
+   map: {
       '*': {
         css: 'src/require-css/css'
       }

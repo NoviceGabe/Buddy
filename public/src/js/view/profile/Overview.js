@@ -26,7 +26,7 @@ define(()=>{
 					<div id="overview-general">
 						<h1>${this.state.name}</h1>
 						<p>${address}</p>
-						<div class=".social-media">
+						<div class="social-media">
 						</div>	
 					</div>
 				</div>
@@ -40,25 +40,27 @@ define(()=>{
 			`;
 			container.innerHTML = template;
 
-			
-
 			if(this.state.socialIds){
-				const socialIdList = document.querySelector('.social-media');
-				this.state.socialIds.forEach((id, index, array) => {
-			        const key = Object.keys(id)[0];
-			        let icon = '';
-			        if(key == 'facebook'){
-			        	icon = '<i class="fa fa-facebook"></i>';
-			        }else if(key == 'twitter'){
-			        	icon = '<i class="fa fa-twitter"></i>';
-			        }else if(key == 'linkedin'){
-			        	icon = '<i class="fa fa-linkedin"></i>';
-			        }
-
-			        socialIdList += `<a href="${id[key]}">${icon}</a>`;
-			    });	
+				const socialIdList = document.querySelector('#profile-overview .social-media');
+				if(this.state.socialIds.facebook){
+					socialIdList.innerHTML += `
+					<a href="${this.state.socialIds.facebook}" target="_blank">
+					<i class="fa fa-facebook"></i>
+					</a>`;
+				}
+				if(this.state.socialIds.twitter){
+					socialIdList.innerHTML += `
+					<a href="${this.state.socialIds.twitter}" target="_blank"> 
+					<i class="fa fa-twitter"></i>
+					</a>`;
+				}
+				if(this.state.socialIds.linkedin){
+					socialIdList.innerHTML += `
+					<a href="${this.state.socialIds.linkedin}" target="_blank">
+					<i class="fa fa-linkedin"></i>
+					</a>`;
+				}
 			}
-						
 		}
 	}
 });

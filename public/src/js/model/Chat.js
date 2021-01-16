@@ -21,6 +21,18 @@ define(['db'], db => {
 			});
 		}
 
+		getInvitation(from, to){
+			return this.prepareCollection('invite')
+			.where('createdBy', '==', from)
+			.where('to', '==', to).get().then(snapshot => {
+				this.snapshot = snapshot;
+		        const invitation = snapshot.docs.map(doc => ({
+		        ...doc.data()
+		        }));
+		        return invitation;
+		    });;
+		}
+
 		accept(from, to){
 			return this.prepareCollection('invite')
 			.where('to', '==', to)

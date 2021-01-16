@@ -1,9 +1,15 @@
+
+#chat-section{
+  width: 100%;
+  height: 600px;
+}
+
 #sidebar{
   background: #F5F5F5;
-  width: 20%;
-  float: left;
   border: 2px solid #e7e6e6;
-  padding: 0;
+  box-sizing: border-box;
+  -webkit-flex: 1;
+  flex: 1;
 }
 
 #sidebar h3{
@@ -11,21 +17,23 @@
   margin: 10px 0px; 
 }
 
+#sidebar #chat-request{
+ padding: 10px;
+ background-color: #E8E8E8;
+}
+
 #main{
-  float: right;
-  width: 79%;
+  width: 20%;
   background: #fff;
   border: 2px solid #e7e6e6;
   padding: 10px;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+  -webkit-flex: 5;
+  flex: 5;
 }
 
-#main:after{
-  content: "";
-  display: block;
-  clear: both;
-}
 
 #previous{
   display: block;
@@ -147,6 +155,20 @@
   cursor: pointer;
 }
 
+#message-error{
+  display: table;
+  text-align: center;
+  width:100%
+}
+
+#message-error p{
+  display:table-cell;
+  vertical-align:middle;
+  height:440px;
+  font-size:18px;
+  font-weight:bold;
+  color:#A9A9A9
+}
 
 [data-letters-before]:before {
   content:attr(data-letters-before);

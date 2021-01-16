@@ -1,5 +1,5 @@
 define([
-	'authController', 
+	'authController',
 	'profileController',
 	'connectionsController',
 	'chatController', 
@@ -24,6 +24,7 @@ define([
 	)=>{
 
 	let _routes;
+	const userModel = new UserModel(firebase.firestore(), firebase.auth());
 
 	return class Router{
 		constructor(routes){
@@ -31,7 +32,8 @@ define([
 		}
 
 		parseLocation(){
-			return location.hash.slice(1).toLowerCase() || '/';
+			let path = location.hash.slice(1) || '/';
+			return this.parseMethod(path);
 		}
 
 		findComponentByPath(path){
@@ -41,14 +43,24 @@ define([
 			}
 		}
 
-		resolve(){
-			let path = this.parseLocation();
+		parseMethod(path){
 			const pathSegments = path.split('/');
 			if(pathSegments.length == 3){
 				const method = pathSegments.pop();
 				sessionStorage.setItem('method', method);
 				path = pathSegments.join('/');
+			}else if(pathSegments.length == 4){
+				const parameter = pathSegments.pop();
+				sessionStorage.setItem('parameter', parameter);
+				const method = pathSegments.pop();
+				sessionStorage.setItem('method', method);
+				path = pathSegments.join('/');
 			}
+			return path;
+		}
+
+		resolve(){
+			let path = this.parseLocation();
 			const component = this.findComponentByPath(path) || this.findComponentByPath('/error');
 			const main = document.querySelector('#container');
 			sessionStorage.setItem('routerPath', path);
@@ -57,6 +69,7 @@ define([
 		}
 
 		load(path, defaultPath = '/error'){
+			path = this.parseMethod(path);
 			const component = this.findComponentByPath(path) || this.findComponentByPath(defaultPath);
 			const main = document.querySelector('#container');
 			sessionStorage.setItem('routerPath', path);
@@ -79,32 +92,51 @@ define([
 
 			switch (path) {
 				case '/profile':
-					if(uid){
-						let controller = new ProfileController(state);
-						controller.initViews();
-						controller.initTabEvents();
-						
-						const logout = document.querySelector('#logout');
-						logout.addEventListener('click', () => {
-							firebase.auth().signOut()
-							.then(() => {
-								const path = '/login';
-								document.location.href = `${DOMAIN}#${path}`;
-								View.removeMenu();
-								this.setRoute(routes);
-								this.load(path);
-			  	 				localStorage.clear();
-			  					sessionStorage.clear();
-							}).catch(err => {
-						  		return err;
-						  	});
-						});
-					}
+					(async()=>{
+						if(uid){
+							try {
+								
+								const UID = sessionStorage.getItem('method');
+								let controller;
+								sessionStorage.removeItem('method');
+
+								if(UID){
+									if(UID == uid){
+										controller = new ProfileController(state, this);
+									}else{
+										const data = await userModel.getUser(UID);
+										controller = new ProfileController(data, this);
+									}
+									
+								}else{
+									controller = new ProfileController(state, this);
+								}
+								
+								controller.initViews();
+								controller.initTabEvents();
+							} catch(e) {
+								console.log(e);
+							}
+						}
+					})();
 					break;
 				case '/connections':
 					if(uid){
-						let controller = new ConnectionsController(state);
-						controller.initViews();
+						(async()=>{
+							const UID = sessionStorage.getItem('parameter');
+							let controller;
+							if(UID){
+								if(UID == uid){
+									controller = new ConnectionsController(state, this);
+								}else{
+									const data = await userModel.getUser(UID);
+									controller = new ConnectionsController(data, this);
+								}
+							}else{
+							 	controller = new ConnectionsController(state, this);
+							}
+							controller.initViews();
+						})();
 					}
 					break;
 				case '/chat':
@@ -121,7 +153,6 @@ define([
 					if(method){
 						(async () => {
 							try {
-								const userModel = new UserModel(firebase.firestore(), firebase.auth());
 								let status;
 
 								if(method == 'google'){
@@ -171,6 +202,10 @@ define([
 
 		setRoute(routes){
 			_routes = routes;
+		}
+
+		changePath(path){
+			window.location.hash = path;
 		}
 	}
 });

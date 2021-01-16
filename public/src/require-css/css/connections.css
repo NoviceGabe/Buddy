@@ -68,6 +68,10 @@
   padding:8px 10px;
 }
 
+#connections-container li button:hover{
+  cursor: pointer;
+}
+
 #connections-container li .view{
   background:#e2202c;
   color:white;
@@ -80,10 +84,14 @@
   border:1px solid #222
 }
 
-#connections-container li img{
+#connections-container li img:first-of-type{
   border-radius: 50%;
   height: 70px;
   width: 70px;
   border: 1px solid #efefef;
   margin-right: 12px;
+}
+
+#connections-container .chat:hover{
+  cursor: pointer;
 }

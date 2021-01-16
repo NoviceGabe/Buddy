@@ -3,7 +3,6 @@ define(['db'], db => {
 		constructor(firestore, auth){
 			super(firestore);
 			this.auth = auth;
-
 		}
 
 		createUser(name, email, photoURL = '', groups = []){

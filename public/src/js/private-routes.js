@@ -1,4 +1,4 @@
-define(() => {
+define([''],() => {
 
 	const homeComponent = {
 		render: () => {
@@ -32,24 +32,26 @@ define(() => {
 
 	const chatComponent = {
 		render: () => {
-			return `<div id="chat-section">
-			<div class="panel" id="sidebar">
-				<h3 >Chats</h3>
-				<div id="chat-dialog" ></div>
-			</div>
-			<div class="panel" id="main">
-				<div class="pre-loader" id="loader">
-				    <img src="src/assets/Rolling-1s-200px.gif" height="120" width="120">
+			return `
+			<div id="chat-section" class="flex-container">
+				<div id="sidebar">
+					<h3 >Chats</h3>
+					<div id="chat-request">Chat Request</div>
+					<div id="chat-dialog" ></div>
 				</div>
-		 
-				<ul id="bubble-dialog"></ul>
+				<div id="main">
+					<div class="pre-loader" id="loader">
+					    <img src="src/assets/Rolling-1s-200px.gif" height="120" width="120">
+					</div>
+			 
+					<ul id="bubble-dialog"></ul>
 
-				<form id="message-form" class="remove">
-					<textarea placeholder="Send a message.." id="message-input"></textarea>
-					<i class="fa fa-paper-plane fa-lg" aria-hidden="true" id="submit"></i>
-				</form>
-			</div>
-		</div>`;
+					<form id="message-form" class="remove">
+						<textarea placeholder="Send a message.." id="message-input"></textarea>
+						<i class="fa fa-paper-plane fa-lg" aria-hidden="true" id="submit"></i>
+					</form>
+				</div>
+			</div>`;
 		}
 	}
 
@@ -63,16 +65,10 @@ define(() => {
 				  <li>Profile</li>
 				</ul>
 				
-				<div id="profile-overview" class="clear-fix">
+				<div id="profile-overview">
 				</div>
 
-				<div id="tabs" class="clear-fix">
-					<ul>
-						<li class="active" data-content="tab-1">My Profile</li>
-						<li data-content="tab-2">My Connections</li>
-						<li data-content="tab-3">Services</li>
-						<li data-content="tab-4">Account Settings</li>
-					</ul>	
+				<div id="tabs">
 				</div>
 
 				<div id="tab-content">
