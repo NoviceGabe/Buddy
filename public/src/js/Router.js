@@ -141,7 +141,7 @@ define([
 					break;
 				case '/chat':
 					if(uid){
-						let controller = new ChatController(state);
+						let controller = new ChatController(state, this);
 						controller.initChatGroups();
 						controller.initChatMessageEvents('#message-form', '#message-input', '#submit');
 					}

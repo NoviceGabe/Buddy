@@ -43,7 +43,8 @@ define([''],() => {
 					<div class="pre-loader" id="loader">
 					    <img src="src/assets/Rolling-1s-200px.gif" height="120" width="120">
 					</div>
-			 
+					
+					<ul id="invitation-dialog"></ul>
 					<ul id="bubble-dialog"></ul>
 
 					<form id="message-form" class="remove">

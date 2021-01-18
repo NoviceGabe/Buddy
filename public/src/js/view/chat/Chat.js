@@ -2,42 +2,63 @@ define(['util', 'moment'], (Util, moment) => {
 	return class Chat{
 		constructor(user){
 			this.user = user;
-			this.chatDialog = document.querySelector('#chat-dialog');
-			this.fragment = new DocumentFragment();
 		}
 
 		template(group){
 
 			const chatContainer = document.createElement('div');
+			const memberInfo = document.createElement('div');
 			chatContainer.setAttribute('id', group.id.trim());
 			chatContainer.classList.add('chat-container');
+			let avatar;
 
 			const chatName = document.createElement('p');
 			chatName.classList.add('chat-name');
 
 			if(group.type == PRIVATE_CONVO){
-				const user = group.members.find(member => member.uid != this.user.uid);
+
+				let imagePath = 'src/assets/man.jpg';
+				
+				avatar = document.createElement('img');
+
+				if(group.member && group.member.photoURL){
+					imagePath = group.member.photoURL;
+				}
+
+				avatar.setAttribute('src', imagePath);
+				chatName.innerText = group.member.name;
+				/*const user = group.members.find(member => member.uid != this.user.uid);
 				chatName.setAttribute('data-letters-before',user.name.getInitials().toUpperCase());
-				chatName.innerText = user.name;
+				chatName.innerText = user.name;*/
 			}else{
 				chatName.setAttribute('data-letters-before', group.name.getInitials().toUpperCase());
 				chatName.innerText = group.name;
 			}
+
+			if(avatar){
+				memberInfo.appendChild(avatar);	
+			}
+
+			memberInfo.appendChild(chatName);	
 				
-			chatContainer.appendChild(chatName);
-			chatContainer.appendChild(this.recent(group));
+			chatContainer.appendChild(memberInfo);
+			const recent = this.recent(group);
+			if(recent){
+				chatContainer.appendChild(this.recent(group));
+			}
 			return chatContainer;
 		}
 
 		render(groups){
-			this.chatDialog.innerHTML = '';
-			this.fragment.innerHTML = '';
+			const chatDialog = document.querySelector('#chat-dialog');
+			const fragment = new DocumentFragment();
+			chatDialog.innerHTML = '';
 			
 			groups.forEach(group => {
 				let li = this.template(group);
-				this.fragment.appendChild(li);
+				fragment.appendChild(li);
 			});
-			this.chatDialog.appendChild(this.fragment);
+			chatDialog.appendChild(fragment);
 		}
 
 		recent(group){
@@ -62,7 +83,8 @@ define(['util', 'moment'], (Util, moment) => {
 				recentRead.innerHTML = `${who}${recentMessage} <span style="font-size:12px;color:#B0B0B0;float: right">sent ${time}</span>`;
 
 				let timer = setInterval(() => { 
-					const ago = document.querySelector(`#${group.id.trim()} span`);
+					const container = document.getElementById(group.id.trim());
+					const ago = container.querySelector('span');
 					if(ago){
 						const date = group.recentMessage.readBy.sentAt.toDate();
 						ago.innerText = 'sent '+moment(date, "YYYYMMDD").fromNow();
@@ -77,18 +99,20 @@ define(['util', 'moment'], (Util, moment) => {
 		}
 
 		update(group){
-			const container = document.querySelector(`#${group.id.trim()}`);
+			const container = document.getElementById(group.id.trim());
+			console.log(container.lastChild)
 			container.removeChild(container.lastChild);
+
 			container.appendChild(this.recent(group));
 		}
 
 		select(id){
-			let chat = document.querySelector(`#${id}`);
+			let chat = document.getElementById(id);
 			chat.classList.add('darker');
 		}
 
 		unselect(id){
-			let chat = document.querySelector(`#${id}`);
+			let chat = document.getElementById(id);
 			chat.classList.remove('darker');
 		}
 	}

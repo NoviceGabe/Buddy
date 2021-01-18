@@ -33,7 +33,7 @@ define(() => {
 			const container = document.querySelector('#root-container');
 			let imagePath = 'src/assets/man.jpg';
 
-			if(_state.photoURL){
+			if(_state != null && _state.photoURL){
 				imagePath = _state.photoURL;
 			}	
 

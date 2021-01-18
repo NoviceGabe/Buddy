@@ -22,6 +22,15 @@
   flex: 2;
   align-items: center;
   padding-left: 30px;
+  gap:10px;
+}
+
+#profile-overview #col-1 .chat{
+  margin-left: 20px;
+}
+
+#profile-overview #col-1 .chat:hover{
+  cursor: pointer;
 }
 
 #profile-overview #col-2{

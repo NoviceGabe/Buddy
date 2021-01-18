@@ -5,14 +5,17 @@ define([
 	'suggestionsView', 
 	'p_connectionsView',
 	'userModel',
+	'chatModel',
 	'routes',
+	'util',
 	'css!css/app',
 	'css!css/profile',
-	], (View, Overview, ProfileView, SuggestionsView, ConnectionView, UserModel, routes)=>{
+	], (View, Overview, ProfileView, SuggestionsView, ConnectionView, UserModel, ChatModel, routes, Util)=>{
 	
 	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
+	const _chatModel = new ChatModel(firebase.firestore());
 	const HOME_TAB = 'tab-1';
-	let _contentId;;
+	let _contentId;
 
 	return class Profile{
 		constructor(state, router){
@@ -49,6 +52,7 @@ define([
 		initOverview(){
 			const overView = new Overview(this.state);
 			overView.render();
+			this.initChatStatus(this.state);
 		}
 
 		initProfile(){
@@ -170,7 +174,59 @@ define([
 					});
 				});
 			});
-			
+		}
+
+		async initChatStatus(user){
+			try {
+				let invitation = await _chatModel.getInvitation(firebase.auth().currentUser.uid, user.uid);
+
+				let chat = document.querySelector('#profile-overview .chat');
+
+				if(invitation.length > 0){
+					invitation= invitation[0];
+					if(invitation.accept){
+						chat.setAttribute('src', 'src/assets/message.png');
+						chat.dataset.chat = 'chat';
+							
+					}else{
+						chat.setAttribute('src', 'src/assets/pending.png');
+						chat.dataset.chat = 'pending';
+					}
+				}
+
+				if(chat){
+					chat.addEventListener('click', e => {
+						(async()=>{
+							try {
+								if(chat.dataset.chat == 'invite'){
+									let status = await _chatModel.invite(firebase.auth().currentUser.uid, user.uid);
+									if(status){
+										chat.setAttribute('src', 'src/assets/pending.png');
+										chat.dataset.chat = 'pending';
+									}
+								}else if(chat.dataset.chat == 'chat'){
+									if(firebase.auth().currentUser.uid != user.uid){
+										const currentUser = await _userModel.getUser(firebase.auth().currentUser.uid);
+										if(currentUser && 
+											(currentUser.groups || currentUser.groups.length) && 
+											(user.groups || user.groups.length)){
+											const groups = Util.getMatchesFromArray(currentUser.groups, user.groups);
+											if(groups.length > 0){
+												const groupId = groups[0];
+												this.router.changePath(`/chat/${groupId}`);
+											}
+										}
+									}
+								}
+							} catch(e) {
+								console.log(e);
+							}
+						})();
+					});
+				}
+			} catch(e) {
+				console.log(e);
+			}
 		}
 	}
 });

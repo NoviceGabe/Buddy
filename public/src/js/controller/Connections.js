@@ -34,12 +34,27 @@ define([
 			const list = document.querySelectorAll('#following li .view');
 			list.forEach(element => {
 				element.addEventListener('click', e => {
-					const id = e.target.parentElement.parentElement.getAttribute('id');
+					const id = e.target.parentElement.parentElement.getAttribute('id').trim();
 					this.router.changePath(`/profile/${id}`); 
 				});
 			});
 
 			this.initChatStatus(followingUsers);
+
+			const unfollow = document.querySelectorAll('#connections-container .unfollow');
+
+			unfollow.forEach(element => {
+				element.addEventListener('click', e=>{
+					const li = e.target.parentElement.parentElement;
+					const parent = li.parentElement;
+					const id = li.getAttribute('id').trim();
+					_userModel.unfollow(firebase.auth().currentUser.uid, id).then(() => {
+						parent.removeChild(li);
+					}).catch(err => {
+						console.log(err);
+					});
+				});
+			});
 		}
 
 		async initFollower(){
@@ -82,25 +97,35 @@ define([
 						}
 					}
 
-					listItemIcon.addEventListener('click', e => {
-						(async()=>{
-							try {
-								if(listItem.dataset.chat == 'invite'){
-									let status = await _chatModel.invite(firebase.auth().currentUser.uid, user.uid);
+					if(listItemIcon){
+						listItemIcon.addEventListener('click', e => {
+							(async()=>{
+								try {
+									if(listItem.dataset.chat == 'invite'){
+										let status = await _chatModel.invite(firebase.auth().currentUser.uid, user.uid);
 
-									if(status){
-										listItemIcon.setAttribute('src', 'src/assets/pending.png');
-										listItem.dataset.chat = 'pending';
+										if(status){
+											listItemIcon.setAttribute('src', 'src/assets/pending.png');
+											listItem.dataset.chat = 'pending';
+										}
+									}else if(listItem.dataset.chat == 'chat'){
+										console.log('chat '+user.uid);
 									}
-								}else if(listItem.dataset.chat == 'chat'){
-									console.log('chat '+user.uid);
+								} catch(e) {
+									console.log(e);
 								}
-							} catch(e) {
-								console.log(e);
-							}
-						})();
-					});
+							})();
+						});
+					}
 				}
+			} catch(e) {
+				console.log(e);
+			}
+		}
+
+		initFollowingStatus(users){
+			try {
+
 			} catch(e) {
 				console.log(e);
 			}

@@ -19,7 +19,6 @@
 
 #sidebar #chat-request{
  padding: 10px;
- background-color: #E8E8E8;
 }
 
 #main{
@@ -45,6 +44,17 @@
   margin: 0;
 }
 
+.chat-container div{
+  display: flex;
+}
+
+.chat-container div img{
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  margin-right: 12px;
+}
+
 .chat-container:hover{
     cursor: pointer;
 }
@@ -55,6 +65,8 @@
 }
 
 .chat-name{
+    width: 100%;
+    font-size: 16px;
     font-weight: bold;
 }
 
@@ -125,17 +137,17 @@
   margin-bottom: 25px;
 }
 
-#bubble-dialog::-webkit-scrollbar-track{
+#bubble-dialog::-webkit-scrollbar-track, #invitation-dialog::-webkit-scrollbar-track{
   border: none;
   background-color: #F5F5F5;
 }
 
-#bubble-dialog::-webkit-scrollbar{
+#bubble-dialog::-webkit-scrollbar, #invitation-dialog::-webkit-scrollbar{
   width: 6px;
   background-color: #F5F5F5;
 }
 
-#bubble-dialog::-webkit-scrollbar-thumb{
+#bubble-dialog::-webkit-scrollbar-thumb, #invitation-dialog::-webkit-scrollbar-thumb{
   background-color:#acacac;  
 }
 
@@ -155,19 +167,20 @@
   cursor: pointer;
 }
 
-#message-error{
+.message-error{
   display: table;
   text-align: center;
-  width:100%
+  width:100%;
 }
 
-#message-error p{
+.message-error p{
   display:table-cell;
   vertical-align:middle;
   height:440px;
+  width: 100%;
   font-size:18px;
   font-weight:bold;
-  color:#A9A9A9
+  color:#A9A9A9;
 }
 
 [data-letters-before]:before {
@@ -198,4 +211,64 @@
   vertical-align:middle;
   margin-left:1em;
   color:white;
+}
+
+#invitation-dialog li:not(.message-error){
+  min-width: 50%;
+  width: 60%;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+}
+
+#invitation-dialog li .message{
+  height: 100%;
+  margin-right: 10px;
+}
+
+#invitation-dialog li img{
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  margin-right: 12px;
+}
+
+#invitation-dialog li img:hover{
+  cursor: pointer;
+}
+
+#invitation-dialog .message .name{
+  font-weight: bold;
+}
+
+#invitation-dialog li .btns{
+  height: 100%;
+  margin-right: 10px;
+}
+
+#invitation-dialog li button{
+  display:inline-block; 
+  width:80px;
+  padding:4px 5px;
+  margin-right: 10px;
+  border-radius: 4px;
+}
+
+#invitation-dialog li button:hover{
+  cursor: pointer;
+}
+
+#invitation-dialog li button.accept{
+  background: #fff;
+  border: 1px solid black;
+}
+
+#invitation-dialog li button.decline{
+  background: #e2202c;
+  border: 1px solid #e2202c;
+  color: white;
+}
+
+#chat-request:hover{
+  cursor: pointer;
 }

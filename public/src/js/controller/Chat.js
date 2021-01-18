@@ -4,10 +4,11 @@ define([
 	'chatModel', 
 	'chatView', 
 	'messageView',
+	'invitationView',
 	'css!css/chat',
 	'css!css/bubble'
 
-	], (Util, UserModel, ChatModel, ChatView, MessageView) => {
+	], (Util, UserModel, ChatModel, ChatView, MessageView, InvitationView) => {
 	
 	let lastVisible = null;
 	let loaded = false;
@@ -17,37 +18,48 @@ define([
 	let prevCount = 0;
 	let lastPage = false;
 
-	const chatModel = new ChatModel(firebase.firestore());
-	const userModel = new UserModel(firebase.firestore(), firebase.auth());
+	const _chatModel = new ChatModel(firebase.firestore());
+	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
 
-	let chatView;
-	let messageView;
+	let _chatView;
+	let _messageView;
+	let _invitationView;
 
 	let count = 0;
 
 	let chatListener;
 	let messageListener;
 
-	function _initChatWindow(groups, user){
+	let _invitations;
+
+	let _router;
+
+	async function _initChatWindow(groups, user){
 		// reset messageListener
 		if(messageListener != undefined){
 			messageListener();
 			messageListener = undefined;
 		}
 
-		chatView.render(groups);
-		const currentChat = localStorage.getItem('currentChat');
+		const groups2 = await _userModel.mergeMemberDataFromGroup(groups);
+		_chatView.render(groups);
 
+		let currentChat = localStorage.getItem('currentChat');
+
+		if(sessionStorage.getItem('method')){
+			currentChat = sessionStorage.getItem('method');
+			sessionStorage.removeItem('method');
+		}
 		groups.forEach(group => {
 			if(currentChat != null && currentChat == group.id.trim()){
 				if(messageListener == undefined){
 					_listenToNewMessages(group.id, user); // register message listener
 				}
-				chatView.select(group.id.trim());
+				_chatView.select(group.id.trim());
 				selected = true;
 				_initMessages(localStorage.getItem('currentChat'), user); // initialize chat messages
 			}
-			let chat = document.querySelector(`#${group.id.trim()}`);
+			let chat = document.getElementById(group.id.trim());
 		
 			chat.addEventListener('click', (e) => {
 				// reset messageListener
@@ -60,9 +72,9 @@ define([
 
 				const currentChat = localStorage.getItem('currentChat');
 				if(currentChat != null){
-					chatView.unselect(currentChat);
+					_chatView.unselect(currentChat);
 				}		    
-				chatView.select(group.id.trim());
+				_chatView.select(group.id.trim());
 				localStorage.setItem("currentChat", group.id.trim());
 				selected = true;
 				_initMessages(group.id.trim(), user); // initialize chat messages
@@ -70,14 +82,101 @@ define([
 		});
 
 		if(!selected){
-			chatView.select(groups[0].id.trim());
+			_chatView.select(groups[0].id.trim());
 			localStorage.setItem("currentChat", groups[0].id.trim());
 			selected = true;
 			_initMessages(groups[0].id.trim(), user);
 		}
+	}
 
-		// get invitation
+	async function _initInvitation(invitations){
+		_messageView.showPreLoader();
+		_invitationView.showInvitationWindow();
 
+		const users = [];
+
+		for(let invitation of invitations){
+			let user = await _userModel.getUser(invitation.createdBy);
+			user.invitation = invitation;
+			users.push(user);
+		}
+
+		_invitationView.render(users);
+		_initInvitationEvents();
+		_messageView.hidePreloader();
+	}
+
+	async function _initInvitationEvents(){
+		const accept = document.querySelectorAll('#invitation-dialog .accept');
+		const decline = document.querySelectorAll('#invitation-dialog .decline');
+		const avatar = document.querySelectorAll('#invitation-dialog li img');
+
+		accept.forEach(invitation => {
+			invitation.addEventListener('click', e => {
+				(async()=>{
+					try {
+						const li = e.target.parentElement.parentElement;
+						const parent = li.parentElement;
+						const id = li.id.trim();
+						const name = li.querySelector('.name').innerText.trim();
+
+						// check first if invitation was already accepted
+						const invitation = await _chatModel.getInvitation(id, firebase.auth().currentUser.uid);
+						if(invitation && !invitation.accept){
+							const group = {};
+							group.members = [{
+											 uid:id,
+											 name: name
+										},{
+											 uid:firebase.auth().currentUser.uid,
+											 name: firebase.auth().currentUser.displayName
+										}];
+
+							group.name = '';
+							_chatModel.accept(id, firebase.auth().currentUser.uid, group).then(groupId => {
+								const invitationId = _setDocId(id, firebase.auth().currentUser.uid);
+								_invitations = _invitations.filter(invitation => invitation.id != invitationId);
+								parent.removeChild(li);
+							}).catch(err => {
+								console.log(err);
+							});
+
+						}else{
+							console.log('Unknown error occured');
+						}
+
+					} catch(e) {
+						console.log(e);
+					}
+				})();
+				
+			});
+		});
+
+		decline.forEach(invitation => {
+			invitation.addEventListener('click', e => {
+				(async()=>{
+					const li = e.target.parentElement.parentElement;
+					const parent = li.parentElement;
+					const id = li.getAttribute('id').trim();
+					_chatModel.decline(id, firebase.auth().currentUser.uid).then(() => {
+						const invitationId = _setDocId(id, firebase.auth().currentUser.uid);
+						_invitations = _invitations.filter(invitation => invitation.id != invitationId);
+						parent.removeChild(li);
+					});
+				})();
+			});
+		});
+
+		avatar.forEach(invitation => {
+			invitation.addEventListener('click', e => {
+				(async () => {
+					const li = e.target.parentElement;
+					const id = li.id.trim();
+					_router.changePath(`/profile/${id}`);
+				})();
+			});
+		});
 	}
 
 	async function _initMessages(id, user){
@@ -87,38 +186,46 @@ define([
 		lastPage = false;
 		showPreviousLink = false;
 		loaded = false;
-		messageView.resetMessagesUI();
-		messageView.showPreLoader();
+		_messageView.resetMessagesUI();
+		_messageView.showPreLoader();
 		
+		const invitation = document.querySelector('#invitation-dialog');
+		invitation.classList.add('remove');
+		const bubble = document.querySelector('#bubble-dialog');
+		if(bubble.classList.contains('remove')){
+			bubble.classList.remove('remove');
+		}
+		_messageView.showMessageForm();
+
 		try {
-			const messages = await chatModel.getMessagesByGroupId(id, ORDER, MSG_COUNT);
-			if(chatModel.snapshot.docs.length == MSG_COUNT){
-				lastVisible = chatModel.snapshot.docs[chatModel.snapshot.docs.length-2];
+			const messages = await _chatModel.getMessagesByGroupId(id, ORDER, MSG_COUNT);
+			if(_chatModel.snapshot.docs.length == MSG_COUNT){
+				lastVisible = _chatModel.snapshot.docs[_chatModel.snapshot.docs.length-2];
 				messages.pop();
 			}else{
-				lastVisible = chatModel.snapshot.docs[chatModel.snapshot.docs.length-1];
+				lastVisible = _chatModel.snapshot.docs[_chatModel.snapshot.docs.length-1];
 			}
 
-			messageView.showMessageForm();
-			messageView.hidePreloader();
+			_messageView.showMessageForm();
+			_messageView.hidePreloader();
 
 			messages.reverse();
-			messageView.render(messages);
+			_messageView.render(messages);
 			//Util.storeInWebStorage(id, messages);
 			loaded = true;
 
 		} catch(e) {
 			console.error(e);
-			messageView.showError(e);
-			messageView.showMessageForm();
-			messageView.hidePreloader();
+			_messageView.showError(e);
+			_messageView.showMessageForm();
+			_messageView.hidePreloader();
 		}	
 	}
 
 	function _listenToNewMessages(id, user){
 		try {
 			const bubbleDialog = document.querySelector('#bubble-dialog');
-			messageListener = chatModel.prepareMessagesByGroupId(id, ORDER, MSG_COUNT).onSnapshot((querySnapshot) => {
+			messageListener = _chatModel.prepareMessagesByGroupId(id, ORDER, MSG_COUNT).onSnapshot((querySnapshot) => {
 				let currentChat = localStorage.getItem('currentChat');
 				let messages = [];
 				// listen only to the current chat
@@ -133,9 +240,9 @@ define([
 					messageCount = messages.length;
 
 					if(messageCount == 0){
-						messageView.showError();
+						_messageView.showError();
 					}
-					messageView.append(messages);
+					_messageView.append(messages);
 					messages = [];
 					bubbleDialog.scrollTo(0, bubbleDialog.scrollHeight);	
 				}
@@ -150,7 +257,7 @@ define([
 		if(lastVisible){
 			try {
 				const bubbleDialog = document.querySelector('#bubble-dialog');
-				const prev = chatModel.prepareCertainMessages(id, ORDER, MSG_COUNT).startAfter(lastVisible);
+				const prev = _chatModel.prepareCertainMessages(id, ORDER, MSG_COUNT).startAfter(lastVisible);
 				const snapshot = await prev.get();
 				prevCount = snapshot.docs.length;
 
@@ -167,12 +274,12 @@ define([
 						lastPage = true;
 					}
 					oldMessages.reverse();
-					messageView.prepend(oldMessages);
+					_messageView.prepend(oldMessages);
 					bubbleDialog.scrollTop = 5;
 				}else{
 					lastPage = true;
 				}
-				messageView.hideLoadMore();
+				_messageView.hideLoadMore();
 				showPreviousLink = false;
 			} catch(e) {
 				console.log(e);
@@ -180,11 +287,25 @@ define([
 		}
 	}
 
+
+	function _setDocId(initiatorId, receiverId){
+		let id;
+		if(initiatorId < receiverId){
+			id = `${initiatorId}_${receiverId}`;
+		}else{
+			id = `${receiverId}_${initiatorId}`;
+		}
+
+		return id;
+	}
+
 	class Chat{
-		constructor(user){
+		constructor(user, router){
 			this.user = user;
-			chatView = new ChatView(user);
-			messageView = new MessageView(user);
+			_router = router;
+			_chatView = new ChatView(user);
+			_messageView = new MessageView(user);
+			_invitationView = new InvitationView();
 		}
 
 		initChatMessageEvents(formRef, inputRef, submitRef){
@@ -194,11 +315,11 @@ define([
 	      	const submit = document.querySelector(submitRef);
 
 	      	input.addEventListener("input", (e) => {
-			  messageView.adjustInputHeight(e);
+			  _messageView.adjustInputHeight(e);
 			}, false);
 
 			input.addEventListener('keyup', (e) => {
-				messageView.resetInputUI(e);
+				_messageView.resetInputUI(e);
 			});
 
 			submit.addEventListener('click', (e) => {
@@ -210,7 +331,7 @@ define([
 		      				console.log('empty message.');
 		      			}else{
 		      				try {
-		      					const status = await chatModel.commitMessage(groupId, firebase.auth().currentUser.uid, input.value);
+		      					const status = await _chatModel.commitMessage(groupId, firebase.auth().currentUser.uid, input.value);
 								if(status){
 									messageForm.reset();
 								}
@@ -238,20 +359,33 @@ define([
 						});
 						showPreviousLink = true;
 					}else if(prevLink.classList.contains('remove')){
-						messageView.showLoadMore();
+						_messageView.showLoadMore();
 						showPreviousLink = true;
 					}
 				}
 			});
 		}
 
-		initChatGroups(){
-			if(chatListener != undefined){
-				chatListener();
-			}
+		async initChatGroups(){
 
 			try {
-				chatListener = chatModel.prepareGroupByUser({'uid':firebase.auth().currentUser.uid, 'name':this.user.name})
+
+				_invitations = await _chatModel.getAllInvitations(firebase.auth().currentUser.uid);
+
+				_invitationView.chatRequestViewState(_invitations);
+
+				const request = document.querySelector('#chat-request');
+
+				request.addEventListener('click', e =>{
+					_messageView.hideMessageWindow();
+					_initInvitation(_invitations);
+				});
+
+				if(chatListener != undefined){
+					chatListener();
+				}
+
+				chatListener = _chatModel.prepareGroupByUser({'uid':firebase.auth().currentUser.uid, 'name':this.user.name})
 				.onSnapshot(querySnapshot => {
 					const groups = [];
 					const notifs = [];
@@ -272,17 +406,17 @@ define([
 			    		_initChatWindow(groups, this.user);
 					}else if(notifs.length > 0){
 						notifs.forEach(notif => {
-							chatView.update(notif);
+							_chatView.update(notif);
 						});
 					}else{
-						messageView.hidePreloader();
-						console.log('No group associated with user '+firebase.auth().currentUser.uid);
+						_messageView.hidePreloader();
+						_messageView.showError('You don\'t have group chats yet.');
 					}
 
 				});
 			} catch(e) {
 				console.log(e);
-				messageView.hidePreloader();
+				_messageView.hidePreloader();
 			}
 		
 		}

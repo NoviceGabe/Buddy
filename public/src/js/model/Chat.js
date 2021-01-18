@@ -7,9 +7,10 @@ define(['db'], db => {
 		}
 
 		invite(from, to){
-			const ref = this.prepareCollection('invite').doc();
+			const id = this.setDocId(from, to);
+			const ref = this.prepareCollection('invite').doc(id);
 			return ref.set({
-				id:ref.id,
+				id:id,
 				createdBy: from,
 				to: to,
 				accept: false,
@@ -22,9 +23,10 @@ define(['db'], db => {
 		}
 
 		getInvitation(from, to){
+			const id = this.setDocId(from, to);
 			return this.prepareCollection('invite')
-			.where('createdBy', '==', from)
-			.where('to', '==', to).get().then(snapshot => {
+			.where('id', '==', id)
+			.get().then(snapshot => {
 				this.snapshot = snapshot;
 		        const invitation = snapshot.docs.map(doc => ({
 		        ...doc.data()
@@ -33,21 +35,73 @@ define(['db'], db => {
 		    });;
 		}
 
-		accept(from, to){
+		getAllInvitations(from){
 			return this.prepareCollection('invite')
-			.where('to', '==', to)
-			.where('createdBy', '==', from).get().then(snapshot => {
+			.where('to', '==', from)
+			.where('accept', '==', false)
+			.orderBy('createdAt', 'desc').get().then(snapshot => {
+				this.snapshot = snapshot;
+		        const invitations = snapshot.docs.map(doc => ({
+		        ...doc.data()
+		        }));
+		        return invitations;
+		    });;
+		}
+
+		accept(from, to, group){
+			const id = this.setDocId(from, to);
+			return this.prepareCollection('invite')
+			.where('id', '==', id)
+			.get().then(snapshot => {
 				const invite = snapshot.docs.map(doc => ({
 			    ...doc.data()
 			    }));
 
-			    return this.update(`invite/${invite[0].id}`, {
-			    	accept: true
-			    }).then(() => {
-			    	return true;
-			    }).catch(() => {
-			    	return false;
+				const batch = this.batch();
+				const invitation = this.prepare(`invite/${invite[0].id}`);
+
+				batch.update(invitation, {
+			      accept: true
 			    });
+
+			    const ref = this.prepareCollection('group').doc();
+
+				batch.set(ref, {
+					id:ref.id,
+					createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+					createdBy: from,
+					members:group.members,
+					name: group.name,
+					type: PRIVATE_CONVO
+				});
+				const member1 = this.prepare(`user/${from}`);
+				batch.set(member1, {
+					groups: firebase.firestore.FieldValue.arrayUnion(ref.id)
+				}, {
+					merge: true
+				});
+
+				const member2 = this.prepare(`user/${to}`);
+				batch.set(member2, {
+					groups: firebase.firestore.FieldValue.arrayUnion(ref.id)
+				}, {
+					merge: true
+				});
+
+				batch.commit();
+
+				return ref.id;
+			});
+		}
+
+		decline(from, to){
+			const id = this.setDocId(from, to);
+			return this.prepareCollection('invite')
+			.where('id', '==', id)
+			.get().then(snapshot => {
+				snapshot.forEach(doc => {
+				    doc.ref.delete();
+				});
 			});
 		}
 
@@ -128,9 +182,25 @@ define(['db'], db => {
 			       	}else{
 			       		reject('No message');
 			      	}
-			    
 			  });
 			}); 
+		}
+
+		getGroupById(groupId){
+			return this.prepare(`group/${groupId}`);
+		}
+
+		getGroupsByMembers(members){
+			let group = this.prepareCollection('group');
+			members.forEach(member => {
+				group = group.where('members', 'array-contains', member);
+			});
+
+			return group.get().then(snapshot => {
+				const groups = snapshot.docs.map(doc => ({
+			    ...doc.data()
+			    }));
+			});
 		}
 
 		commitMessage(groupId, uid, message){
@@ -165,6 +235,17 @@ define(['db'], db => {
 
 		prepareCertainMessages(id, order, limit){
 			return this.prepareCertainOrderBy(`message/${id}/messages`, 'sentAt', order, limit);
+		}
+
+		setDocId(initiatorId, receiverId){
+			let id;
+			if(initiatorId < receiverId){
+				id = `${initiatorId}_${receiverId}`;
+			}else{
+				id = `${receiverId}_${initiatorId}`;
+			}
+
+			return id;
 		}
 
 	}

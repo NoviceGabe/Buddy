@@ -54,7 +54,7 @@ define(['moment'], (moment) => {
 				this.bubbleDialog.scrollTo(0, this.bubbleDialog.scrollHeight);
 			}else{
 				this.bubbleDialog.innerHTML = `
-								<li id="message-error">
+								<li class="message-error">
 									<p>No Message</p>
 								</li>`;
 			}
@@ -112,24 +112,43 @@ define(['moment'], (moment) => {
 		showError(error){
 			const bubbleDialog = document.querySelector('#bubble-dialog');
 			bubbleDialog.innerHTML = `
-								<li id="message-error">
+								<li class="message-error">
 									<p>${error}</p>
 								</li>`;
 		}
 
+		showMessageWindow(){
+			const bubble = document.querySelector('#bubble-dialog');
+			if(bubble.classList.contains('remove')){
+				bubble.classList.remove('remove');
+			}
+			this.showMessageForm();
+		}
+
+		hideMessageWindow(){
+			const bubble = document.querySelector('#bubble-dialog');
+			bubble.classList.add('remove');
+			this.hideMessageForm();
+		}
+
 		hideMessageForm(){
 			const messageForm = document.querySelector('#message-form');
+			messageForm.classList.add('remove');
 
 		}
 
 		showMessageForm(){
 			const messageForm = document.querySelector('#message-form');
-			messageForm.classList.remove('remove');
+			if(messageForm.classList.contains('remove')){
+				messageForm.classList.remove('remove');
+			}
 		}
 
 		showPreLoader(){
 			const loader = document.querySelector('#loader');
-		 	loader.classList.remove("remove");
+		 	if(loader.classList.contains('remove')){
+		 		loader.classList.remove("remove");
+		 	}
 		}
 
 		hidePreloader(){
@@ -139,7 +158,9 @@ define(['moment'], (moment) => {
 
 		showLoadMore(){
 			const prevLink = document.querySelector('#load-more');
-			prevLink.classList.remove('remove');
+			if(prevLink.classList.contains('remove')){
+				prevLink.classList.remove('remove');
+			}
 		}
 
 		hideLoadMore(){

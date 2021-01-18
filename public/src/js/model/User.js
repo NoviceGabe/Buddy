@@ -11,6 +11,8 @@ define(['db'], db => {
 				email: email,
 				photoURL: photoURL,
 				groups: groups,
+				followerCount: 0,
+				followingCount: 0
 			}
 		}
 
@@ -71,6 +73,15 @@ define(['db'], db => {
 				members.push(user);
 			}
 			return members;
+		}
+
+		async mergeMemberDataFromGroup(groups){
+			for (const group of groups) {
+				let member = group.members.filter(member => member.uid != firebase.auth().currentUser.uid);
+				let user = await this.getUser(member[0].uid);
+				group.member = user;
+			}
+			return groups;
 		}
 
 		async fetchNotFollowingUsers(suggestions){

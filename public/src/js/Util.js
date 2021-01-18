@@ -31,5 +31,17 @@ define(() => {
 		   return splitStr.join(' '); 
 		}
 
+		static getMatchesFromArray(array1, array2){
+			var ret = [];
+			array1.sort();
+			array2.sort();
+			for(var i = 0; i < array1.length; i++) {
+			    if(array2.indexOf(array1[i]) > -1){
+			        ret.push(array1[i]);
+			    }
+			}
+			return ret;
+		}
+
 	}
 });

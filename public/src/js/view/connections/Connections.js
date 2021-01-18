@@ -3,11 +3,13 @@ define(['util'],(Util)=>{
 
 	return class Connections{
 		constructor(state){
+			this.ref;
 			this.state = state;
 			_init = false;
 		}
 
 		render(ref, users, filter){
+			this.ref = ref;
 			const container = document.querySelector('#connections-container');
 			const count = (users.length > 0)? users.length: 0;
 
@@ -113,32 +115,28 @@ define(['util'],(Util)=>{
 					</div>
 					${chat}
 				</div>`;
+
+			let buttons = '<button class="view">View Profile</button>';
 			
 			if(firebase.auth().currentUser.uid == this.state.uid){
-				content += `
-					<div class="col-2 float-right">
-						<button class="view">View Profile</button>
-						<button class="unfollow">Unfollow</button>
-					</div>`;
+				if(this.ref == FOLLOWING){
+					buttons += `<button class="unfollow">Unfollow</button>`;
+				}
 			}else{
-
-				let buttons = '<button class="view">View Profile</button>';
-
 				if(firebase.auth().currentUser.uid != user.uid){
 					buttons += `<button class="follow">Follow</button>`;
 				}
+			}
 
-				content += `
+			content += `
 					<div class="col-2 float-right">
 						${buttons}
 					</div>`;
-			}
 
 			li = `
 				<li id="${user.uid}" class="clear-fix" data-chat="invite">
 					${content}
-				</li>
-			`;
+				</li>`;
 
 			return li;
 		}

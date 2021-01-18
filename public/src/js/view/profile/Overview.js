@@ -19,6 +19,12 @@ define(()=>{
 			if(this.state.phone){
 				phone = this.state.phone;
 			}
+			let chat = `<img src="src/assets/invite_chat.png" height="30" width="30" class="chat" data-chat="invite">`;
+
+			if(firebase.auth().currentUser.uid == this.state.uid){
+				chat = '';
+			}
+
 			const template = `
 				<div id="col-1">
 					<img src="${imagePath}" alt="profile image" class="profile-image" 
@@ -29,6 +35,7 @@ define(()=>{
 						<div class="social-media">
 						</div>	
 					</div>
+					${chat}
 				</div>
 				<div id="col-2">
 					<div id="contacts">
