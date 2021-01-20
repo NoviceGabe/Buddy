@@ -42,7 +42,7 @@ define(['db'], db => {
 		}
 
 		prepareUser(uid){
-			return this.db.prepare(`user/${uid}`);
+			return this.prepare(`user/${uid}`);
 		}
 
 		getAllUsers(){
@@ -63,6 +63,18 @@ define(['db'], db => {
 			    ...doc.data(),
 			    }));
 			    return users;
+			});
+		}
+
+		updateUser(uid, data){
+			return this.update(`user/${uid}`, data);
+		}
+
+		mergeUpdateUser(uid, data){
+			return this.set(`user/${uid}`, data, true).then(() =>{
+				return true;
+			}).catch(() => {
+				return false;
 			});
 		}
 

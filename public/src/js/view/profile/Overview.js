@@ -38,11 +38,7 @@ define(()=>{
 					${chat}
 				</div>
 				<div id="col-2">
-					<div id="contacts">
-						<h4 class="info-header">CONTACTS</h4>
-						<p><b>Email:</b> ${this.state.email}</p>
-						<p><b>Phone:</b> ${phone}</p>
-					</div>
+					
 				</div>
 			`;
 			container.innerHTML = template;

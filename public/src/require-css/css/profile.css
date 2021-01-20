@@ -107,17 +107,78 @@
 
 #tab-1{
   display: flex;
-  flex-wrap: wrap;
-  gap:20px;
+  align-items: center;
+  justify-content: center;
 }
 
 #profile{
   background: #fff;
   padding: 30px;
   border-radius: 25px;
-  width: 60%;
+  width: 90%;
   min-height: 310px;
   box-sizing:border-box;
+}
+
+#about{
+  font-family: Arial, sans-serif;
+  font-weight: 200;
+}
+
+#about > div{
+  margin-bottom: 20px;
+}
+
+#about > div:not(:last-child){
+  border-bottom: 1px solid #d9d9d9;
+}
+
+#about .header{
+  display: -webkit-flex;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#about .header h4{
+
+}
+
+#about .header span{
+  font-size: 14px;
+  color: #0095b6;
+}
+
+#about .header span:hover{
+  cursor: pointer;
+}
+
+#about .content{
+  padding: 10px;
+  margin-bottom: 10px;
+  min-height: 50px;
+}
+
+#about .content > div{
+  margin-bottom: 15px;
+}
+
+#about .content h5{
+  font-size: 16px;
+  font-weight: normal;
+  color: #404040;
+}
+
+#about .content p{
+  font-size: 14px;
+}
+
+#about .content h5 + p{
+  font-size: 13px;
+  color: #707070;
+  font-weight: 200;
+  padding-left: 3px;
+
 }
 
 #profile > h4 + p{
@@ -126,6 +187,10 @@
 
 #profile #content-general{
   margin-bottom: 40px;
+}
+
+#profile #content-general span{
+  text-decoration: underline;
 }
 
 #profile #content-general p{

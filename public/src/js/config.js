@@ -41,6 +41,7 @@ requirejs.config({
         'p_connectionsView': 'src/js/view/profile/Connections',
         'c_connectionsView': 'src/js/view/connections/Connections',
         'invitationView': 'src/js/view/chat/Invitation',
+        'dateView': 'src/js/view/profile/DateMenu',
         'controller': 'src/js/controller/Controller',
         'authController': 'src/js/controller/Authenticate',
         'loginController': 'src/js/controller/Login',

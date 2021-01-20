@@ -1,0 +1,164 @@
+.modal {
+  position: fixed; 
+  padding-top: 50px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #e2202c;
+  box-sizing: border-box;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+.modal-content {
+  width: 100%;  
+  height: 100%;
+  display: flex;
+}
+
+.modal .modal-header{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal .modal-footer{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-footer button{
+  display:inline-block; 
+  border-radius: 4px;
+  width:110px;
+  padding:4px 5px;
+  margin-right: 10px;
+}
+
+.modal-footer button.save{
+  background:#e2202c;
+  color:white;
+  border:1px solid #e2202c
+}
+
+.modal-footer button.cancel{
+   background:#fff;
+  color:#222;
+  border:1px solid #222
+  margin-right:20px;
+}
+
+.modal-footer button:hover{
+  cursor: pointer;
+}
+
+.close-btn {
+  float: right; 
+  color: lightgray; 
+  font-size: 24px;  
+  font-weight: bold;
+}
+.close-btn:hover {
+  color: darkgray;
+  cursor: pointer;
+}
+
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+.modal-content > div{
+  flex: 2;
+}
+
+.modal-content > form{
+  flex: 3;
+  padding: 10px;
+}
+
+.modal-content > form input{
+  width:230px;
+  padding: 7px;
+  margin-bottom: 10px;
+}
+
+.modal-content > form #acad{
+  margin-bottom: 10px;
+  display: none;
+  gap:10px;
+}
+
+.modal-content .link{
+  display: block;
+   color: #0095b6;
+   margin-top: 10px;
+   margin-left: 10px;
+   margin-bottom: 15px;
+   width: 50%;
+}
+
+.modal-content .start, 
+.modal-content .end{
+  display:flex;
+  gap:10px;
+  margin-bottom: 10px;
+}
+
+.modal-content #college, .modal-content #highschool{
+  display: none;
+}
+
+.modal-content #highschool{
+ gap:10px;
+}
+
+.modal-content .link:hover{
+  cursor: pointer;
+}
+
+#modal-bio #form-bio{
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#modal-bio #form-bio #bio{
+  flex: 0 0 100%;
+  display: flex;
+}
+#modal-bio #form-bio #count{
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+#modal-bio #form-bio #count span:last-child{
+  margin-right: 10px;
+}
+
+#modal-bio textarea{
+  flex-basis: 100%;
+  height: 150px;
+  margin:  auto;
+  padding: 0;
+  padding: 10px;
+  border:  1px solid #d3d3d3;
+  outline: 0;
+  font-size: 14px;
+  resize: none;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  float: left;
+  overflow-y:hidden;
+  white-space: pre-wrap;
+}

@@ -46,7 +46,6 @@ define(() => {
 				  <li><a href="#/">Home</a></li>
 				  <li><a href="#/browse">Browse</a></li>
 				  <li><a href="#/chat">Message</a></li>
-				  <li><a href="#/about">How it works</a></li>
 				  <li>
 				  <a href="#/profile/${firebase.auth().currentUser.uid}">
 				  <img src="${imagePath}" alt="profile image" class="profile-image" heigh="30" width="30">
