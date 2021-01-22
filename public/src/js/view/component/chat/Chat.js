@@ -26,10 +26,14 @@ define(['util', 'moment'], (Util, moment) => {
 				}
 
 				avatar.setAttribute('src', imagePath);
-				chatName.innerText = group.member.name;
-				/*const user = group.members.find(member => member.uid != this.user.uid);
-				chatName.setAttribute('data-letters-before',user.name.getInitials().toUpperCase());
-				chatName.innerText = user.name;*/
+				if(group.member){
+					chatName.innerText = group.member.name;
+				}else{
+					const user = group.members.find(member => member.uid != this.user.uid);
+					//chatName.setAttribute('data-letters-before',user.name.getInitials().toUpperCase());
+					chatName.innerText = user.name;
+				}
+
 			}else{
 				chatName.setAttribute('data-letters-before', group.name.getInitials().toUpperCase());
 				chatName.innerText = group.name;
@@ -44,7 +48,7 @@ define(['util', 'moment'], (Util, moment) => {
 			chatContainer.appendChild(memberInfo);
 			const recent = this.recent(group);
 			if(recent){
-				chatContainer.appendChild(this.recent(group));
+				chatContainer.appendChild(recent);
 			}
 			return chatContainer;
 		}
@@ -59,6 +63,11 @@ define(['util', 'moment'], (Util, moment) => {
 				fragment.appendChild(li);
 			});
 			chatDialog.appendChild(fragment);
+
+			this.changeTime();
+			setInterval(() =>{
+				this.changeTime();
+			}, 1000*60);
 		}
 
 		recent(group){
@@ -68,9 +77,19 @@ define(['util', 'moment'], (Util, moment) => {
 
 				const recentRead = document.createElement('p');
 				recentRead.classList.add('recent-read');
-			
-				const time = moment(group.recentMessage.readBy.sentAt.toDate(), "YYYYMMDD").fromNow();
 
+				let date;
+				try {
+					date = group.recentMessage.readBy.sentAt.toDate();
+				} catch(e) {
+					date = new firebase.firestore
+						.Timestamp(group.recentMessage.readBy.sentAt.seconds, 
+						group.recentMessage.readBy.sentAt.nanoseconds)
+						.toDate();
+				}
+
+				const time = moment(date, "YYYYMMDD").fromNow();
+				
 				if(group.recentMessage.readBy.sentBy.trim() == this.user.uid.trim()){
 					who = 'You: ';
 				}else{
@@ -80,22 +99,22 @@ define(['util', 'moment'], (Util, moment) => {
 					}
 				}
 				recentMessage = Util.truncate(group.recentMessage.content,24).trim();
-				recentRead.innerHTML = `${who}${recentMessage} <span style="font-size:12px;color:#B0B0B0;float: right">sent ${time}</span>`;
-
-				let timer = setInterval(() => { 
-					const container = document.getElementById(group.id.trim());
-					const ago = container.querySelector('span');
-					if(ago){
-						const date = group.recentMessage.readBy.sentAt.toDate();
-						ago.innerText = 'sent '+moment(date, "YYYYMMDD").fromNow();
-					}else{
-						clearInterval(timer);
-					}
-				
-				}, 60000);
-
+				recentRead.innerHTML = `${who}${recentMessage} 
+				<span style="font-size:12px;color:#B0B0B0;float: right" 
+				data-seconds="${group.recentMessage.readBy.sentAt.seconds}"
+				 data-nanoseconds="${group.recentMessage.readBy.sentAt.nanoseconds}">${time}</span>`;
 				return recentRead;
 			}
+		}
+
+		changeTime(){
+			const recent = document.querySelectorAll('.recent-read span');
+			recent.forEach(element => {
+				let seconds = element.dataset.seconds;
+				let nanoseconds = element.dataset.nanoseconds;
+				let timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds).toDate();
+				element.innerText = 'sent '+moment(timestamp, "YYYYMMDD").fromNow();
+			});
 		}
 
 		update(group){

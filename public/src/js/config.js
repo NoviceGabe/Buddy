@@ -3,9 +3,9 @@ const MSG_COUNT = 7;
 const ORDER = 'desc';
 const FOLLOWING = 'following';
 const FOLLOWER = 'follower';
-//const DOMAIN = 'http://localhost/buddy-test/public/'; // local server 1
+const DOMAIN = 'http://localhost/buddy-test-2/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2
-const DOMAIN = 'https://chat-3db56.web.app/'; // production
+//const DOMAIN = 'https://chat-3db56.web.app/'; // production
 const EMAIL_PASSWORD_SIGN_IN_METHOD = 'password';
 const GOOGLE_PROVIDER = 'google.com';
 const FACEBOOK_PROVIDER = 'facebook.com';
@@ -33,16 +33,21 @@ requirejs.config({
         'userModel': 'src/js/model/User',
         'chatModel': 'src/js/model/Chat',
         'view': 'src/js/view/View',
-        'chatView': 'src/js/view/chat/Chat',
-        'messageView': 'src/js/view/chat/Message',
-        'overView': 'src/js/view/profile/Overview',
-        'profileView': 'src/js/view/profile/Profile',
-        'suggestionsView':'src/js/view/profile/Suggestions',
-        'p_connectionsView': 'src/js/view/profile/Connections',
-        'c_connectionsView': 'src/js/view/connections/Connections',
-        'invitationView': 'src/js/view/chat/Invitation',
-        'dateView': 'src/js/view/profile/DateMenu',
-        'controller': 'src/js/controller/Controller',
+        'chatComponent': 'src/js/view/component/chat/Chat',
+        'messageComponent': 'src/js/view/component/chat/Message',
+        'overviewComponent': 'src/js/view/component/profile/Overview',
+        'profileComponent': 'src/js/view/component/profile/Profile',
+        'suggestionsComponent':'src/js/view/component/profile/Suggestions',
+        'p_connectionsComponent': 'src/js/view/component/profile/Connections',
+        'c_connectionsComponent': 'src/js/view/component/connections/Connections',
+        'invitationComponent': 'src/js/view/component/chat/Invitation',
+        '404':'src/js/view/404',
+        'chatView': 'src/js/view/Chat',
+        'homeView': 'src/js/view/Home',
+        'profileView': 'src/js/view/Profile',
+        'loginView': 'src/js/view/Login',
+        'registerView': 'src/js/view/Register',
+        'dateComponent': 'src/js/view/component/profile/DateMenu',
         'authController': 'src/js/controller/Authenticate',
         'loginController': 'src/js/controller/Login',
         'registerController':'src/js/controller/Register',
@@ -50,8 +55,6 @@ requirejs.config({
         'connectionsController': 'src/js/controller/Connections',
         'chatController': 'src/js/controller/Chat',
         'router':'src/js/Router',
-        'routes': 'src/js/routes',
-        'private-routes': 'src/js/private-routes',
         'util':'src/js/Util',
         'validator':'src/js/Validator'
 	},

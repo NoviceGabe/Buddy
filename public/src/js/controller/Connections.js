@@ -1,9 +1,9 @@
 define([
 	'userModel',
 	 'chatModel', 
-	 'c_connectionsView', 
+	 'c_connectionsComponent', 
 	 'css!css/connections'
-	 ], (UserModel, ChatModel, ConnectionsView)=>{
+	 ], (UserModel, ChatModel, ConnectionsComponent)=>{
 	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
 	const _chatModel = new ChatModel(firebase.firestore());
 
@@ -27,7 +27,7 @@ define([
 			const followingUsers = await _userModel.fetchMembers(following);
 
 			if(followingUsers){
-				const connectionsView = new ConnectionsView(this.state);
+				const connectionsView = new ConnectionsComponent(this.state);
 				connectionsView.render('following', followingUsers, 'all');
 			}
 
@@ -62,7 +62,7 @@ define([
 			const followerUsers = await _userModel.fetchMembers(followers);
 
 			if(followerUsers){
-				const connectionsView = new ConnectionsView(this.state);
+				const connectionsView = new ConnectionsComponent(this.state);
 				connectionsView.render('follower', followerUsers, 'all');
 			}
 

@@ -96,6 +96,21 @@
   gap:10px;
 }
 
+.modal-content #form-contact > div{
+  display: flex;
+}
+
+#form-contact #mobile > div, #form-contact #email > div{
+  width: 100%;
+}
+
+.modal-content #form-contact label{
+  margin-bottom: 10px;
+  font-size: 12px;
+ color: #707070;
+ display: block;
+}
+
 .modal-content .link{
   display: block;
    color: #0095b6;
@@ -161,4 +176,68 @@
   float: left;
   overflow-y:hidden;
   white-space: pre-wrap;
+}
+
+#form-basic #gender div {
+  margin-bottom: 10px;
+}
+
+#form-basic div > p{
+  margin-bottom: 5px;
+  color: #707070;
+  font-size: 12px;
+}
+
+#form-basic > div{
+  margin-bottom: 10px;
+}
+
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+[type="radio"]:checked + label,
+[type="radio"]:not(:checked) + label
+{
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+}
+[type="radio"]:checked + label:before,
+[type="radio"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    background: #fff;
+}
+[type="radio"]:checked + label:after,
+[type="radio"]:not(:checked) + label:after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: #e2202c;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+[type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+[type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
 }

@@ -1,7 +1,14 @@
 define(['userModel', 'validator', 'authController', 'util', 'css!css/login-register'], (UserModel, Validator,  AuthController, Util) => {
+	let _router;
+
 	return class Register{
-		static initRegisterForm(ref){
-			const registerForm = document.querySelector(ref);
+		constructor(router){
+			_router = router;
+			Register.initRegisterForm();
+		}
+
+		static initRegisterForm(){
+			const registerForm = document.querySelector('#signup-form');
 			if(registerForm){
 				registerForm.addEventListener('submit', e => {
 					e.preventDefault();
@@ -32,7 +39,7 @@ define(['userModel', 'validator', 'authController', 'util', 'css!css/login-regis
 									const name = Util.toCapitalizeString(fname+' '+surname);
 									const userdata = userModel.createUser(name, email, '', []);
 
-									const account = await userModel.createAccount(userdata.email, password);
+									const account = await userModel.createAccount(userdata.email[0], password);
 
 									if(account){
 										userdata.uid = account.uid;
@@ -41,8 +48,9 @@ define(['userModel', 'validator', 'authController', 'util', 'css!css/login-regis
 
 										if(isUserAdded){
 											console.log('Register successful');
-											const status = await AuthController.signOut();
-											document.location.href = DOMAIN+'#/login';
+											firebase.auth().signOut().then(() => {
+												_router.navigate('/login');
+											});
 										}else{
 											console.log('Unable to register user to the database');
 										}

@@ -1,64 +1,6 @@
-define([''],() => {
-
-	const homeComponent = {
-		render: () => {
-			return `home`;
-		}
-	}
-
-	const connectionComponent = {
-		render: () => {
-			return `
-			<div id="connections-section">
-
-				<ul class="breadcrumb" >
-				  <li><a href="#/">Buddy</a></li>
-				  <li>Connections</li>
-				</ul>
-				
-				<div id="connections-container" class="clear-fix">
-				</div>
-
-			</div>
-			`;
-		}
-	}
-
-	const serviceComponent = {
-		render: () => {
-			return `service`;
-		}
-	}
-
-	const chatComponent = {
-		render: () => {
-			return `
-			<div id="chat-section" class="flex-container">
-				<div id="sidebar">
-					<h3 >Chats</h3>
-					<div id="chat-request">Chat Request</div>
-					<div id="chat-dialog" ></div>
-				</div>
-				<div id="main">
-					<div class="pre-loader" id="loader">
-					    <img src="src/assets/Rolling-1s-200px.gif" height="120" width="120">
-					</div>
-					
-					<ul id="invitation-dialog"></ul>
-					<ul id="bubble-dialog"></ul>
-
-					<form id="message-form" class="remove">
-						<textarea placeholder="Send a message.." id="message-input"></textarea>
-						<i class="fa fa-paper-plane fa-lg" aria-hidden="true" id="submit"></i>
-					</form>
-				</div>
-			</div>`;
-		}
-	}
-
-	const profileComponent = {
-		render: () => {
-			return `
+define(()=>{
+	const template = () =>{
+		return `
 			<div id="profile-section">
 
 				<ul class="breadcrumb" >
@@ -220,41 +162,111 @@ define([''],() => {
 				  </div>
 				</div>
 
+				<div id="modal-address" class="modal" style="min-height:150px;width:60%">
+					<div class="modal-header">
+				    	<h3>Edit Address</h3>
+				    	<span class="close-btn">&times;</span>
+				    </div>
+				    <div class="modal-content" style="height:100px">
+				    	<form id="form-address">
+				    		<input type="text" id="address-name" placeholder="Current Address">
+						</form>
+				    </div>
+				   <div class="modal-footer">
+				  	  	<button class="save">Save</button>
+				    	<button class="cancel">Cancel</button>
+				  </div>
+				</div>
+
+				<div id="modal-contact" class="modal" style="min-height:200px;width:60%">
+					<div class="modal-header">
+				    	<h3>Edit Contact Info</h3>
+				    	<span class="close-btn">&times;</span>
+				    </div>
+				    <div class="modal-content" >
+				    	<form id="form-contact">
+				    		<div id="mobile">
+				    		   <div>
+					    		   	<label htmlFor="mobile-primary">Mobile Number (Primary)</label>
+					    			<input type="text" id="mobile-primary" placeholder="Mobile Number (primary)">
+				    		   </div>
+				    			<div>
+				    				<label htmlFor="mobile-secondary">Mobile Number (Secondary)</label>
+				    				<input type="text" id="mobile-secondary" placeholder="Mobile Number (secondary)">
+				    			</div>
+				    		</div>
+				    		<div id="email">
+				    			<div>
+				    				<label htmlFor="email-primary">Email Address (Primary)</label>
+				    				<input type="email" id="email-primary" placeholder="Email Address (primary)">
+				    			</div>
+				    			
+				    			<div>
+				    				<label htmlFor="email-secondary">Email Address (Secondary)</label>
+				    				<input type="email" id="email-secondary" placeholder="Email Address (secondary)">
+				    			</div>
+				    		</div>
+						</form>
+				    </div>
+				   <div class="modal-footer">
+				  	  	<button class="save">Save</button>
+				    	<button class="cancel">Cancel</button>
+				  </div>
+				</div>
+
+				<div id="modal-basic" class="modal" style="min-height:200px;width:50%">
+					<div class="modal-header">
+				    	<h3>Edit Basic Info</h3>
+				    	<span class="close-btn">&times;</span>
+				    </div>
+				    <div class="modal-content" style="min-height:100px">
+				    	<form id="form-basic">
+				    		<div id="gender">
+				    		  <p>Gender</p>
+				    		  <div>
+							    <input type="radio" id="male" name="radio-group" checked value="male">
+							    <label for="male">Male</label>
+							  </div>
+							  <div>
+							    <input type="radio" id="female" name="radio-group" value="female">
+							    <label for="female">Female</label>
+							  </div>
+							  <div>
+							    <input type="radio" id="other" name="radio-group" value="other">
+							    <label for="other">Other</label>
+							  </div>
+				    		</div>
+				    		<div id="bday">
+				    			<p>Birthday</p>
+				    			<select class="year" >
+				    				<option value="empty"></option>
+								</select>
+								<select class="month">
+									<option value="empty"></option>
+								</select>
+								<select class="day">
+									<option value="empty"></option>
+								</select>
+				    		</div>
+						</form>
+				    </div>
+				   <div class="modal-footer">
+				  	  	<button class="save">Save</button>
+				    	<button class="cancel">Cancel</button>
+				  </div>
+				</div>
+
 				<button id="logout">logout</button>
 			</div>
 			`;
 		}
+
+	const render = () =>{
+		const container = document.querySelector('#container');
+		container.innerHTML = template(); 
 	}
 
-	const errorComponent = {
-		render: () => {
-			return `error`;
-		}
-	}
-
-	const routes = [
-	{
-		path: '/',
-		template: homeComponent
-	},
-	{
-		path: '/connections',
-		template: connectionComponent
-	},
-	{
-		path: '/service',
-		template: serviceComponent
-	},{
-		path: '/chat',
-		template: chatComponent
-	},{
-		path: '/profile',
-		template: profileComponent
-	},
-	{
-		path: '/error',
-		template: errorComponent
-	}];
-
-	return routes;
+	return {
+		render : render
+	};
 });

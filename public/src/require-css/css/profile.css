@@ -146,7 +146,7 @@
 
 #about .header span{
   font-size: 14px;
-  color: #0095b6;
+  color: #0275d8;
 }
 
 #about .header span:hover{
@@ -157,10 +157,6 @@
   padding: 10px;
   margin-bottom: 10px;
   min-height: 50px;
-}
-
-#about .content > div{
-  margin-bottom: 15px;
 }
 
 #about .content h5{
