@@ -42,7 +42,7 @@ define(['view'], (View) => {
 		        if(match) {
 		            let segment = match.shift();
 		            sessionStorage.setItem('path', segment);
-		           	let dispatch = _routes[i].handler(segment);
+		           	let dispatch = await _routes[i].handler(segment);
 		           	if(dispatch.view){
 		           		require([dispatch.view], function(view){
 		           				view.render();
@@ -73,7 +73,7 @@ define(['view'], (View) => {
 		navigate: function(path) {
 	        path = path ? path : '';
 	        
-	        window.location.href = window.location.href.replace(/#(.*)$/, '') + '#' + path;
+	        window.location.href = window.location.href.replace(/#(.*)$/, '') + '#/' + path;
 	        return this;
 	    },
 

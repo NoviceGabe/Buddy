@@ -194,41 +194,6 @@
   margin-bottom: 10px;
 }
 
-#suggestions {
-   border-radius: 25px;
-  background: #fff;
-  width: 37%;
-  min-height: 310px;
-  height: 420px;
-  box-sizing:border-box;
-  padding: 30px;
-}
-
-#suggestions ul{
-  list-style-type: none;
-}
-
-#suggestions li img.avatar{
-  border-radius: 50%;
-  height: 40px;
-  width: 40px;
-  border: 1px solid #efefef;
-  margin-right: 12px;
-}
-
-#suggestions li {
-  padding: 10px;
-}
-
-#suggestions li:hover{
-  cursor: pointer;
-}
-
-
-#suggestions > div{
-  margin-bottom: 20px;
-}
-
 #connections {
   width: 100%;
 }

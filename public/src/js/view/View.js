@@ -1,7 +1,8 @@
-define(() => {
+define(['css!css/app'],() => {
 	const singleton = Symbol();
 	const singletonEnforcer = Symbol();
 	let _state;
+
 	return class View{
 
 		constructor(enforcer, state){

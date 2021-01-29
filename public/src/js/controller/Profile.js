@@ -2,27 +2,26 @@ define([
     'view',
     'overviewComponent',
     'profileComponent',
-    'suggestionsComponent',
     'p_connectionsComponent',
     'userModel',
     'chatModel',
     'util',
     'validator',
     'dateComponent',
+    'modalComponent',
     'authController',
     'css!css/profile',
     'css!css/modal'
 ], (View,
     OverviewComponent,
     ProfileComponent,
-    SuggestionsComponent,
     ConnectionComponent,
     UserModel,
     ChatModel,
-    routes,
     Util,
     Validator,
     DateComponent,
+    ModalComponent,
     Auth) => {
 
     const _userModel = new UserModel(firebase.firestore(), firebase.auth());
@@ -38,11 +37,17 @@ define([
     let _state
 
     ////////////////////// edit events
+
     const _initBioModalEvents = () => {
+        const ref = document.querySelector('#modal-bio');
+        const edit = document.querySelector('#edit-bio');
+        const form = document.querySelector('#form-bio');
+        const modal = new ModalComponent(ref, edit, form);
+
         const text = document.querySelector("#form-bio textarea");
-        let oldText = _state.bio;
+        let oldText = _state.bio.trim();
         if (_state.bio) {
-            text.value = _state.bio;
+            text.value = _state.bio.trim();
         }
 
         const wordCount = document.querySelector("#count #current");
@@ -50,32 +55,32 @@ define([
         const limit = 600;
 
         text.addEventListener("keyup", function() {
-            const characters = text.value.split('');
+            const characters = text.value.trim().split('');
             wordCount.innerText = characters.length;
 
             if (characters.length > limit) {
-                text.value = text.value.substring(0, limit);
+                text.value = text.value.trim().substring(0, limit);
                 wordCount.innerText = limit;
             }
         });
 
-        _initModalEvents('#modal-bio', '#edit-bio', '#form-bio', function() {
-            return (async () => {
-                if (text.value.length == 0) {
+        modal.onSave(function(){
+             return (async () => {
+                if (text.value.trim().length == 0) {
                     console.log('Empty field');
                     return false;
-                } else if (oldText == text.value) {
+                } else if (oldText.trim() == text.value.trim()) {
                     console.log('No changes');
                     return false;
                 } else {
                     try {
                         const status = await _userModel
-                            .mergeUpdateUser(firebase.auth().currentUser.uid, { bio: text.value });
+                            .mergeUpdateUser(firebase.auth().currentUser.uid, { bio: text.value.trim() });
 
                         if (status) {
                             console.log('Update successful');
-                            _profileView.updateBio(text.value);
-                            oldText = text.value;
+                            _profileView.updateBio(text.value.trim());
+                            oldText = text.value.trim();
                             return true;
                         }
 
@@ -86,13 +91,27 @@ define([
                     }
                 }
             })();
-
         }, function() {
-            if (text.value.length == 0 && oldText.length) {
-                text.value = oldText;
+            if (text.value.trim().length == 0 && oldText.trim().length) {
+                text.value = oldText.trim();
             }
             return false;
         });
+
+        modal.onCancel( function() {
+            if (text.value.trim().length == 0 && oldText.trim().length) {
+                text.value = oldText.trim();
+            }
+            return false;
+        });
+
+        modal.onClose( function() {
+            if (text.value.trim().length == 0 && oldText.trim().length) {
+                text.value = oldText.trim();
+            }
+            return false;
+        });
+
     }
 
     const _initEducationModalEvents = () => {
@@ -157,7 +176,12 @@ define([
         let selectEndYearHighschool = document.querySelector('#highschool .year');
         let endDateHighSchool = new DateComponent(selectEndYearHighschool);
 
-        _initModalEvents('#modal-education', '#edit-education', '#form-education', function() {
+        const ref = document.querySelector('#modal-education');
+        const edit = document.querySelector('#edit-education');
+        const form = document.querySelector('#form-education');
+        const modal = new ModalComponent(ref, edit, form);
+
+        modal.onSave(function() {
 
             let data = {
                 education: {
@@ -290,7 +314,12 @@ define([
         let selectEndDay = document.querySelector('#workplace-since .end .day');
         let endDate = new DateComponent(selectEndYear, selectEndtMonth, selectEndDay);
 
-        _initModalEvents('#modal-workplace', '#edit-workplace', '#form-workplace', function() {
+        const ref = document.querySelector('#modal-workplace');
+        const edit = document.querySelector('#edit-workplace');
+        const form = document.querySelector('#form-workplace');
+        const modal = new ModalComponent(ref, edit, form);
+
+        modal.onSave(function() {
             let data = {
                 workplace: {
 
@@ -367,11 +396,17 @@ define([
                     return false;
                 });
         });
+
     }
 
     const _initAddressModalEvents = () => {
         const name = document.querySelector('#address-name');
-        _initModalEvents('#modal-address', '#edit-address', '#form-address', function() {
+        const ref = document.querySelector('#modal-address');
+        const edit = document.querySelector('#edit-address');
+        const form = document.querySelector('#form-address');
+        const modal = new ModalComponent(ref, edit, form);
+
+        modal.onSave(function() {
             let data = {};
             if (name.value.length == 0) {
                 console.log('Empty address name');
@@ -391,19 +426,19 @@ define([
     }
 
     const _initContactModalEvents = () => {
-        const emailPrimary = document.querySelector('#email-primary');
+        //const emailPrimary = document.querySelector('#email-primary');
         const emailSecondary = document.querySelector('#email-secondary');
         const mobilePrimary = document.querySelector('#mobile-primary');
         const mobileSecondary = document.querySelector('#mobile-secondary');
 
-        let isPrimaryEmailReadOnly = true;
-        let emailUpdateCount = _state.emailUpdateCount;
+        //let isPrimaryEmailReadOnly = true;
+        //let emailUpdateCount = _state.emailUpdateCount;
 
         const provider = firebase.auth().currentUser.providerData[0].providerId;
 
-        if (firebase.auth().currentUser.email) {
+        /*if (firebase.auth().currentUser.email) {
             emailPrimary.value = firebase.auth().currentUser.email;
-        }
+        }*/
 
         if (_state.email[1]) {
             emailSecondary.value = _state.email[1];
@@ -417,44 +452,51 @@ define([
             mobileSecondary.value = _state.mobile[1];
         }
 
-        let oldEmailPrimary = emailPrimary.value;
+        //let oldEmailPrimary = emailPrimary.value;
         let oldEmailSecondary = emailSecondary.value;
         let oldMobilePrimary = mobilePrimary.value;
         let oldMobileSecondary = mobileSecondary.value;
 
-        if (provider != EMAIL_PASSWORD_SIGN_IN_METHOD) {
+       /* if (provider != EMAIL_PASSWORD_SIGN_IN_METHOD) {
             emailPrimary.readOnly = true;
         } else {
             isPrimaryEmailReadOnly = false;
         }
+        */
+        const ref = document.querySelector('#modal-contact');
+        const edit = document.querySelector('#edit-contact');
+        const form = document.querySelector('#form-contact');
+        const modal = new ModalComponent(ref, edit, form);
 
-        _initModalEvents('#modal-contact', '#edit-contact', '#form-contact', function() {
+        modal.onSave(function() {
             let data = {};
             data.email = ['', ''];
             data.mobile = ['', ''];
 
             /*if((isPrimaryEmailReadOnly && 
-            	!emailSecondary.value.length &&
-            	!mobilePrimary.value.length && 
-            	!mobileSecondary.value.length) ||
-            	(!isPrimaryEmailReadOnly && 
-            	!emailPrimary.value.length &&
-            	!emailSecondary.value.length && 
-            	!mobilePrimary.value.length &&
-            	!mobileSecondary.value.length)
+                !emailSecondary.value.length &&
+                !mobilePrimary.value.length && 
+                !mobileSecondary.value.length) ||
+                (!isPrimaryEmailReadOnly && 
+                !emailPrimary.value.length &&
+                !emailSecondary.value.length && 
+                !mobilePrimary.value.length &&
+                !mobileSecondary.value.length)
 
-            	){
-				
-            	console.log('No contact info to update');
-            	return false;
-            	
-            }else{*/
+                ){
+                
+                console.log('No contact info to update');
+                return false;
+                
+            }else{
             if (emailPrimary.value.length && !Validator.isEmailValid(emailPrimary.value)) {
                 console.log('Invalid email address');
                 return false;
             } else {
                 data.email[0] = emailPrimary.value;
-            }
+            }*/
+
+            data.email[0] = firebase.auth().currentUser.email;
 
             if (emailSecondary.value.length && !Validator.isEmailValid(emailSecondary.value)) {
                 console.log('Invalid email address');
@@ -471,20 +513,20 @@ define([
                 data.mobile[1] = mobileSecondary.value;
             }
 
-            if (oldEmailPrimary == emailPrimary.value &&
+            if (/*oldEmailPrimary == emailPrimary.value &&*/
                 oldEmailSecondary == emailSecondary.value &&
                 oldMobilePrimary == mobilePrimary.value &&
                 oldMobileSecondary == mobileSecondary.value
             ) {
-                console.log('No fucking changes!!');
+                console.log('No changes!!');
                 return false;
             }
-
+/*
             if (emailPrimary.value.length && emailSecondary.value.length &&
                 emailPrimary.value == emailSecondary.value) {
                 console.log('Primary email and secondary email must not be the same')
                 return false;
-            }
+            }*/
 
             if (!data.email.length && !data.mobile.length) {
                 console.log('no valid data')
@@ -492,51 +534,70 @@ define([
             } else {
                 (async () => {
                     try {
+                        /*
                         if (!isPrimaryEmailReadOnly && emailPrimary.value.length &&
                             emailPrimary.value != oldEmailPrimary) {
 
                             const increment = firebase.firestore.FieldValue.increment(1);
                             data.emailUpdateCount = increment;
 
-                            const password = prompt("Please enter your current password");
+                            const overlay = document.querySelector('.overlay');
+                            overlay.style.display = 'block';
 
-                            if (!password.length) {
-                                return false;
-                            }
+                            let password = document.querySelector('#password');
 
-                            let status = await Auth.changeEmail(password, emailPrimary.value);
 
-                            if (status) {
-                                if (emailUpdateCount) {
-                                    if (emailUpdateCount == 1) {
-                                        console.log('You only have two more chances left to change your current email')
-                                    } else if (emailUpdateCount == 2) {
-                                        console.log('You only 1 more chance left to change your current email');
-                                    } else {
-                                        console.log(`You reached the limit of changing email address. 
-														You can\'t change your email address anymore'`);
-                                        return false;
+                            _initModalEvents('#modal-password', '', '#form-password', async function() {
+                                if(!password.value.length){
+                                    console.log('Enter your password');
+                                    return false;
+                                }
+                                                                
+                                let id = await Auth.changeEmail(password.value, emailPrimary.value);
+
+                                if (id) {
+                                    if (emailUpdateCount) {
+                                        if (emailUpdateCount == 1) {
+                                            console.log('You only have two more chances left to change your current email')
+                                        } else if (emailUpdateCount == 2) {
+                                            console.log('You only 1 more chance left to change your current email');
+                                        } else {
+                                            console.log(`You reached the limit of changing email address. 
+                                                                You can\'t change your email address anymore'`);
+                                            return false;
+                                        }
                                     }
+
+                                    const status = await _userModel.mergeUpdateUser(id, data);
+                                    if (status) {
+                                        oldEmailPrimary = emailPrimary.value;
+                                        oldEmailSecondary = emailSecondary.value;
+                                        oldMobilePrimary = mobilePrimary.value;
+                                        oldMobileSecondary = mobileSecondary.value;
+                                        console.log('Update successful');
+                                         _profileView.updateContact(data);
+                                        return true;
+                                    }
+
                                 }
 
-                                status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
-                                if (status) {
-                                    oldEmailPrimary = emailPrimary.value;
-                                    oldEmailSecondary = emailSecondary.value;
-                                    oldMobilePrimary = mobilePrimary.value;
-                                    oldMobileSecondary = mobileSecondary.value;
-                                    console.log('Update successful');
-                                    _profileView.updateContact(data);
-                                    return true;
+                                return false;
+                            }, function(){
+                                overlay.style.display = 'none';
+
+                                return function(){
+                                     const modal = document.querySelector('#modal-contact');
+                                     modal.style.display = 'none';
+                                     return false;
                                 }
 
-                            }
+                            });
 
-                        } else {
+                        } else {*/
                             const status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
 
                             if (status) {
-                                oldEmailPrimary = emailPrimary.value;
+                              //  oldEmailPrimary = emailPrimary.value;
                                 oldEmailSecondary = emailSecondary.value;
                                 oldMobilePrimary = mobilePrimary.value;
                                 oldMobileSecondary = mobileSecondary.value;
@@ -544,7 +605,7 @@ define([
                                 _profileView.updateContact(data);
                                 return true;
                             }
-                        }
+                       // }
 
                         return false;
 
@@ -555,12 +616,11 @@ define([
                 })();
             }
             //}
-
         }, function() {
-
+            /*
             if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
                 emailPrimary.value = oldEmailPrimary;
-            }
+            }*/
 
             if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
                 emailSecondary.value = oldEmailSecondary;
@@ -576,6 +636,51 @@ define([
 
             return false;
         });
+
+        modal.onClose(function() {
+
+            /*
+            if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
+                emailPrimary.value = oldEmailPrimary;
+            }*/
+
+            if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
+                emailSecondary.value = oldEmailSecondary;
+            }
+
+            if (mobilePrimary.value.length == 0 && oldMobilePrimary.length) {
+                mobilePrimary.value = oldMobilePrimary;
+            }
+
+            if (mobileSecondary.value.length == 0 && oldMobileSecondary.length) {
+                mobileSecondary.value = oldMobileSecondary;
+            }
+
+            return false;
+        });
+
+        modal.onCancel(function() {
+
+           /*
+            if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
+                emailPrimary.value = oldEmailPrimary;
+            }*/
+
+            if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
+                emailSecondary.value = oldEmailSecondary;
+            }
+
+            if (mobilePrimary.value.length == 0 && oldMobilePrimary.length) {
+                mobilePrimary.value = oldMobilePrimary;
+            }
+
+            if (mobileSecondary.value.length == 0 && oldMobileSecondary.length) {
+                mobileSecondary.value = oldMobileSecondary;
+            }
+
+            return false;
+        });
+
     }
 
     const _initBasicInfoModalEvents = () => {
@@ -601,7 +706,11 @@ define([
 
         let startDate = new DateComponent(selectStartYear, selectStartMonth, selectStartDay);
 
-        _initModalEvents('#modal-basic', '#edit-basic', '#form-basic', function() {
+        const ref = document.querySelector('#modal-basic');
+        const edit = document.querySelector('#edit-basic');
+        const form = document.querySelector('#form-basic');
+        const modal = new ModalComponent(ref, edit, form);
+        modal.onSave(function() {
             let data = {};
 
             elements.forEach(e => {
@@ -634,7 +743,8 @@ define([
             }
 
             if (oldValue == data.gender &&
-                Object.keys(data.birthday).length === 0 && data.birthday.constructor === Object) {
+               (data.birthday != undefined &&
+                Object.keys(data.birthday).length === 0 && data.birthday.constructor === Object)) {
                 console.log('No changes');
                 return false;
             } else {
@@ -650,65 +760,6 @@ define([
             }
 
         });
-    }
-
-    const _initModalEvents = (modalRef, editRef, formRef, onSave, onFinish) => {
-        const modal = document.querySelector(modalRef);
-        const edit = document.querySelector(editRef);
-        const close = document.querySelector(`${modalRef} .close-btn`);
-        const form = document.querySelector(formRef);
-        const save = document.querySelector(`${modalRef} .save`);
-        const cancel = document.querySelector(`${modalRef} .cancel`);
-
-        edit.addEventListener('click', () => {
-            modal.style.display = 'flex';
-        });
-
-        close.addEventListener('click', () => {
-            modal.style.display = 'none';
-            if (typeof onFinish == 'function') {
-                if (onFinish()) {
-                    form.reset();
-                }
-            } else {
-                form.reset();
-            }
-        });
-
-        cancel.addEventListener('click', () => {
-            modal.style.display = 'none';
-            if (typeof onFinish == 'function') {
-                if (onFinish()) {
-                    form.reset();
-                }
-            } else {
-                form.reset();
-            }
-        });
-
-
-        save.addEventListener('click', () => {
-            (async () => {
-                const status = await onSave();
-                if (status) {
-                    modal.style.display = 'none';
-                    if (typeof onFinish == 'function') {
-                        if (onFinish()) {
-                            form.reset();
-                        }
-                    } else {
-                        form.reset();
-                    }
-                }
-            })();
-        });
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-                form.reset();
-            }
-        }
     }
 
     //////////////////////
@@ -752,14 +803,6 @@ define([
             _initContactModalEvents();
             _initBasicInfoModalEvents();
         }
-    }
-
-    const initSuggestions = async () => {
-        const suggestionsView = new SuggestionsComponent(_state);
-        const users = await _userModel.getAllUsersExcept(_state.uid);
-        const suggestions = await _userModel.fetchNotFollowingUsers(users);
-        suggestionsView.render(suggestions);
-        initSuggestionsEvents();
     }
 
     const _initConnections = async () => {
@@ -811,29 +854,6 @@ define([
         });
     }
 
-   const initSuggestionsEvents = () => {
-        const suggestions = document.querySelectorAll('#suggestions ul li .avatar');
-        suggestions.forEach(user => {
-            user.addEventListener('click', e => {
-                const id = e.target.parentElement.getAttribute('id');
-                _router.changePath(`/profile/${id}`);
-            });
-        });
-        const follow = document.querySelectorAll('#suggestions ul li .follow');
-        follow.forEach(user => {
-            user.addEventListener('click', e => {
-                e.preventDefault();
-                const id = e.target.parentElement.getAttribute('id');
-                _userModel.follow(firebase.auth().currentUser.uid.trim(), id.trim()).then(() => {
-                    user.setAttribute('src', '');
-                    console.log('followed ' + id)
-                }).catch(err => {
-                    console.log(err.message);
-                });
-            });
-        });
-    }
-
     const _initChatStatus = async (user) => {
         try {
             let invitation = await _chatModel.getInvitation(firebase.auth().currentUser.uid, user.uid);
@@ -871,7 +891,7 @@ define([
                                         const groups = Util.getMatchesFromArray(currentUser.groups, user.groups);
                                         if (groups.length > 0) {
                                             const groupId = groups[0];
-                                            _router.navigate(`/chat/${groupId}`);
+                                            _router.navigate(`chat/${groupId}`);
                                         }
                                     }
                                 }
@@ -900,9 +920,9 @@ define([
             logout.addEventListener('click', () => {
             	firebase.auth().signOut()
             	.then(() => {
-            		const path = '/login';
+            		const path = 'login';
             		View.removeMenu();
-            		_router.navigate('/login');
+            		_router.navigate('login');
                     location.reload(true);
             		localStorage.clear();
             		sessionStorage.clear();

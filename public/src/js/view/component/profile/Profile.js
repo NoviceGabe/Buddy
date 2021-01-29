@@ -117,7 +117,8 @@ define(['util'],(Util) => {
 						</div>
 						<div class="content">
 							<h5>${address}</h5>
-							${(address.length > 0)? '<p>Current Home</p>': ''}
+							<p>${(address.length > 0)? 'Current Home': ''}</p>
+							
 						</div>
 					</div>
 					<div id="contact">

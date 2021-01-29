@@ -3,7 +3,7 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
   	document.location.href = DOMAIN;
 } 
 
-require(['router', 'userModel', 'view', 'css!css/app', 'css!css/index', 'css!css/helper'], 
+require(['router', 'userModel', 'view', 'css!css/index', 'css!css/helper'], 
 	(Router, UserModel, View) => {
 
 	firebase.auth().onAuthStateChanged(user => {
@@ -18,36 +18,52 @@ require(['router', 'userModel', 'view', 'css!css/app', 'css!css/index', 'css!css
 	    		 (provider == FACEBOOK_PROVIDER)){
 
 				const reloading = sessionStorage.getItem('reloading');
+				sessionStorage.removeItem('reloading');
 				if (reloading) {
 					const path = sessionStorage.getItem('path');
 					if(path){
 						Router.navigate(path);
 					}else{
-						Router.navigate('/');
+						Router.navigate('');
 					}
 					
 				}else{
-					if(uid){
-						Router.navigate('/');
+					if(user.uid){
+						Router.navigate('');
 					}else{
-						Router.navigate('/login');
+						Router.navigate('login');
 					}
 				}
 
 	    		(async () => {
 	    			const userModel = new UserModel(firebase.firestore(), firebase.auth());
-					const data = await userModel.getUser(firebase.auth().currentUser.uid);
+					const data = await userModel.getUser(user.uid);
 
 					View.instance(data);
 					View.renderMenu();
 					View.onToggleMenu();
 
-		    		main(Router, data);
+		    		main(Router, userModel,  data);
 	    		})();
 	    		
 	    	}
 	    }else{
 	    	console.log('logged out');
+
+	    	const reloading = sessionStorage.getItem('reloading');
+	    	sessionStorage.removeItem('reloading');
+			if (reloading) {
+				const path = sessionStorage.getItem('path');
+				if(path){
+						Router.navigate(path);
+				}else{
+						Router.navigate('login');
+				}
+					
+			}else{
+				Router.navigate('login');
+			}
+			
 
 	    	Router
 			.add(/signup/, function() {
@@ -67,19 +83,14 @@ require(['router', 'userModel', 'view', 'css!css/app', 'css!css/index', 'css!css
 					view: 'loginView',
 					controller:'loginController',
 				};
-			}).add(/login/, function() {
-			   	return {
-					view: 'loginView',
-					controller:'loginController',
-				};
-			}).add(function() {
+			})
+			.add(/login/, function() {
 			   	return {
 					view: 'loginView',
 					controller:'loginController',
 				};
 			})
-			.resolve();
-
+			.resolve()
 			Router.listener();
 	    }
 	   
@@ -91,7 +102,7 @@ require(['router', 'userModel', 'view', 'css!css/app', 'css!css/index', 'css!css
 });
 
 
-const main = (Router, data) => {
+const main = (Router, userModel, data) => {
 	try {
 		
 		Router
@@ -114,7 +125,7 @@ const main = (Router, data) => {
 			let state = data;
 			 
 			if(id != firebase.auth().currentUser.uid){
-				return userModel.getUser(UID).then(state => {
+				return userModel.getUser(id).then(state => {
 					return {
 						view:'profileView',
 						controller:'profileController',
@@ -130,7 +141,24 @@ const main = (Router, data) => {
 			}
 		})
 		.add(/connections\/following\/(.*)/, function(segment){
-			console.log(segment)
+			const id = segment.split('/').pop();
+			let state = data;
+			 
+			if(id != firebase.auth().currentUser.uid){
+				return userModel.getUser(id).then(state => {
+					return {
+						view:'c_connectionsComponent',
+						controller:'connectionsController',
+						state: state
+					};
+				});
+			}else{
+				return {
+					view:'c_connectionsComponent',
+					controller:'connectionsController',
+					state: state
+				};
+			}
 		})
 		.add(/connections\/follower\/(.*)/, function(segment){
 			console.log(segment)
@@ -138,11 +166,11 @@ const main = (Router, data) => {
 		.add(function() {
 		   return {
 		     view: 'homeView',
-		     controller: ''
+		     controller: 'homeController',
+		     state: data
 		   }
 		})
-		.resolve();
-
+		.resolve()
 		Router.listener();
 	
 	} catch(e) {

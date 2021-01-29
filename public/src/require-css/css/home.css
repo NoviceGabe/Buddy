@@ -1,0 +1,179 @@
+#home-section{
+  height: 100%;
+  width: 90%;
+  padding-top: 20px;
+  margin:auto;
+  background: #efefef;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+
+#header{
+  width: 87%;
+  margin:auto;
+  margin-bottom: 20px;
+  height: 50px;
+}
+
+#header > div{
+  height: 100%;
+  width: 70%;
+  padding-left: 30px;
+  padding-right: 100px;
+  box-sizing: border-box;
+}
+
+#header > div button{
+  display: inline-block;
+  border-radius: 4px;
+  width:110px;
+  padding:8px 10px;
+  background:#e2202c;
+  color:white;
+  border:1px solid #e2202c;
+}
+
+#header > div button:hover{
+  cursor: pointer;
+}
+
+
+#home-main .col-1{
+  width: 60%;
+  height:100vh;
+  box-sizing:border-box;
+  margin-right: 20px;
+}
+
+#home-main .col-2{
+  width: 25%;
+  min-height: 300px;
+  padding: 10px;
+  box-sizing:border-box;
+  position: relative;
+}
+
+#newsfeed{
+  padding: 10px;
+}
+
+#newsfeed .post{
+   border-radius: 25px;
+   min-height:400px;
+   width:90%;
+   background:#fff;
+}
+
+.post .post-header{
+  padding: 15px 20px 10px 20px;
+}
+
+.post .post-header > img{
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  border: 1px solid #efefef;
+  margin-right: 12px;
+}
+
+.post .post-header > div p{
+  color: #707070;
+  font-size: 14px;
+}
+
+.post .post-subheader{
+  padding: 20px 20px 20px 20px; 
+}
+
+.post .post-subheader > div{
+  width: 50%;
+}
+
+.post .post-subheader p{
+  color: #707070;
+  font-size: 13px;
+}
+
+.post .post-content{
+  padding:10px 20px 10px 20px;
+}
+
+.post .post-content > *{
+  margin-bottom: 10px;
+}
+
+.post-content .post-tags{
+  list-style-type: none;
+}
+
+.post-content .post-tags li{
+  border-radius: 5px;
+  display: inline-block;
+  background: #fff;
+  padding: 3px 7px 3px 7px;
+  border: 1px solid #d3d3d3;
+  font-size: 12px;
+}
+
+.post-footer .like{
+  padding: 5px 0px 5px 20px;
+  border-top: 2px solid #efefef;
+}
+
+.post-footer .like > *{
+  display: inline-block;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.post-footer .actions{
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top: 2px solid #efefef;
+}
+
+.post-footer .actions > span{
+  width: 33.33%;  
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.post-footer .actions > span:not(:last-child){
+  border-right: 2px solid #efefef;
+}
+
+#suggestions {
+  border-radius: 25px;
+  background: #fff;
+  width: 100%;
+  min-height: 310px;
+  height: 420px;
+  box-sizing:border-box;
+  padding: 30px;
+}
+
+#suggestions ul{
+  list-style-type: none;
+}
+
+#suggestions li img.avatar{
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  border: 1px solid #efefef;
+  margin-right: 12px;
+}
+
+#suggestions li {
+  padding: 10px;
+}
+
+#suggestions li:hover{
+  cursor: pointer;
+}
+
+
+#suggestions > div{
+  margin-bottom: 20px;
+}

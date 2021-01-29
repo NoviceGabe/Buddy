@@ -39,8 +39,6 @@ define(['authController', 'css!css/login-register'], (AuthController) => {
 
 							const isUserAdded = await userModel.addUser(userData.uid, userData);
 						}
-						location.reload(true);
-						_router.navigate('/');
 
 					} catch(e) {
 						console.log(e.message);
@@ -68,8 +66,6 @@ define(['authController', 'css!css/login-register'], (AuthController) => {
 								console.log(auth)
 								if(auth){
 										console.log('Login successful');
-										location.reload(true);
-										_router.navigate('/');
 								}else{
 										console.log('Invalid email or password');
 								}

@@ -3,7 +3,7 @@ const MSG_COUNT = 7;
 const ORDER = 'desc';
 const FOLLOWING = 'following';
 const FOLLOWER = 'follower';
-const DOMAIN = 'http://localhost/buddy-test-2/public/'; // local server 1
+const DOMAIN = 'http://localhost/buddy/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2
 //const DOMAIN = 'https://chat-3db56.web.app/'; // production
 const EMAIL_PASSWORD_SIGN_IN_METHOD = 'password';
@@ -32,12 +32,13 @@ requirejs.config({
         'db': 'src/js/db',
         'userModel': 'src/js/model/User',
         'chatModel': 'src/js/model/Chat',
+        'postModel': 'src/js/model/Post',
         'view': 'src/js/view/View',
         'chatComponent': 'src/js/view/component/chat/Chat',
         'messageComponent': 'src/js/view/component/chat/Message',
         'overviewComponent': 'src/js/view/component/profile/Overview',
         'profileComponent': 'src/js/view/component/profile/Profile',
-        'suggestionsComponent':'src/js/view/component/profile/Suggestions',
+        'suggestionsComponent':'src/js/view/component/home/Suggestions',
         'p_connectionsComponent': 'src/js/view/component/profile/Connections',
         'c_connectionsComponent': 'src/js/view/component/connections/Connections',
         'invitationComponent': 'src/js/view/component/chat/Invitation',
@@ -47,16 +48,18 @@ requirejs.config({
         'profileView': 'src/js/view/Profile',
         'loginView': 'src/js/view/Login',
         'registerView': 'src/js/view/Register',
-        'dateComponent': 'src/js/view/component/profile/DateMenu',
+        'dateComponent': 'src/js/util/DateMenu',
+        'modalComponent':'src/js/util/Modal',
         'authController': 'src/js/controller/Authenticate',
         'loginController': 'src/js/controller/Login',
         'registerController':'src/js/controller/Register',
+        'homeController':'src/js/controller/Home',
         'profileController':'src/js/controller/Profile',
         'connectionsController': 'src/js/controller/Connections',
         'chatController': 'src/js/controller/Chat',
         'router':'src/js/Router',
-        'util':'src/js/Util',
-        'validator':'src/js/Validator'
+        'util':'src/js/util/Util',
+        'validator':'src/js/util/Validator'
 	},
    map: {
       '*': {

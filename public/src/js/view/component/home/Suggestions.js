@@ -1,9 +1,7 @@
-define(['userModel'], (UserModel)=>{
-	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
+define(()=>{
 
 	return class Suggestions{
-		construtor(state){
-			this.state = state;
+		construtor(){
 		}
 
 		render(users){

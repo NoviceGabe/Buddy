@@ -1,9 +1,5 @@
 .modal {
-  position: fixed; 
   padding-top: 50px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background-color: white;
   border: 1px solid #e2202c;
   box-sizing: border-box;
@@ -12,6 +8,7 @@
   flex-direction: column;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
 }
+
 .modal-content {
   width: 100%;  
   height: 100%;
@@ -55,13 +52,13 @@
   cursor: pointer;
 }
 
-.close-btn {
+.close {
   float: right; 
   color: lightgray; 
   font-size: 24px;  
   font-weight: bold;
 }
-.close-btn:hover {
+.close:hover {
   color: darkgray;
   cursor: pointer;
 }
@@ -139,44 +136,106 @@
   cursor: pointer;
 }
 
+#modal-post{
+  height:700px;
+  width:70%;
+}
+
+#modal-post .modal-content{
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+#modal-post .modal-content > div{
+  flex-shrink: 0;
+}
+
 #modal-bio #form-bio{
   flex-basis: 100%;
   display: flex;
   flex-wrap: wrap;
 }
 
-#modal-bio #form-bio #bio{
+#modal-post #form-post{
+  flex-basis: 100%;
+  display: flex;
+}
+
+#modal-post #form-post{
+  flex-direction: column;
+}
+
+#modal-bio #form-bio #bio,
+#modal-post #form-post #title,
+#modal-post #form-post #description{
   flex: 0 0 100%;
   display: flex;
 }
-#modal-bio #form-bio #count{
+
+#modal-bio #form-bio #count, 
+#modal-post #form-post #count{
   flex: 0 0 100%;
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
 }
 
+
+.modal-content .header{
+  display: flex;
+  font-weight: 200;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.modal-content .header:after {
+  background: #d3d3d3;
+  height: 1px;
+  flex: 1;
+  content: '';
+
+}
+
+.modal-content .header span{
+  margin-right: 10px;
+}
+
+#modal-post .modal-content select{
+  padding: 8px 10px;
+  min-width: 200px;
+}
+
+.modal-content input, select, textarea{
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #d3d3d3;
+}
+
 #modal-bio #form-bio #count span:last-child{
   margin-right: 10px;
 }
 
-#modal-bio textarea{
+.modal-content textarea{
   flex-basis: 100%;
   height: 150px;
   margin:  auto;
   padding: 0;
   padding: 10px;
-  border:  1px solid #d3d3d3;
   outline: 0;
   font-size: 14px;
   resize: none;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
   float: left;
-  overflow-y:hidden;
+  overflow-x:hidden;
   white-space: pre-wrap;
 }
+
+.modal-content #title textarea{
+  height: 25px;
+}
+
 
 #form-basic #gender div {
   margin-bottom: 10px;
@@ -240,4 +299,14 @@
     opacity: 1;
     -webkit-transform: scale(1);
     transform: scale(1);
+}
+
+.overlay {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(128,128,128,0.5); 
+  display: none;
 }

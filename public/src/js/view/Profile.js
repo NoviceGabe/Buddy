@@ -25,10 +25,10 @@ define(()=>{
 					</div>
 				</div>
 
-				<div id="modal-bio" class="modal" style="min-height:200px;width:70%">
+				<div id="modal-bio" class="modal vertical-center-fixed" style="min-height:200px;width:70%">
 					<div class="modal-header">
 				    	<h3>Edit Bio</h3>
-				    	<span class="close-btn">&times;</span>
+				    	<span class="close">&times;</span>
 				    </div>
 				    <div class="modal-content">
 				    	<form id="form-bio" >
@@ -47,10 +47,10 @@ define(()=>{
 				  </div>
 				</div>
 
-				<div id="modal-workplace" class="modal" style="min-height:200px;width:60%">
+				<div id="modal-workplace" class="modal vertical-center-fixed" style="min-height:200px;width:60%">
 					<div class="modal-header">
 				    	<h3>Edit Workplace</h3>
-				    	<span class="close-btn">&times;</span>
+				    	<span class="close">&times;</span>
 				    </div>
 				    <div class="modal-content">
 				    	<form id="form-workplace">
@@ -91,10 +91,10 @@ define(()=>{
 				  </div>
 				</div>
 
-				<div id="modal-education" class="modal" style="min-height:200px;width:70%;">
+				<div id="modal-education" class="modal vertical-center-fixed" style="min-height:200px;width:70%;">
 				  <div class="modal-header">
 				    <h3>Edit Education</h3>
-				    <span class="close-btn">&times;</span>
+				    <span class="close">&times;</span>
 				  </div>
 				  <div class="modal-content">
 				   	<div>
@@ -162,10 +162,10 @@ define(()=>{
 				  </div>
 				</div>
 
-				<div id="modal-address" class="modal" style="min-height:150px;width:60%">
+				<div id="modal-address" class="modal vertical-center-fixed" style="min-height:150px;width:60%">
 					<div class="modal-header">
 				    	<h3>Edit Address</h3>
-				    	<span class="close-btn">&times;</span>
+				    	<span class="close">&times;</span>
 				    </div>
 				    <div class="modal-content" style="height:100px">
 				    	<form id="form-address">
@@ -178,10 +178,10 @@ define(()=>{
 				  </div>
 				</div>
 
-				<div id="modal-contact" class="modal" style="min-height:200px;width:60%">
+				<div id="modal-contact" class="modal vertical-center-fixed" style="min-height:200px;width:60%">
 					<div class="modal-header">
 				    	<h3>Edit Contact Info</h3>
-				    	<span class="close-btn">&times;</span>
+				    	<span class="close">&times;</span>
 				    </div>
 				    <div class="modal-content" >
 				    	<form id="form-contact">
@@ -197,11 +197,6 @@ define(()=>{
 				    		</div>
 				    		<div id="email">
 				    			<div>
-				    				<label htmlFor="email-primary">Email Address (Primary)</label>
-				    				<input type="email" id="email-primary" placeholder="Email Address (primary)">
-				    			</div>
-				    			
-				    			<div>
 				    				<label htmlFor="email-secondary">Email Address (Secondary)</label>
 				    				<input type="email" id="email-secondary" placeholder="Email Address (secondary)">
 				    			</div>
@@ -214,10 +209,28 @@ define(()=>{
 				  </div>
 				</div>
 
-				<div id="modal-basic" class="modal" style="min-height:200px;width:50%">
+				<div class="overlay">
+					<div id="modal-password" class="modal vertical-center-fixed" style="min-height:150px;width:30%;top:100px">
+						<div class="modal-header">
+					    	<h3>Enter your password</h3>
+					    	<span class="close">&times;</span>
+					    </div>
+					    <div class="modal-content" style="height:100px">
+					    	<form id="form-password">
+					    		<input type="password" id="password" placeholder="Password">
+							</form>
+					    </div>
+					   <div class="modal-footer">
+					  	  	<button class="save">Ok</button>
+					    	<button class="cancel">Cancel</button>
+					  </div>
+					</div>
+				</div>	
+
+				<div id="modal-basic" class="modal vertical-center-fixed" style="min-height:200px;width:50%">
 					<div class="modal-header">
 				    	<h3>Edit Basic Info</h3>
-				    	<span class="close-btn">&times;</span>
+				    	<span class="close">&times;</span>
 				    </div>
 				    <div class="modal-content" style="min-height:100px">
 				    	<form id="form-basic">

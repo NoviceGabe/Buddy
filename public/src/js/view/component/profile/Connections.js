@@ -33,6 +33,7 @@ define(['util'], (Util) => {
 				</div>`;
 
 			container.innerHTML += template;
+			console.log(container)
 
 			const fragment = new DocumentFragment();
 			const dialog = document.querySelector(`#${ref}-dialog`);

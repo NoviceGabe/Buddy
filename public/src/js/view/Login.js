@@ -20,6 +20,7 @@ define(()=>{
 							<input type="password" id="password" placeholder="Password">
 							<input type="submit" value="Login"> 
 						</form>
+						<!--a href="#/email-verification">Request email verification</a-->
 
 						<div class="divider">
 				         <span>or</span>
