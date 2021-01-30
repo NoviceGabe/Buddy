@@ -13,45 +13,6 @@ define(()=>{
 						<div id="suggestions"></div>
 					</div>
 					<div id="newsfeed" class="col-1 float-right">
-						<div class="post">
-							<div class="post-header clear-fix">
-								<img src="src/assets/man.jpg" class="float-left">
-								<div class="float-left">
-									<h3>John Doe</h3>
-									<p>1h</p>
-								</div>
-							</div>
-							<div class="post-subheader clear-fix">
-								  <div class="float-left">
-								  	 <h4>P500</h4>
-								  	 <p>Budget</p>
-								  </div>
-								   <div class="float-left">
-								  	 <h4>Intermediate</h4>
-								  	 <p>Experience level</p>
-								  </div>
-							</div>
-							<div class="post-content">
-								<h3 class="post-title">Project Title</h3>
-								<p class="post-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-								<ul class="post-tags">
-									<li>Driving</li>
-									<li>Onsite</li>
-									<li>Fixed</li>
-								</ul>
-							</div>
-							<div class="post-footer">
-								<div class="like clear-fix" >
-									<img src="src/assets/like-filled.png" class="float-left" height="10" width="18">
-									<span class="count" class="float-left">25</span>
-								</div>
-								<div class="actions clear-fix">
-									<span class="float-left">Like</span>
-									<span class="float-left">Comment</span>
-									<span class="float-left">Share</span>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div id="modal-post" class="modal vertical-center-fixed">
@@ -133,7 +94,7 @@ define(()=>{
 					    			<option value="2">Onsite</option>
 					    		</select>
 				    		</div>
-				    		<div id="container-location" style="height:380px;width:100%;">
+				    		<div id="container-location" style="height:380px;width:100%;" class="remove">
 				    			<h4 class="header"><span>Location</span></h4>
 				    			<div id="map" style="height:100%;width:70%;margin:auto">
 				    			</div>

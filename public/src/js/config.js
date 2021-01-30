@@ -39,6 +39,7 @@ requirejs.config({
         'overviewComponent': 'src/js/view/component/profile/Overview',
         'profileComponent': 'src/js/view/component/profile/Profile',
         'suggestionsComponent':'src/js/view/component/home/Suggestions',
+        'postComponent':'src/js/view/component/home/Post',
         'p_connectionsComponent': 'src/js/view/component/profile/Connections',
         'c_connectionsComponent': 'src/js/view/component/connections/Connections',
         'invitationComponent': 'src/js/view/component/chat/Invitation',
@@ -59,6 +60,7 @@ requirejs.config({
         'chatController': 'src/js/controller/Chat',
         'router':'src/js/Router',
         'util':'src/js/util/Util',
+        'map':'src/js/util/Map',
         'validator':'src/js/util/Validator'
 	},
    map: {

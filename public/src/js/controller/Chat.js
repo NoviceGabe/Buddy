@@ -85,7 +85,7 @@ define([
 				e.preventDefault();
 				e.stopPropagation();
 				const user = group.members.find(member => member.uid != firebase.auth().currentUser.uid);
-				_router.changePath(`/profile/${user.uid}`);
+				_router.navigate(`profile/${user.uid}`);
 			});
 		});
 

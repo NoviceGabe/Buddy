@@ -1,9 +1,8 @@
 #home-section{
-  height: 100%;
+  height: auto;
   width: 90%;
   padding-top: 20px;
   margin:auto;
-  background: #efefef;
   box-sizing:border-box;
   font-family: Arial, sans-serif;
 }
@@ -62,6 +61,7 @@
    min-height:400px;
    width:90%;
    background:#fff;
+   margin-bottom: 20px;
 }
 
 .post .post-header{
@@ -76,17 +76,55 @@
   margin-right: 12px;
 }
 
+.post .post-header > img:hover{
+  cursor: pointer;
+}
+
 .post .post-header > div p{
   color: #707070;
   font-size: 14px;
 }
 
 .post .post-subheader{
-  padding: 20px 20px 20px 20px; 
+  padding: 0px 20px 20px 20px; 
 }
 
 .post .post-subheader > div{
   width: 50%;
+}
+
+.post .post-subheader .header{
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.post .post-subheader .header > div{
+  height: 100%;
+   width: 50%;
+   box-sizing:border-box;
+}
+
+.post .post-subheader .header .location > *,
+.post .post-subheader .header .work > *{
+  display: block;
+}
+
+.post .post-subheader .header .location > img,
+.post .post-subheader .header .work > img{
+  width: 10%;
+}
+
+
+.post .post-subheader .header .location > span,
+.post .post-subheader .header .work > span{
+  font-size: 11px;
+  color: #707070;
+  height: 100%;
+  width: 90%;
+}
+.post .post-subheader .header .location > span:hover{
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .post .post-subheader p{
@@ -96,6 +134,11 @@
 
 .post .post-content{
   padding:10px 20px 10px 20px;
+  min-height: 150px;
+}
+
+.post-content .post-description{
+  min-height: 100px;
 }
 
 .post .post-content > *{
@@ -113,6 +156,11 @@
   padding: 3px 7px 3px 7px;
   border: 1px solid #d3d3d3;
   font-size: 12px;
+  margin-right: 5px;
+}
+
+.post-content .post-tags li:hover{
+  cursor: pointer;
 }
 
 .post-footer .like{
@@ -137,6 +185,10 @@
   padding: 10px;
   box-sizing: border-box;
   text-align: center;
+}
+
+.post-footer .actions > span:hover{
+  cursor: pointer;
 }
 
 .post-footer .actions > span:not(:last-child){

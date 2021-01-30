@@ -144,7 +144,7 @@ define(['db'], db => {
 
 		    const following = this.prepare(`following/${followerId.trim()}/userFollowing/${followedId.trim()}`);
 		    batch.set(following, {
-		      id:followedId
+		      uid:followedId
 		    });
 	        
 	        const increment = firebase.firestore.FieldValue.increment(1);
@@ -156,7 +156,7 @@ define(['db'], db => {
 
 		    const follower = this.prepare(`following/${followedId.trim()}/userFollowers/${followerId.trim()}`);
 		    batch.set(follower, {
-		      id:followerId
+		      uid:followerId
 		    });
 
 		    const followedUser = this.prepare(`user/${followedId}`);

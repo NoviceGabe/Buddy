@@ -1,9 +1,29 @@
-define(['userModel', 'postModel', 'suggestionsComponent',  'modalComponent', 'css!css/home', 'css!css/modal'],
-	(UserModel, PostModel, SuggestionsComponent, ModalComponent)=>{
+define([
+	'userModel',
+	'postModel',
+	'postComponent', 
+	'suggestionsComponent',
+	'modalComponent',
+	'map', 
+	'css!css/home',
+	'css!css/modal'
+	],
+	(
+		UserModel, 
+		PostModel,
+		PostComponent,
+		SuggestionsComponent, 
+		ModalComponent, 
+		Map
+	)=>{
 
 	let _router;
 	let _state;
 	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
+	const _postModel = new PostModel(firebase.firestore());
+	const _postComponent = new PostComponent();
+	
+	let _map;
 
 	const _initSuggestions = async () => {
         const suggestionsView = new SuggestionsComponent();
@@ -52,6 +72,7 @@ define(['userModel', 'postModel', 'suggestionsComponent',  'modalComponent', 'cs
         const budgetType = form.querySelector('#budget-type');
         const work = form.querySelector('#work-experience');
         const job = form.querySelector('#job-type');
+        const location = document.querySelector('#container-location');
 
         budget.setAttribute('placeholder', String.fromCharCode(0x20b1)+'0');
 
@@ -62,13 +83,37 @@ define(['userModel', 'postModel', 'suggestionsComponent',  'modalComponent', 'cs
         	role.appendChild(option);
         }
 
-        modal.onTrigger(function(){
-        	_initMap(post);
-        });
+		job.addEventListener('change', function(event) {
+
+		   if(event.target.value == 2){
+
+			   	 if(location.classList.contains('remove')){
+			   	 	location.classList.remove('remove');
+			   	 }
+			   	 if(!_map){
+			   	 	_map = new Map();
+			   	 	_map
+			   	 	.onDragMarker()
+			   	 	.onClickMap()
+			   	 	.onSearch();
+			   	 }
+		   		
+		   }else{
+		   	 
+		   	  	if(!location.classList.contains('remove')){
+			   	 	location.classList.add('remove');
+			   	}
+		   }
+		});
+		
         
 
         modal.onSave(function(){
-        	const postModel = new PostModel(firebase.firestore());
+        	if(job.value == 2 && _map){
+        		post.location = _map.location;
+        	}else if(post.location){
+        		delete post.location;
+        	}
 
         	if(role.value == 'empty'){
         		console.log('No role was selected.');
@@ -97,6 +142,10 @@ define(['userModel', 'postModel', 'suggestionsComponent',  'modalComponent', 'cs
         	}else if(job.value == 'empty'){
         		console.log('No job type was selected.');
         		return false;
+        	}else if(job.value == 2 &&
+        		Object.keys(post.location).length === 0 && post.location.constructor === Object){
+        		console.log('No location was selected.');
+        		return false;
         	}
 
         	post.user = {
@@ -105,6 +154,10 @@ define(['userModel', 'postModel', 'suggestionsComponent',  'modalComponent', 'cs
         		photoURL: _state.photoURL,
         		role: role.value
         	};
+
+            if(_state.workplace){
+                post.user.work = _state.workplace.position;
+            }
 
             post.serviceCat = service.value;
             post.title = title.value.trim();
@@ -118,11 +171,18 @@ define(['userModel', 'postModel', 'suggestionsComponent',  'modalComponent', 'cs
             post.likeCount = 0;
             post.shareCount = 0;
             post.timestamp = firebase.firestore.Timestamp.fromDate(new Date());
-
-            return postModel.add(post)
+         
+            return _postModel.add(post)
                 .then(() => {
                     console.log('Post uploaded');
-                   // _homeView.addPost(post);
+                   if(_map){
+                   	_map.clear();
+                   	_map = null;
+
+                   }
+			   	  	if(!location.classList.contains('remove')){
+				   	 	location.classList.add('remove');
+				   	}
                     return true;
                 }).catch(err => {
                     console.log(err.message);
@@ -158,48 +218,56 @@ define(['userModel', 'postModel', 'suggestionsComponent',  'modalComponent', 'cs
         
     }
 
-    const _initMap = async (post) => {
-	  	const provider = new GeoSearch.OpenStreetMapProvider();
-		const searchControl = new GeoSearch.GeoSearchControl({
-		  showMarker: true,
-		  autoClose: true,
-		  keepResult: true,
-		  provider: provider,
-		  autoComplete: true, 
-  		  autoCompleteDelay: 250, 
-		});
+    const _initNewsFeed = async () =>{
+    	try {
+			const today = new Date()
+			const yesterday = new Date(today);
+			yesterday.setDate(yesterday.getDate() - 1);
+			const week = new Date(today);
+			week.setDate(week.getDate() - 7);
 
-	  	const lat = 12.8797;
-	  	const longt = 121.7740;
-	  	const ph = new L.LatLng(lat,longt);
-	 	const map = L.map('map').setView(ph, 5);
+    		const following = await _userModel.getAllFollowing(firebase.auth().currentUser.uid);
+    		// get posts for the past 7 days and today from following 
+    		for(let user of following){
+				_postModel.prepareAllByDate(user.uid, ORDER)
+				.where('timestamp', '>=', week)
+				.onSnapshot(querySnapshot => {
+					querySnapshot.docChanges().forEach(change =>{
+						if(change.type == "added"){
+							const post = change.doc.data();
+							if(post){
+								_postComponent.render(post);
+							}
+						}
+					});
+				});    			
+    		}
+    		// get posts for the past 7 days and today from current user 
+    		_postModel.prepareAllByDate(firebase.auth().currentUser.uid, ORDER)
+				.where('timestamp', '>=', yesterday)
+				.onSnapshot(querySnapshot => {
+					querySnapshot.docChanges().forEach(change =>{
+						if(change.type == "added"){
+							const post = change.doc.data();
+							if(post){
+								_postComponent.render(post);
+							}
+						}
+					});
+				});   		
 
-	 	map.addControl(searchControl);
 
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(map);
-
-		L.marker([lat, longt]).addTo(map);
-
-		const callback = (data) => {
-        	map.setView([data.location.y, data.location.x], 13);
-        	map.dragging.enable();
-        	map.scrollWheelZoom.enabled();
-			post.location = {};
-			post.location.x = data.location.x;
-			post.location.y = data.location.y;
-			post.location.label = data.location.label;
-		}
-
-		map.on('geosearch/showlocation', callback);
-
-	 }
+    		
+    	} catch(e) {
+    		console.log(e.message);
+    	}
+    }
 
 	return class Home{
 		constructor(state, router){
 			_router = router;
 			_state = state;
+			_initNewsFeed();
 			_initSuggestions();
 			_initWritePost();
 		}

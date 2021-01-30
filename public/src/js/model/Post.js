@@ -35,6 +35,10 @@ define(['db'], db => {
 		    });
 		}
 
+		prepareAllByDate(id, order){
+			return this.prepareAllOrderBy(`posts/${id}/userPost`, 'timestamp', order);
+		}
+
 		update(post){
 			return this.hasPost(post.id).then(p => {
 				if(p.docs.length > 0){

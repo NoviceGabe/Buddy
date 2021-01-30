@@ -5,6 +5,7 @@
 }
 
 #sidebar{
+  height: 600px;
   background: #F5F5F5;
   border: 2px solid #e7e6e6;
   box-sizing: border-box;
@@ -22,6 +23,7 @@
 }
 
 #main{
+  height: 600px;
   width: 20%;
   background: #fff;
   border: 2px solid #e7e6e6;
