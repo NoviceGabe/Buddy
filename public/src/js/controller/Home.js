@@ -5,6 +5,7 @@ define([
 	'suggestionsComponent',
 	'modalComponent',
 	'map', 
+    'util',
 	'css!css/home',
 	'css!css/modal'
 	],
@@ -14,14 +15,15 @@ define([
 		PostComponent,
 		SuggestionsComponent, 
 		ModalComponent, 
-		Map
+		Map,
+        Util
 	)=>{
 
 	let _router;
 	let _state;
 	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
 	const _postModel = new PostModel(firebase.firestore());
-	const _postComponent = new PostComponent();
+	let _postComponent;
 	
 	let _map;
 
@@ -237,6 +239,8 @@ define([
 							const post = change.doc.data();
 							if(post){
 								_postComponent.render(post);
+                                avatarObserver(post);
+                                likeObserver(post);
 							}
 						}
 					});
@@ -244,14 +248,17 @@ define([
     		}
     		// get posts for the past 7 days and today from current user 
     		_postModel.prepareAllByDate(firebase.auth().currentUser.uid, ORDER)
+                //.where('timestamp', '>=', week)
 				.where('timestamp', '>=', yesterday)
 				.onSnapshot(querySnapshot => {
 					querySnapshot.docChanges().forEach(change =>{
 						if(change.type == "added"){
 							const post = change.doc.data();
 							if(post){
-								_postComponent.render(post);
-							}
+                                _postComponent.render(post);
+                                avatarObserver(post);
+                                likeObserver(post);
+                            }
 						}
 					});
 				});   		
@@ -261,12 +268,62 @@ define([
     	} catch(e) {
     		console.log(e.message);
     	}
+
+        const likeObserver = (post) =>{
+            const ref = document.getElementById(post.id);
+            const like = ref.querySelector('.action-like');
+            let hasLike = false;
+
+            _postModel.hasLike(post.id, firebase.auth().currentUser.uid).then(value => {
+                if(value.length){
+                    like.classList.add('color-like');
+                    hasLike = true;
+                }
+            });
+
+            like.addEventListener('click', function(e){
+                if(hasLike){
+                    like.classList.remove('color-like');
+                }else{
+                   like.classList.add('color-like');
+                }
+                
+                _postModel.onToggleLike(post.id, post.user.uid, firebase.auth().currentUser.uid, function(count, flag){
+                    const postContainer = document.getElementById(post.id);
+                    const likeCount = postContainer.querySelector('.post-footer .like .count');
+                    likeCount.innerText = count;
+
+                     hasLike = flag;
+
+                    if(hasLike){
+                        like.classList.add('color-like');
+                    }else{
+                        like.classList.remove('color-like');
+                    }
+                   
+                });
+            });
+        }
+
+        const avatarObserver = (post) => {
+            const ref = document.getElementById(post.id);
+            const opAvatar = ref.querySelector('.post-header > img');
+            const userAvatar = ref.querySelector('.post-footer .comment-section .input img')
+            opAvatar.addEventListener('click', e =>{
+                _router.navigate(`profile/${post.user.uid}`);
+            });
+
+            userAvatar.addEventListener('click', e =>{
+                _router.navigate(`profile/${firebase.auth().currentUser.uid}`);
+            });
+        }
     }
 
 	return class Home{
 		constructor(state, router){
 			_router = router;
 			_state = state;
+            _postComponent = new PostComponent(_state);
 			_initNewsFeed();
 			_initSuggestions();
 			_initWritePost();

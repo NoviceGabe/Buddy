@@ -43,5 +43,8 @@ define(() => {
 			return ret;
 		}
 
+		static isType(type, val) {
+		  return val.constructor.name.toLowerCase() === type.toLowerCase();
+		}
 	}
 });

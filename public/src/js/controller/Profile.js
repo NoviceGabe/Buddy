@@ -774,22 +774,24 @@ define([
         if (firebase.auth().currentUser.uid == _state.uid) {
             tabs.innerHTML = `
 				<ul>
-					<li class="active" data-content="tab-1">My Profile</li>
-					<li data-content="tab-2">My Connections</li>
-					<li data-content="tab-3">Services</li>
-					<li data-content="tab-4">Account Settings</li>
+                    <li class="active" data-content="tab-1">My Timeline</li>
+					<li data-content="tab-2">My Profile</li>
+					<li data-content="tab-3">My Connections</li>
+					<li data-content="tab-4">Services</li>
+					<li data-content="tab-5">Account Settings</li>
 				</ul>`;
         } else {
             tabs.innerHTML = `
 				<ul>
-					<li class="active" data-content="tab-1">Profile</li>
-					<li data-content="tab-2">Connections</li>
-					<li data-content="tab-3">Services</li>
+                    <li class="active" data-content="tab-1">My Timeline</li>
+					<li class="active" data-content="tab-2">Profile</li>
+					<li data-content="tab-3">Connections</li>
+					<li data-content="tab-4">Services</li>
 				</ul>`;
         }
         const content = document.querySelector('#tab-content');
         _initProfile();
-        _initConnections();
+      //  _initConnections();
     }
 
     const _initProfile = () => {
@@ -808,18 +810,18 @@ define([
     const _initConnections = async () => {
         try {
             const p_connectionsView = new ConnectionComponent(_state);
-
+            console.log(_state)
             const following = await _userModel.getAllFollowing(_state.uid);
             const followingUsers = await _userModel.fetchMembers(following);
 
-            if (followingUsers) {
+            if (followingUsers.length) {
                 p_connectionsView.render('following', followingUsers);
             }
 
             const follower = await _userModel.getAllFollowers(_state.uid);
             const followerUsers = await _userModel.fetchMembers(follower);
 
-            if (followerUsers) {
+            if (followerUsers.length) {
                 p_connectionsView.render('follower', followerUsers);
             }
 
@@ -838,14 +840,6 @@ define([
                 const tabContent = document.querySelector(`#${contentId}`);
                 if (contentId != _contentId) {
                     document.querySelector(`#${_contentId}`).style.display = 'none';
-                }
-                const suggestions = document.querySelector('#suggestions');
-                if (suggestions) {
-                    if (contentId != HOME_TAB) {
-                        suggestions.style.display = 'none';
-                    } else {
-                        suggestions.style.display = 'block';
-                    }
                 }
 
                 tabContent.style.display = 'flex';

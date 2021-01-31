@@ -8,10 +8,11 @@ define(['moment'],(moment)=>{
 
 	const FIXED = '1';
 	const NEGO = '2';
+	let _state;
 
 	return class Post{
-		constructor(){
-
+		constructor(state){
+			_state = state;
 		}
 
 		render(posts){
@@ -42,6 +43,7 @@ define(['moment'],(moment)=>{
 		template(post){
 			const container = document.createElement('div');
 			container.classList.add('post');
+			container.setAttribute('id', post.id);
 			container.appendChild(this.header(post));
 			container.appendChild(this.subheader(post));
 			container.appendChild(this.content(post));
@@ -59,8 +61,8 @@ define(['moment'],(moment)=>{
 
 			let photoUrl = 'src/assets/man.jpg';
 
-			if(post.user.photoUrl){
-				photoUrl = post.user.photoUrl;
+			if(post.user.photoURL){
+				photoUrl = post.user.photoURL;
 			}
 
 			avatar.setAttribute('src', photoUrl);
@@ -303,6 +305,10 @@ define(['moment'],(moment)=>{
 			comment.classList.add('float-left');
 			share.classList.add('float-left');
 
+			like.classList.add('action-like');
+			comment.classList.add('action-comment');
+			share.classList.add('action-share');
+
 			like.innerText = 'Like';
 			comment.innerText = 'Comment';
 			share.innerText = 'Share';
@@ -311,8 +317,38 @@ define(['moment'],(moment)=>{
 			actions.appendChild(comment);
 			actions.appendChild(share);
 
+			const commentSection = document.createElement('div');
+			const comments = document.createElement('div');
+			const input = document.createElement('div');
+			const div1 = document.createElement('div');
+			const div2 = document.createElement('div');
+
+			const avatar = document.createElement('img');
+			const commentInput = document.createElement('textarea');
+			commentInput.setAttribute('placeholder', 'Write a comment..');
+			commentSection.classList.add('comment-section');
+			comments.classList.add('comments');
+			input.classList.add('input');
+
+			let photoUrl = 'src/assets/man.jpg';
+
+			if(_state.photoURL){
+				photoUrl = _state.photoURL;
+			}
+
+			avatar.setAttribute('src', photoUrl);
+
+			div1.appendChild(avatar);
+			div2.appendChild(commentInput);
+			input.appendChild(div1);
+			input.appendChild(div2);
+
+			commentSection.appendChild(comments);
+			commentSection.appendChild(input);
+
 			footer.appendChild(likeCounter);
 			footer.appendChild(actions);
+			footer.appendChild(commentSection)
 
 			return footer;
 		}

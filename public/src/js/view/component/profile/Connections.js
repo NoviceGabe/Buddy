@@ -37,7 +37,7 @@ define(['util'], (Util) => {
 
 			const fragment = new DocumentFragment();
 			const dialog = document.querySelector(`#${ref}-dialog`);
-
+			console.log(users)
 			users.forEach(user => {
 				fragment.appendChild(this.template(user));
 			});

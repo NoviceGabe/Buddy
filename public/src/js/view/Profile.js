@@ -16,10 +16,14 @@ define(()=>{
 
 				<div id="tab-content">
 					<div id="tab-1">
-						<div id="profile">
+						<div id="timeline">
 						</div>
 					</div>
-					<div id="tab-2" class="remove">
+					<div id="tab-2">
+						<div id="profile" class="remove">
+						</div>
+					</div>
+					<div id="tab-3" class="remove">
 						<div id="connections">
 						</div>
 					</div>

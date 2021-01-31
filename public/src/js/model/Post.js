@@ -14,7 +14,9 @@ define(['db'], db => {
 		}
 
 		get(uid, postId){
-			return this.get(`posts/${uid}/userPost/${postId}`);
+			return super.get(`posts/${uid}/userPost/${postId}`).then(doc => {
+				return doc.data();
+			});
 		}
 
 		getAll(id){
@@ -71,16 +73,16 @@ define(['db'], db => {
 			});
 		}
 
-		like(id){
+		like(postId, postUserId, userId){
 			const batch = this.batch();
-			const like = this.prepare(`likes/${UID}_${id}`);
+			const like = this.prepare(`likes/${userId}_${postId}`);
 			batch.set(like, {
-		        userId: UID,
-		        postId: id,
+		        userId: userId,
+		        postId: postId,
 		    });
 
 		    const increment = firebase.firestore.FieldValue.increment(1);
-		    const count = this.prepare(`posts/${UID}/userPost/${id}`);
+		    const count = this.prepare(`posts/${postUserId}/userPost/${postId}`);
 		    batch.update(count, {
 		      likeCount: increment
 		    });
@@ -88,18 +90,35 @@ define(['db'], db => {
 		    return batch.commit();
 		}
 
-		dislike(id){
+		dislike(postId, postUserId, userId){
 			const batch = this.batch();
-			const dislike = this.prepare(`likes/${UID}_${id}`);
+			const dislike = this.prepare(`likes/${userId}_${postId}`);
 			batch.delete(dislike);
 
 			const decrement = firebase.firestore.FieldValue.increment(-1);
-		    const count = this.prepare(`posts/${UID}/userPost/${id}`);
+		    const count = this.prepare(`posts/${postUserId}/userPost/${postId}`);
 		    batch.update(count, {
 		      likeCount: decrement
 		    });
 
 		    return batch.commit();
+		}
+
+		async onToggleLike(postId, postUserId, userId, callback){
+			try {
+				const postLike = await this.hasLike(postId, userId);
+				if(postLike.length){
+				 	const dislike = await this.dislike(postId, postUserId, userId);
+				 	const post = await this.get(postUserId, postId);
+				 	callback(post.likeCount, false);
+				}else{
+				 	const like = await this.like(postId, postUserId, userId);
+				 	const post = await this.get(postUserId, postId);
+				 	callback(post.likeCount, true);
+				 }
+			} catch(e) {
+				console.log(e.message);
+			}
 		}
 
 		hasPost(id){
@@ -108,6 +127,19 @@ define(['db'], db => {
 				operator: '==',
 				value: id
 			});
+		}
+
+		hasLike(postId, userId){
+			return this.prepareCollection('likes')
+			  .where('postId','==', postId)
+			  .where('userId','==', userId)
+			  .get()
+			  .then(snapshot => {
+			  	 const data = snapshot.docs.map(doc => ({
+		        ...doc.data()
+		        }));
+			  	 return data;
+			  });
 		}
 	}
 });

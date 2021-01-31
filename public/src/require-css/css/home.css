@@ -178,11 +178,12 @@
   padding-left: 10px;
   padding-right: 10px;
   border-top: 2px solid #efefef;
+  border-bottom: 1px solid  #efefef;
 }
 
 .post-footer .actions > span{
   width: 33.33%;  
-  padding: 10px;
+  padding: 5px;
   box-sizing: border-box;
   text-align: center;
 }
@@ -193,6 +194,60 @@
 
 .post-footer .actions > span:not(:last-child){
   border-right: 2px solid #efefef;
+}
+
+.post-footer .comment-section{
+  display: flex;
+  padding: 5px 10px 10px 5px;
+  flex-direction: column;
+}
+
+.post-footer .comment-section .comments{
+  width: 100%;
+  height: auto;
+}
+
+.post-footer .comment-section .input {
+  display: flex;
+}
+
+.post-footer .comment-section .input > div:first-child{
+  width: 9%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 5px 0 5px 5px;
+}
+
+.post-footer .comment-section .input > div:last-child{
+  width: 90%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 6px 6px 0 6px;
+}
+
+.post-footer .comment-section img{
+  border-radius: 50%;
+  border: 1px solid #efefef;
+  height: 40px;
+  width: 40px;
+  display: block;
+}
+
+.post-footer .comment-section img:hover{
+  cursor: pointer;
+}
+
+.post-footer .comment-section textarea{
+  width: 100%;
+  height: 38px;
+  padding: 10px;
+  margin:  auto;
+  outline: 0;
+  font-size: 14px;
+  resize: none;
+  overflow-x:hidden;
+  white-space: pre-wrap;
+  box-sizing: border-box;
 }
 
 #suggestions {
@@ -228,4 +283,8 @@
 
 #suggestions > div{
   margin-bottom: 20px;
+}
+
+.color-like{
+ color: #0275d8;
 }
