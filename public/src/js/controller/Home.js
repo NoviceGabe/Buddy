@@ -241,6 +241,7 @@ define([
 								_postComponent.render(post);
                                 avatarObserver(post);
                                 likeObserver(post);
+                                commentObserver(post);
 							}
 						}
 					});
@@ -258,6 +259,7 @@ define([
                                 _postComponent.render(post);
                                 avatarObserver(post);
                                 likeObserver(post);
+                                commentObserver(post);
                             }
 						}
 					});
@@ -316,6 +318,45 @@ define([
             userAvatar.addEventListener('click', e =>{
                 _router.navigate(`profile/${firebase.auth().currentUser.uid}`);
             });
+        }
+
+        const commentObserver = (post) => {
+            const ref = document.getElementById(post.id);
+            const text = ref.querySelector('.input textarea');
+
+            text.addEventListener('keyup', (e) => {
+                const key = e.keyCode;
+                if(key === 13 && text.value.length){
+                    const comment = {
+                                uid: firebase.auth().currentUser.uid,
+                                name: _state.name,
+                                photoURL:_state.photoURL,
+                                postId: post.id,
+                                postUserId: post.user.uid,
+                                text:text.value.trim(),
+                                timestamp: firebase.firestore.Timestamp.fromDate(new Date())
+                                }
+
+                    _postModel.addComment(comment).then(() => {
+                        text.value = '';
+                        e.target.style.height = '38px';
+                    }).catch(err => {
+                        console.log(err.message);
+                    });
+                }
+            });
+
+             _postModel.prepareAllCommentsByDate(post.id, post.user.uid, ORDER)
+                .onSnapshot(querySnapshot => {
+                    querySnapshot.docChanges().forEach(change =>{
+                        if(change.type == "added"){
+                            const comment = change.doc.data();
+                            if(comment){
+                               _postComponent.comment(comment);
+                            }
+                        }
+                    });
+                });
         }
     }
 

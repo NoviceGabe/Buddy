@@ -82,8 +82,8 @@ define(['db'], db => {
 		    });
 
 		    const increment = firebase.firestore.FieldValue.increment(1);
-		    const count = this.prepare(`posts/${postUserId}/userPost/${postId}`);
-		    batch.update(count, {
+		    const post = this.prepare(`posts/${postUserId}/userPost/${postId}`);
+		    batch.update(post, {
 		      likeCount: increment
 		    });
 
@@ -140,6 +140,28 @@ define(['db'], db => {
 		        }));
 			  	 return data;
 			  });
+		}
+
+		addComment(comment){
+			const batch = this.batch();
+
+			const ref = this.prepareCollection(`posts/${comment.postUserId}/userPost/${comment.postId}/comments`)
+			.doc();
+			comment.id = ref.id;
+
+			batch.set(ref, comment);
+
+			const increment = firebase.firestore.FieldValue.increment(1);
+		    const post = this.prepare(`posts/${comment.postUserId}/userPost/${comment.postId}`);
+		    batch.update(post, {
+		      commentCount: increment
+		    });
+
+		    return batch.commit();
+		}
+
+		prepareAllCommentsByDate(postId, postUserId, order){
+			return this.prepareAllOrderBy(`posts/${postUserId}/userPost/${postId}/comments`, 'timestamp', order);
 		}
 	}
 });

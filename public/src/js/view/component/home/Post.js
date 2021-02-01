@@ -326,9 +326,39 @@ define(['moment'],(moment)=>{
 			const avatar = document.createElement('img');
 			const commentInput = document.createElement('textarea');
 			commentInput.setAttribute('placeholder', 'Write a comment..');
+			commentInput.style.height = '38px';
 			commentSection.classList.add('comment-section');
+			commentSection.classList.add('remove');
 			comments.classList.add('comments');
 			input.classList.add('input');
+
+			comment.addEventListener('click', e => {
+				if(commentSection.classList.contains('remove')){
+					commentSection.classList.remove('remove');
+					commentInput.focus();
+				}
+			});
+
+			commentInput.addEventListener('keydown', e => {
+				const height = parseInt(e.target.style.height.replace('px',''));
+				if(height < 138){
+				 	e.target.style.height = 'auto';
+				  	e.target.style.height = (e.target.scrollHeight) + 'px';
+				  	return;
+				}
+				if(e.target.style.overflowY != 'auto'){
+				  	 e.target.style.overflowY = 'auto';
+				}
+				 
+			}, false);
+
+			commentInput.addEventListener('keyup', (e) => {
+				const key = e.keyCode;
+				
+				if(e.target.value.trim().length == 0){
+					e.target.style.height = '38px';
+				}			
+			});
 
 			let photoUrl = 'src/assets/man.jpg';
 
@@ -351,6 +381,65 @@ define(['moment'],(moment)=>{
 			footer.appendChild(commentSection)
 
 			return footer;
+		}
+
+		comment(data){
+			const post = document.getElementById(data.postId);
+			const container = post.querySelector('.comment-section .comments');
+			const comment = document.createElement('div');
+			const div1 = document.createElement('div');
+			const div2 = document.createElement('div');
+			const bubble = document.createElement('div');
+			const avatar = document.createElement('img');
+			const name = document.createElement('p');
+			const text = document.createElement('p');
+			const time = document.createElement('p');
+
+			comment.classList.add('comment');
+			bubble.classList.add('bubble-container');
+
+			let photoURL = 'src/assets/man.jpg';
+			let textData = '';
+			let timeData = '';
+			let nameData = '';
+
+			if(data.name){
+				nameData = data.name;
+			}
+			if(data.photoURL){
+				photoURL = data.photoURL;
+			}
+			if(data.text){
+				textData = data.text;
+			}
+			if(data.timestamp){
+				let date;
+				try {
+					date = data.timestamp.toDate();
+				} catch(e) {
+					date = new firebase.firestore
+						.Timestamp(data.timestamp.seconds, 
+						data.timestamp.nanoseconds)
+						.toDate();
+				}
+
+				const time = moment(date, "YYYYMMDD").fromNow();
+				timeData = time;
+			}
+			avatar.setAttribute('src', photoURL);
+			name.innerText = nameData;
+			text.innerText = textData;
+			time.innerText = timeData;
+			div1.appendChild(avatar);
+			bubble.appendChild(name);
+			bubble.appendChild(text);
+			div2.appendChild(bubble);
+			div2.appendChild(time);
+
+			comment.appendChild(div1);
+			comment.appendChild(div2);
+
+			container.appendChild(comment);
 		}
 	}
 });
