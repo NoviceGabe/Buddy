@@ -20,7 +20,6 @@ define(['moment'],(moment)=>{
 
 			if(posts.length){
 				const fragment = new DocumentFragment();
-
 				posts.forEach(post => {
 					let div = this.template(post);
 					fragment.appendChild(div);
@@ -265,42 +264,83 @@ define(['moment'],(moment)=>{
 
 		footer(post){
 			const footer = document.createElement('div');
-			footer.classList.add('post-footer');
-
-			const likeCounter = document.createElement('div');
+			
+			const bar = document.createElement('div');
 			const actions = document.createElement('div');
 
-			likeCounter.classList.add('like');
-			likeCounter.classList.add('clear-fix');
+			const barDiv1 = document.createElement('div');
+			const barDiv2 = document.createElement('div')
 
-			actions.classList.add('actions');
-			actions.classList.add('clear-fix');
-
+			const barDiv1Child = document.createElement('div');
 			const image = document.createElement('img');
-			image.setAttribute('src', 'src/assets/like-filled.png');
-			image.classList.add('float-left');
-			image.setAttribute('height', '10');
-			image.setAttribute('width', '18');
+			const likeCountContainer = document.createElement('span');
 
-			const countContainer = document.createElement('span');
-			countContainer.classList.add('count');
-			countContainer.classList.add('float-left');
-
-			let count = 0;
-
-			if(post.likeCount){
-				count = post.likeCount;
-			}
-
-			countContainer.innerText = count;
-
-			likeCounter.appendChild(image);
-			likeCounter.appendChild(countContainer);
+			const commentCountContainer = document.createElement('span');
 
 			const like = document.createElement('span');
 			const comment = document.createElement('span');
 			const share = document.createElement('span');
 
+			const commentSection = document.createElement('div');
+			const comments = document.createElement('div');
+			const input = document.createElement('div');
+			const div1 = document.createElement('div');
+			const div2 = document.createElement('div');
+
+			const commentInput = document.createElement('textarea');
+			const avatar = document.createElement('img');
+
+			footer.classList.add('post-footer');
+
+			bar.classList.add('bar');
+			bar.style.display = 'none';
+
+			image.setAttribute('src', 'src/assets/like-filled.png');
+			image.setAttribute('height', '15');
+			image.setAttribute('width', '18');
+			likeCountContainer.classList.add('like-count');
+
+			commentCountContainer.classList.add('comment-count');
+
+			actions.classList.add('actions');
+			actions.classList.add('clear-fix');
+
+			if(post.likeCount || post.commentCount){
+				bar.style.display = 'flex';
+			}
+
+			if(post.likeCount){
+				barDiv1Child.style.display = 'flex';
+			}else{
+				barDiv1Child.style.display = 'none';
+			}
+
+			if(post.commentCount){
+				commentCountContainer.style.display = 'block';
+			}else{
+				commentCountContainer.style.display = 'none';
+			}
+
+			likeCountContainer.innerText = post.likeCount;
+			barDiv1Child.appendChild(image);
+			barDiv1Child.appendChild(likeCountContainer);
+
+			barDiv1.appendChild(barDiv1Child);
+
+			let suffix = (post.commentCount > 1)? 's':'';
+			commentCountContainer.innerText = `${post.commentCount} comment${suffix}`;
+			commentCountContainer.addEventListener('click', e => {
+				if(commentSection.classList.contains('remove')){
+					commentSection.classList.remove('remove');
+					commentInput.focus();
+				}
+			});
+
+			barDiv2.appendChild(commentCountContainer);
+
+			bar.appendChild(barDiv1);
+			bar.appendChild(barDiv2);
+			
 			like.classList.add('float-left');
 			comment.classList.add('float-left');
 			share.classList.add('float-left');
@@ -316,21 +356,17 @@ define(['moment'],(moment)=>{
 			actions.appendChild(like);
 			actions.appendChild(comment);
 			actions.appendChild(share);
-
-			const commentSection = document.createElement('div');
-			const comments = document.createElement('div');
-			const input = document.createElement('div');
-			const div1 = document.createElement('div');
-			const div2 = document.createElement('div');
-
-			const avatar = document.createElement('img');
-			const commentInput = document.createElement('textarea');
+		
 			commentInput.setAttribute('placeholder', 'Write a comment..');
 			commentInput.style.height = '38px';
 			commentSection.classList.add('comment-section');
 			commentSection.classList.add('remove');
 			comments.classList.add('comments');
 			input.classList.add('input');
+
+			if(post.commentCount){
+				comments.style.padding = '10px';
+			}
 
 			comment.addEventListener('click', e => {
 				if(commentSection.classList.contains('remove')){
@@ -376,14 +412,24 @@ define(['moment'],(moment)=>{
 			commentSection.appendChild(comments);
 			commentSection.appendChild(input);
 
-			footer.appendChild(likeCounter);
+			footer.appendChild(bar);
 			footer.appendChild(actions);
 			footer.appendChild(commentSection)
 
 			return footer;
 		}
 
-		comment(data){
+		comments(data, position){
+			if(data.length){
+				data.forEach(comment => {
+					this.comment(comment, position);
+				});
+			}else{
+				this.comment(data);
+			}
+		}
+
+		comment(data, position = 'end'){
 			const post = document.getElementById(data.postId);
 			const container = post.querySelector('.comment-section .comments');
 			const comment = document.createElement('div');
@@ -397,6 +443,7 @@ define(['moment'],(moment)=>{
 
 			comment.classList.add('comment');
 			bubble.classList.add('bubble-container');
+			time.classList.add('time');
 
 			let photoURL = 'src/assets/man.jpg';
 			let textData = '';
@@ -430,6 +477,8 @@ define(['moment'],(moment)=>{
 			name.innerText = nameData;
 			text.innerText = textData;
 			time.innerText = timeData;
+			time.setAttribute('data-seconds', data.timestamp.seconds);
+			time.setAttribute('data-nanoseconds', data.timestamp.nanoseconds);
 			div1.appendChild(avatar);
 			bubble.appendChild(name);
 			bubble.appendChild(text);
@@ -438,8 +487,26 @@ define(['moment'],(moment)=>{
 
 			comment.appendChild(div1);
 			comment.appendChild(div2);
+			if(position == 'first'){
+				container.insertBefore(comment, container.firstChild.nextSibling);
+			}else{
+				container.appendChild(comment);
+			}
+			
+			this.changeTime();
+			setInterval(() =>{
+				this.changeTime();
+			}, 1000*60);
+		}
 
-			container.appendChild(comment);
+		changeTime(){
+			const commentTime = document.querySelectorAll('.comment-section .comment .time');
+			commentTime.forEach(element => {
+				let seconds = element.dataset.seconds;
+				let nanoseconds = element.dataset.nanoseconds;
+				let timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds).toDate();
+				element.innerText = 'sent '+moment(timestamp, "YYYYMMDD").fromNow();
+			});
 		}
 	}
 });

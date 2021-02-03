@@ -24,6 +24,7 @@ define([
 	const _userModel = new UserModel(firebase.firestore(), firebase.auth());
 	const _postModel = new PostModel(firebase.firestore());
 	let _postComponent;
+    const COMMENT_COUNT = 2;
 	
 	let _map;
 
@@ -292,10 +293,25 @@ define([
                 
                 _postModel.onToggleLike(post.id, post.user.uid, firebase.auth().currentUser.uid, function(count, flag){
                     const postContainer = document.getElementById(post.id);
-                    const likeCount = postContainer.querySelector('.post-footer .like .count');
+                    const bar = postContainer.querySelector('.post-footer .bar');
+                    const likeCount = bar.querySelector('.like-count');
                     likeCount.innerText = count;
 
-                     hasLike = flag;
+                    if(count && bar.style.display == 'none'){
+                        bar.style.display = 'flex';
+                    }
+
+                    if(!count && !post.commentCount){
+                        bar.style.display = 'none';
+                    }
+                    
+                    if(count && likeCount.parentElement.style.display == 'none'){
+                        likeCount.parentElement.style.display = 'flex';
+                    }else if(!count && likeCount.parentElement.style.display == 'flex'){
+                        likeCount.parentElement.style.display = 'none';
+                    }
+
+                    hasLike = flag;
 
                     if(hasLike){
                         like.classList.add('color-like');
@@ -322,7 +338,15 @@ define([
 
         const commentObserver = (post) => {
             const ref = document.getElementById(post.id);
+            const commentCount = ref.querySelector('.comment-count');
             const text = ref.querySelector('.input textarea');
+
+            let lastVisible;
+            let showPreviousLink = false;
+            let prevCount = 0;
+            let lastPage = false;
+            let flag = false;
+            let commentListener;
 
             text.addEventListener('keyup', (e) => {
                 const key = e.keyCode;
@@ -340,23 +364,100 @@ define([
                     _postModel.addComment(comment).then(() => {
                         text.value = '';
                         e.target.style.height = '38px';
+                        let suffix = (post.commentCount > 1)? 's':'';
+                        post.commentCount++;
+                        commentCount.innerText = `${post.commentCount} comment${suffix}`;
                     }).catch(err => {
                         console.log(err.message);
                     });
                 }
             });
 
-             _postModel.prepareAllCommentsByDate(post.id, post.user.uid, ORDER)
+            if(commentListener != undefined){
+                commentListener();
+                commentListener = undefined;
+            }
+
+            if(commentListener == undefined){
+                 commentListener = _postModel.prepareCertainCommentsByDate(post.id, post.user.uid, ORDER, COMMENT_COUNT)
                 .onSnapshot(querySnapshot => {
+                    let comments = [];
                     querySnapshot.docChanges().forEach(change =>{
                         if(change.type == "added"){
                             const comment = change.doc.data();
-                            if(comment){
-                               _postComponent.comment(comment);
-                            }
+                            comments.push(comment);
                         }
                     });
+
+                    if(!flag){
+                         if(comments.length == COMMENT_COUNT){
+                            lastVisible = querySnapshot.docs[querySnapshot.docs.length-2];
+                            comments.pop();
+                        }else{
+                            lastVisible = querySnapshot.docs[querySnapshot.docs.length-1];
+                        }
+                        flag = true;
+                    }
+
+                    if(comments.length){
+                        comments.reverse();
+                        _postComponent.comments(comments);
+                    }
+
+                 });
+            }
+           
+            if(post.commentCount > 1){
+                const container = ref.querySelector('.comment-section .comments');
+                const loadMore = document.createElement('div');
+                const span = document.createElement('span');
+
+                loadMore.classList.add('load-more');
+                span.innerText = 'Show more comments';
+            
+                loadMore.appendChild(span);
+
+                container.insertBefore(loadMore, container.firstChild);
+                loadMore.addEventListener('click', async (e) => {
+                    // load previous comments
+                    console.log(lastVisible)
+                    if(lastVisible && !lastPage){
+                        try {
+                            const prev =  _postModel.prepareCertainCommentsByDate(post.id, post.user.uid, ORDER, 10)
+                            .startAfter(lastVisible);
+                            const snapshot = await prev.get();
+                            prevCount = snapshot.docs.length;
+
+                            if(prevCount > 0){
+                                const oldComments = snapshot.docs.map(doc => ({
+                                    ...doc.data()
+                                }));
+
+                                if(snapshot.docs.length == 10){
+                                    lastVisible = snapshot.docs[snapshot.docs.length-2];
+                                    oldComments.pop();
+                                }else{
+                                    lastVisible = snapshot.docs[snapshot.docs.length-1];
+                                    loadMore.classList.add('remove');
+                                    lastPage = true;
+                                }
+
+                                if(oldComments.length){
+                                   _postComponent.comments(oldComments, 'first');
+                                }
+
+                            }else{
+                                loadMore.classList.add('remove');
+                                lastPage = true;
+                            }
+
+                        } catch(e) {
+                            console.log(e.message);
+                        }
+                      
+                    }
                 });
+            }
         }
     }
 

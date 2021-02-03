@@ -163,5 +163,10 @@ define(['db'], db => {
 		prepareAllCommentsByDate(postId, postUserId, order){
 			return this.prepareAllOrderBy(`posts/${postUserId}/userPost/${postId}/comments`, 'timestamp', order);
 		}
+
+		prepareCertainCommentsByDate(postId, postUserId, order, limit) {
+			return this.prepareCertainOrderBy(`posts/${postUserId}/userPost/${postId}/comments`,
+			 'timestamp', order, limit);
+		}
 	}
 });

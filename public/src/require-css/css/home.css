@@ -1,6 +1,8 @@
 #home-section{
+  display: flex;
+  flex-direction: column;
   height: auto;
-  width: 90%;
+  width: 75%;
   padding-top: 20px;
   margin:auto;
   box-sizing:border-box;
@@ -15,16 +17,19 @@
 }
 
 #header > div{
+  display: flex;
   height: 100%;
   width: 70%;
   padding-left: 30px;
   padding-right: 100px;
   box-sizing: border-box;
+  justify-content: space-between;
 }
 
 #header > div button{
   display: inline-block;
   border-radius: 4px;
+  height: 40px;
   width:110px;
   padding:8px 10px;
   background:#e2202c;
@@ -36,31 +41,34 @@
   cursor: pointer;
 }
 
+#home-main{
+  display: flex;
+  height: auto;
+  margin-bottom: 50px;
+}
 
 #home-main .col-1{
-  width: 60%;
-  height:100vh;
+  width: 70%;
+  height:auto;
   box-sizing:border-box;
   margin-right: 20px;
+  padding: 10px;
 }
 
 #home-main .col-2{
-  width: 25%;
+  width: 30%;
   min-height: 300px;
   padding: 10px;
   box-sizing:border-box;
   position: relative;
 }
 
-#newsfeed{
-  padding: 10px;
-}
-
 #newsfeed .post{
    border-radius: 25px;
-   min-height:400px;
-   width:90%;
+   min-height:365px;
+   width:80%;
    background:#fff;
+   margin: auto;
    margin-bottom: 20px;
 }
 
@@ -163,15 +171,37 @@
   cursor: pointer;
 }
 
-.post-footer .like{
-  padding: 5px 0px 5px 20px;
+.post-footer .bar{
+  height: 20px;
+  padding: 5px 0;
   border-top: 2px solid #efefef;
 }
 
-.post-footer .like > *{
+.post-footer .bar > div:first-child{
+  display: flex;
+  height: 100%;
+  width: 50%;
+  margin-left: 20px;
+}
+
+.post-footer .bar > div:first-child > div > img{
+  margin-right: 5px;
+}
+
+.post-footer .bar > div:first-child > div > *{
   display: inline-block;
-  height: 20px;
-  margin-right: 10px;
+  height: 100%;
+}
+
+.post-footer .bar > div:last-child{
+  text-align: right;
+  height: 100%;
+  width: 50%;
+  margin-right: 20px;
+}
+
+.post-footer .bar > div:last-child span:hover{
+  cursor: pointer;
 }
 
 .post-footer .actions{
@@ -204,7 +234,6 @@
 .post-footer .comment-section .comments{
   width: 100%;
   height: auto;
-  padding: 10px;
   box-sizing: border-box;
 }
 
@@ -245,6 +274,19 @@
   padding-left:5px;
   padding-right: 5px;
    box-sizing: border-box;
+}
+
+.post-footer .comment-section .comments .load-more{
+  margin-bottom: 10px;
+}
+
+.post-footer .comment-section .comments .load-more span{
+  text-decoration: underline;
+  font-size: 12px;
+}
+
+.post-footer .comment-section .comments .load-more span:hover{
+  cursor: pointer;
 }
 
 
@@ -298,6 +340,7 @@
   height: 420px;
   box-sizing:border-box;
   padding: 30px;
+  margin:auto;
 }
 
 #suggestions ul{

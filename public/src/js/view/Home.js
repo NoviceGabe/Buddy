@@ -2,17 +2,17 @@ define(()=>{
 	const template = () =>{
 		return `
 			<div id="home-section">
-				<div id="header" class="float-right clear-fix">
-					<div class="float-left clear-fix">
-						<h1 class="float-left">My Feed</h1>
-						<button class="float-right" id="write-post">Write post</button>
+				<div id="header">
+					<div>
+						<h1 >My Feed</h1>
+						<button id="write-post">Write post</button>
 					</div>
 				</div>
-				<div id="home-main" class="clear-fix">
-					<div class="col-2 float-right">
-						<div id="suggestions"></div>
+				<div id="home-main">
+					<div id="newsfeed" class="col-1">
 					</div>
-					<div id="newsfeed" class="col-1 float-right">
+					<div class="col-2">
+						<div id="suggestions"></div>
 					</div>
 				</div>
 				<div id="modal-post" class="modal vertical-center-fixed">
