@@ -28,11 +28,9 @@ define(['moment'],(moment)=>{
 				container.appendChild(fragment);
 			}else{
 				let div = this.template(posts);
-				
 				if (container.firstChild) {
 			        container.insertBefore(div, container.firstChild);
-			    }
-			    else {
+			    }else {
 			        container.appendChild(div);
 			    }
 			}
@@ -59,7 +57,6 @@ define(['moment'],(moment)=>{
 			avatar.classList.add('float-left');
 
 			let photoUrl = 'src/assets/man.jpg';
-
 			if(post.user.photoURL){
 				photoUrl = post.user.photoURL;
 			}
@@ -332,7 +329,8 @@ define(['moment'],(moment)=>{
 			commentCountContainer.addEventListener('click', e => {
 				if(commentSection.classList.contains('remove')){
 					commentSection.classList.remove('remove');
-					commentInput.focus();
+				}else{
+					commentSection.classList.add('remove');
 				}
 			});
 
@@ -371,8 +369,8 @@ define(['moment'],(moment)=>{
 			comment.addEventListener('click', e => {
 				if(commentSection.classList.contains('remove')){
 					commentSection.classList.remove('remove');
-					commentInput.focus();
 				}
+				commentInput.focus();
 			});
 
 			commentInput.addEventListener('keydown', e => {
