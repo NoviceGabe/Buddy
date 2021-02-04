@@ -70,7 +70,7 @@ ul.breadcrumb li {
   font-size: 18px;
 }
 
-ul.breadcrumb li+li:before {
+ul.breadcrumb li.item + li.item:before {
   padding: 8px;
   color: black;
   content: "/\00a0";
@@ -84,4 +84,8 @@ ul.breadcrumb li a {
 ul.breadcrumb li a:hover {
   color: #01447e;
   text-decoration: underline;
+}
+
+ul.breadcrumb #logout:hover{
+  cursor: pointer;
 }

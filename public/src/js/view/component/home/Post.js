@@ -9,6 +9,8 @@ define(['moment'],(moment)=>{
 	const FIXED = '1';
 	const NEGO = '2';
 	let _state;
+	let _flag;
+	let _postId;
 
 	return class Post{
 		constructor(state){
@@ -40,6 +42,7 @@ define(['moment'],(moment)=>{
 		template(post){
 			const container = document.createElement('div');
 			container.classList.add('post');
+			container.setAttribute('data-author', post.user.uid);
 			container.setAttribute('id', post.id);
 			container.appendChild(this.header(post));
 			container.appendChild(this.subheader(post));
@@ -50,26 +53,27 @@ define(['moment'],(moment)=>{
 
 		header(post){
 			const header = document.createElement('div');
-			header.classList.add('post-header');
-			header.classList.add('clear-fix');
+
+			const div1 = document.createElement('div');
+			const div2 = document.createElement('div');
 
 			const avatar = document.createElement('img');
+			
+			const headerDiv = document.createElement('div');
+			const name = document.createElement('h3');
+			const ago = document.createElement('p');
+			
+			const more = document.createElement('img');
+			more.classList.add('more');
+			
+			header.classList.add('post-header');
+			div1.classList.add('clear-fix');
+			headerDiv.classList.add('float-left');
 			avatar.classList.add('float-left');
 
-			let photoUrl = 'src/assets/man.jpg';
-			if(post.user.photoURL){
-				photoUrl = post.user.photoURL;
-			}
-
+			let photoUrl = (post.user.photoURL)?post.user.photoURL:'src/assets/man.jpg';
 			avatar.setAttribute('src', photoUrl);
-
-			const headerDiv = document.createElement('div');
-			headerDiv.classList.add('float-left');
-
-			const name = document.createElement('h3');
 			name.innerText = post.user.name;
-
-			const ago = document.createElement('p');
 
 			let date;
 			try {
@@ -80,17 +84,46 @@ define(['moment'],(moment)=>{
 					post.timestamp.nanoseconds)
 					.toDate();
 			}
-
 			const time = moment(date, "YYYYMMDD").fromNow();
-
 			ago.innerText = time;
+
+			more.setAttribute('src', 'src/assets/meatball.png');
+			
+			let menu = this.modal(post, div2);
+			more.addEventListener('click', function(e){
+				e.stopPropagation();
+				_postId = post.id;
+				if(!_flag){
+					if(menu.classList.contains('remove')){
+						menu.classList.remove('remove');
+					}
+					_flag = true;
+				}else{
+					menu.classList.add('remove');
+					_flag = false;
+				}
+			});
+
+			window.onclick = function(event) {
+				const ref = document.getElementById(_postId);
+				const menu = ref.querySelector('.menu');
+
+			  	if (menu && event.target != menu && _flag) {
+			  		if(!menu.classList.contains('remove')){
+						 menu.classList.add('remove');
+					}
+				    _flag = false;
+			  	}
+			}
 
 			headerDiv.appendChild(name);
 			headerDiv.appendChild(ago);
+			div1.appendChild(avatar);
+			div1.appendChild(headerDiv);
+			div2.appendChild(more);
 
-			header.appendChild(avatar);
-			header.appendChild(headerDiv);
-
+			header.appendChild(div1);
+			header.appendChild(div2);
 			return header;
 		}
 
@@ -505,6 +538,57 @@ define(['moment'],(moment)=>{
 				let timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds).toDate();
 				element.innerText = 'sent '+moment(timestamp, "YYYYMMDD").fromNow();
 			});
+		}
+
+		modal(post, parent){
+			const menuContainer = document.createElement('div');
+			menuContainer.classList.add('remove');
+			parent.classList.add('options');
+			menuContainer.classList.add('menu');
+			const menu = document.createElement('ul');
+
+			if(firebase.auth().currentUser.uid == post.user.uid){
+				menu.innerHTML = `
+						<li class="edit-post">Edit Post</li>
+						<li class="turn-off-notif">Turn off notification</li>
+						<li class="delete">Delete</li>
+					`;
+			}else{
+				if(post.user.role == 'server'){
+					menu.innerHTML = `
+						<li class="request">Request</li>
+						<li class="message">Message</li>
+						<li class="hide-post">Hide post</li>
+						<li class="unfollow">Unfollow</li>
+						<li class="turn-on-notif">Turn on notification</li>
+						<li class="report">Report</li>
+					`;
+				}else if(post.user.role == 'client'){
+					if(_state.role == 'server'){
+						menu.innerHTML = `
+						<li class="accept">Accept</li>
+						<li class="offer">Offer</li>
+						<li class="message">Message</li>
+						<li class="hide-post">Hide post</li>
+						<li class="unfollow">Unfollow</li>
+						<li class="turn-on-notif">Turn on notification</li>
+						<li class="report">Report</li>
+					`;
+					}else{
+						menu.innerHTML = `
+						<li class="message">Message</li>
+						<li class="hide-post">Hide post</li>
+						<li class="unfollow">Unfollow</li>
+						<li class="turn-on-notif">Turn on notification</li>
+						<li class="report">Report</li>
+					`;
+					}
+				}
+			}
+
+			menuContainer.appendChild(menu);
+			parent.appendChild(menuContainer);
+			return menuContainer;
 		}
 	}
 });

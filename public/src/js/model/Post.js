@@ -42,9 +42,9 @@ define(['db'], db => {
 		}
 
 		update(post){
-			return this.hasPost(post.id).then(p => {
+			return this.hasPost(post.id, firebase.auth().currentUser.uid).then(p => {
 				if(p.docs.length > 0){
-		           return this.update(`posts/${UID}/userPost/${post.id}`, post)
+		           return super.update(`posts/${firebase.auth().currentUser.uid}/userPost/${post.id}`, post)
 		           .then(() => {
 		           	return true;
 		           }).catch(error => {
@@ -58,9 +58,9 @@ define(['db'], db => {
 		}
 
 		delete(id){
-			return this.hasPost(id).then(p => {
+			return this.hasPost(id, firebase.auth().currentUser.uid).then(p => {
 				if(p.docs.length > 0){
-					return this.delete(`posts/${UID}/userPost/${id}`)
+					return super.delete(`posts/${firebase.auth().currentUser.uid}/userPost/${id}`)
 					.then(() => {
 		           		return true;
 		           }).catch(error => {
@@ -121,11 +121,13 @@ define(['db'], db => {
 			}
 		}
 
-		hasPost(id){
-			return this.db.getByCustom(`posts/${UID}/userPost`, {
+		hasPost(postId, userId){
+			console.log(postId)
+			console.log(userId)
+			return this.getByCustom(`posts/${userId}/userPost`, {
 				attribute: 'id',
 				operator: '==',
-				value: id
+				value: postId
 			});
 		}
 

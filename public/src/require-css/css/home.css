@@ -74,9 +74,15 @@
 
 .post .post-header{
   padding: 15px 20px 10px 20px;
+  display: flex;
+}
+.post .post-header > div{
+  width: 50%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.post .post-header > img{
+.post .post-header > div:first-child img{
   border-radius: 50%;
   height: 50px;
   width: 50px;
@@ -84,13 +90,44 @@
   margin-right: 12px;
 }
 
-.post .post-header > img:hover{
+.post .post-header > div:last-child{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.post .post-header img:hover{
   cursor: pointer;
 }
 
-.post .post-header > div p{
+.post .post-header div p{
   color: #707070;
   font-size: 14px;
+}
+
+.post-header .options{
+  position: relative;
+}
+
+.post-header .menu{
+  position: absolute;
+  top: 15px;
+  padding: 10px;
+  background: #fff;
+  z-index: 1;
+  border: 2px solid #efefef;
+}
+
+.post-header .menu ul{
+  list-style-type: none;
+  font-size: 14px;
+}
+
+.post-header .menu ul li{
+  margin-bottom: 5px;
+}
+
+.post-header .menu ul li:hover{
+  cursor: pointer;
 }
 
 .post .post-subheader{

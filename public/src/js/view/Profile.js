@@ -3,9 +3,10 @@ define(()=>{
 		return `
 			<div id="profile-section">
 
-				<ul class="breadcrumb" >
-				  <li><a href="#/">Buddy</a></li>
-				  <li>Profile</li>
+				<ul class="breadcrumb" class="clear-fix">
+				  <li class="item"><a href="#/">Buddy</a></li>
+				  <li class="item">Profile</li>
+				  <li id="logout" class="float-right">Logout</li>
 				</ul>
 				
 				<div id="profile-overview">
@@ -19,12 +20,20 @@ define(()=>{
 						<div id="timeline">
 						</div>
 					</div>
-					<div id="tab-2">
-						<div id="profile" class="remove">
+					<div id="tab-2" class="remove">
+						<div id="profile">
 						</div>
 					</div>
 					<div id="tab-3" class="remove">
 						<div id="connections">
+						</div>
+					</div>
+					<div id="tab-4" class="remove">
+						<div id="services">
+						</div>
+					</div>
+					<div id="tab-5" class="remove">
+						<div id="settings">
 						</div>
 					</div>
 				</div>
@@ -272,8 +281,6 @@ define(()=>{
 				    	<button class="cancel">Cancel</button>
 				  </div>
 				</div>
-
-				<button id="logout">logout</button>
 			</div>
 			`;
 		}

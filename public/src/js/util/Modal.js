@@ -10,11 +10,7 @@ define(() => {
 			this.cancel = modal.querySelector('.cancel');
 
 			 this.trigger.addEventListener('click', () => {
-			 	if(!flag){
-			 		this.modal.style.display = 'flex';
-			 		flag = true;
-			 	}
-               
+			 	this.open();
             });
 
 			 this.cancel.addEventListener('click', () => {
@@ -32,13 +28,18 @@ define(() => {
 
 		onTrigger(callback){
 			this.trigger.addEventListener('click', () => {
-			 	if(!flag){
-			 		this.modal.style.display = 'flex';
-			 		flag = true;
-			 	}
-			 	callback();
-               
+			 	this.open(callback);
             });
+		}
+
+		open(callback){
+			if(!flag){
+				this.modal.style.display = 'flex';
+				flag = true;
+				if(typeof callback == 'function'){
+					callback();
+				}
+			}
 		}
 
 		onCancel(onFinish){
@@ -112,4 +113,3 @@ define(() => {
 
 	}
 });
-

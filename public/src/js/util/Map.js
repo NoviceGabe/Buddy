@@ -40,6 +40,22 @@ define(()=>{
 			this.location = {};
 		}
 
+		changeView(latlng){
+			this.geo = new L.LatLng(latlng.lat, latlng.lng);
+			_map.eachLayer((layer) => {
+				  layer.remove();
+				});
+			_map.setView(this.geo, 5);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			}).addTo(_map);
+			this.layerGroup = L.layerGroup().addTo(_map);
+			this.marker = L.marker([_map.getCenter().lat, _map.getCenter().lng], {      
+			      draggable: true
+			}).addTo(_map); 
+			this.marker.bindPopup(latlng.label).openPopup();
+		}
+
 		onDragMarker(){
 			let self = this;
 			this.marker.on('drag', function(e){

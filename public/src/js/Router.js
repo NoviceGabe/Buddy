@@ -44,6 +44,7 @@ define(['view'], (View) => {
 		            sessionStorage.setItem('path', segment);
 		           	let dispatch = await _routes[i].handler(segment);
 		           	if(dispatch.view){
+		           		console.log(dispatch.view)
 		           		require([dispatch.view], function(view){
 		           				view.render();
 					    });

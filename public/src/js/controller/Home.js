@@ -1,6 +1,7 @@
 define([
         'userModel',
         'postModel',
+        'chatModel',
         'postComponent',
         'suggestionsComponent',
         'modalComponent',
@@ -12,6 +13,7 @@ define([
     (
         UserModel,
         PostModel,
+        ChatModel,
         PostComponent,
         SuggestionsComponent,
         ModalComponent,
@@ -23,8 +25,12 @@ define([
         let _state;
         const _userModel = new UserModel(firebase.firestore(), firebase.auth());
         const _postModel = new PostModel(firebase.firestore());
+        const _chatModel = new ChatModel(firebase.firestore());
         let _postComponent;
+        let _modal;
         const COMMENT_COUNT = 2;
+        let _add = true;
+        let _postId;
 
         let listeners = [];
 
@@ -67,7 +73,7 @@ define([
             const ref = document.querySelector('#modal-post');
             const write = document.querySelector('#write-post');
             const form = document.querySelector('#form-post');
-            const modal = new ModalComponent(ref, write, form);
+            _modal = new ModalComponent(ref, write, form);
 
             const role = form.querySelector('#user-role');
             const service = form.querySelector('#service-category');
@@ -111,9 +117,7 @@ define([
                 }
             });
 
-
-
-            modal.onSave(function() {
+            _modal.onSave(function() {
                 if (job.value == 2 && _map) {
                     post.location = _map.location;
                 } else if (post.location) {
@@ -177,7 +181,8 @@ define([
                 post.shareCount = 0;
                 post.timestamp = firebase.firestore.Timestamp.fromDate(new Date());
 
-                return _postModel.add(post)
+                if(_add){
+                   return _postModel.add(post)
                     .then(() => {
                         console.log('Post uploaded');
                         if (_map) {
@@ -192,8 +197,30 @@ define([
                     }).catch(err => {
                         console.log(err.message);
                         return false;
-                    });
+                    });  
 
+                }else{
+                    post.id = _postId;
+                    return _postModel.update(post)
+                    .then(() => {
+                        console.log('Post updated');
+                        if (_map) {
+                            _map.clear();
+                            _map = null;
+
+                        }
+                        if (!location.classList.contains('remove')) {
+                            location.classList.add('remove');
+                        }
+
+                        return true;
+                    }).catch(err => {
+                        console.log(err.message);
+                        return false;
+                    });  
+                    _add = true;
+                }
+               
                 return false;
             });
 
@@ -223,6 +250,12 @@ define([
 
         }
 
+        const _updatePostView = (post) => {
+            const ref = document.getElementById(post.id);
+            console.log(post)
+
+        }
+
         const _initNewsFeed = async () => {
 
             if (listeners.length) {
@@ -239,9 +272,12 @@ define([
                     .onSnapshot(querySnapshot => {
                         let posts = [];
                         querySnapshot.docChanges().forEach(change => {
-                            if (change.type == "added") {
+                            if (change.type == 'added') {
                                 const post = change.doc.data();
                                 posts.push(post);
+                            }else if(change.type == 'modified'){
+                                const post = change.doc.data();
+                                _updatePostView(post);
                             }
                         });
 
@@ -251,12 +287,22 @@ define([
                                 avatarObserver(post);
                                 likeObserver(post);
                                 commentObserver(post);
+                                unfollowObserver(post);
+                                hidePostObserver(post);
+                                messageObserver(post);
+                                deleteObserver(post);
+                                editObserver(post);
                             });
                         } else if (posts.length == 1) {
                             _postComponent.render(posts[0]);
                             avatarObserver(posts[0]);
                             likeObserver(posts[0]);
                             commentObserver(posts[0]);
+                            unfollowObserver(posts[0]);
+                            hidePostObserver(posts[0]);
+                            messageObserver(posts[0]);
+                            deleteObserver(posts[0]);
+                            editObserver(posts[0]);
                         }
                     });
                 listeners.push(postListener);
@@ -314,7 +360,7 @@ define([
 
             const avatarObserver = (post) => {
                 const ref = document.getElementById(post.id);
-                const opAvatar = ref.querySelector('.post-header > img');
+                const opAvatar = ref.querySelector('.post-header img');
                 const userAvatar = ref.querySelector('.post-footer .comment-section .input img')
                 opAvatar.addEventListener('click', e => {
                     _router.navigate(`profile/${post.user.uid}`);
@@ -446,6 +492,202 @@ define([
                 }
             }
 
+            const unfollowObserver = (post) => {
+                const ref = document.getElementById(post.id);
+                const unfollow = ref.querySelector('.unfollow');
+                if (unfollow) {
+                    unfollow.addEventListener('click', async function() {
+                        _userModel.unfollow(firebase.auth().currentUser.uid, post.user.uid)
+                            .then(() => {
+                                // select all post wher userId == post.user.uid then hide
+                                const posts = document.querySelectorAll(`[data-author="${post.user.uid}"]`);
+                                posts.forEach(post => {
+                                    post.classList.add('remove');
+                                });
+                            })
+                            .catch(err => {
+                                console.log(err.message);
+                            });
+                    });
+                }
+
+            }
+
+            const hidePostObserver = (post) => {
+                const ref = document.getElementById(post.id);
+                const hide = ref.querySelector('.hide-post');
+                if (hide) {
+                    hide.addEventListener('click', function() {
+                        ref.classList.add('remove');
+                    });
+                }
+            }
+
+            const messageObserver = async (post) => {
+                try {
+                    let invitation = await _chatModel.getInvitation(firebase.auth().currentUser.uid, post.user.uid);
+
+                    const ref = document.getElementById(post.id);
+                    let chat = ref.querySelector('.message');
+                    let flag;
+
+                    if (!chat) {
+                        return;
+                    }
+
+                    if (invitation.length > 0) {
+                        invitation = invitation[0];
+                        if (invitation.accept) {
+                            chat.innerText = 'Message';
+                            chat.dataset.chat = 'chat';
+                            flag = 'chat';
+
+                        } else {
+                            chat.innerText = 'Chat request pending';
+                            chat.dataset.chat = 'pending';
+                            flag = 'pending';
+                        }
+                    } else {
+                        chat.innerText = 'Chat request';
+                        chat.dataset.chat = 'invite';
+                        flag = 'invite';
+                    }
+
+                    if (chat) {
+                        chat.addEventListener('click', e => {
+                            (async () => {
+                                try {
+                                    if (flag == 'invite') {
+                                        let status = await _chatModel.invite(firebase.auth().currentUser.uid, post.user.uid);
+                                        if (status) {
+                                            chat.innerText = 'Chat request pending';
+                                            chat.dataset.chat = 'pending';
+                                            flag = 'pending';
+                                        }
+                                    } else if (flag == 'chat') {
+                                        if (firebase.auth().currentUser.uid != post.user.uid) {
+                                            const user = await _userModel.getUser(post.user.uid);
+                                            if (user &&
+                                                (user.groups || user.groups.length) &&
+                                                (_state.groups || _state.groups.length)) {
+                                                const groups = Util.getMatchesFromArray(_state.groups, user.groups);
+                                                if (groups.length > 0) {
+                                                    const groupId = groups[0];
+                                                    _router.navigate(`chat/${groupId}`);
+                                                }
+                                            }
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            })();
+                        });
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
+            const deleteObserver = (post) => {
+                const ref = document.getElementById(post.id);
+                const deletePost = ref.querySelector('.delete');
+                if (deletePost) {
+                    deletePost.addEventListener('click', async function() {
+                        const result = confirm("Delete post?");
+                        if (result == true) {
+                            try {
+                                const isDelete = _postModel.delete(post.id);
+                                if (isDelete) {
+                                    ref.classList.add('remove');
+                                } else {
+                                    console.log('Unable to delete post');
+                                }
+
+                            } catch (e) {
+                                console.log(e.message);
+                            }
+                        }
+
+                    });
+                }
+            }
+
+            const editObserver = (post) => {
+                const ref = document.getElementById(post.id);
+                const edit = ref.querySelector('.edit-post');
+                if (edit && post.user.uid == firebase.auth().currentUser.uid) {
+                    edit.addEventListener('click', function(e){
+                       _modal.open(function(){
+                            _add = false;
+                            _postId = post.id;
+                            const form = document.querySelector('#form-post');
+                            const role = form.querySelector('#user-role');
+                            const service = form.querySelector('#service-category');
+                            const title = form.querySelector('#title textarea');
+                            const description = form.querySelector('#description textarea');
+                            const budget = form.querySelector('#budget');
+                            const budgetType = form.querySelector('#budget-type');
+                            const work = form.querySelector('#work-experience');
+                            const job = form.querySelector('#job-type');
+                            const location = document.querySelector('#container-location');
+
+                            for(let i = 0; i < role.options.length; i++){
+                                 if(role.options[i].value == post.user.role){
+                                    role.options[i].selected = true;
+                                 }
+                            }
+
+                            for(let i = 0; i < service.options.length; i++){
+                                 if(service.options[i].value == post.serviceCat){
+                                    service.options[i].selected = true;
+                                 }
+                            }
+
+                            title.value = post.title;
+                            description.value = post.description;
+                            budget.value = parseFloat(post.budget);
+
+                            for(let i = 0; i < budgetType.options.length; i++){
+                                 if(budgetType.options[i].value == post.budgetType){
+                                    budgetType.options[i].selected = true;
+                                 }
+                            }
+
+                            for(let i = 0; i < work.options.length; i++){
+                                 if(work.options[i].value == post.workExp){
+                                    work.options[i].selected = true;
+                                 }
+                            }
+
+                            for(let i = 0; i < job.options.length; i++){
+                                 if(job.options[i].value == post.jobType){
+                                    job.options[i].selected = true;
+                                 }
+                            }
+
+                            if (!_map && post.location) {
+                                if (location.classList.contains('remove')) {
+                                    location.classList.remove('remove');
+                                }
+                                _map = new Map(post.location.y,  post.location.x);
+                                 _map
+                                .onDragMarker()
+                                .onClickMap()
+                                .onSearch();
+                            }else{
+                                _map.changeView({
+                                    lat:post.location.y, 
+                                    lng:post.location.x,
+                                    label: post.location.label
+                                });
+                            }
+                            
+                        });
+                    });
+                }
+            }
+
             try {
                 const today = new Date()
                 const yesterday = new Date(today);
@@ -471,9 +713,11 @@ define([
                 _router = router;
                 _state = state;
                 _postComponent = new PostComponent(_state);
+                const write = document.querySelector('#write-post');
+                _initWritePost(write);
                 _initNewsFeed();
                 _initSuggestions();
-                _initWritePost();
+
             }
         }
     });

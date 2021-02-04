@@ -85,8 +85,10 @@ define(['db'], db => {
 		async fetchMembers(group) {
 			const members = [];
 			for (const g of group) {
-				let user = await this.getUser(g.id);
-				members.push(user);
+				let user = await this.getUser(g.uid);
+				if(user){
+					members.push(user);
+				}
 			}
 			return members;
 		}
@@ -170,13 +172,15 @@ define(['db'], db => {
 		}
 
 		unfollow(followerId, followedId){
+			console.log(followerId)
+			console.log(followedId)
 			const batch = this.batch();
 
 	 		const following = this.prepare(`following/${followerId}/userFollowing/${followedId}`);
 		    batch.delete(following);
 
 		    const decrement = firebase.firestore.FieldValue.increment(-1);
-	        const followerUser = this.prepare(`users/${followerId}`);
+	        const followerUser = this.prepare(`user/${followerId}`);
 
 	        batch.update(followerUser, {
 		      followingCount: decrement
@@ -185,7 +189,7 @@ define(['db'], db => {
 		    const follower = this.prepare(`following/${followedId}/userFollowers/${followerId}`);
 		    batch.delete(follower);
 
-		    const followedUser = this.prepare(`users/${followedId}`);
+		    const followedUser = this.prepare(`user/${followedId}`);
 
 	        batch.update(followedUser, {
 		      followerCount: decrement

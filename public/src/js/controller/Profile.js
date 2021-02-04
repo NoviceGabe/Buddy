@@ -791,7 +791,7 @@ define([
         }
         const content = document.querySelector('#tab-content');
         _initProfile();
-      //  _initConnections();
+        _initConnections();
     }
 
     const _initProfile = () => {
@@ -810,12 +810,11 @@ define([
     const _initConnections = async () => {
         try {
             const p_connectionsView = new ConnectionComponent(_state);
-            console.log(_state)
             const following = await _userModel.getAllFollowing(_state.uid);
             const followingUsers = await _userModel.fetchMembers(following);
 
             if (followingUsers.length) {
-                p_connectionsView.render('following', followingUsers);
+               p_connectionsView.render('following', followingUsers);
             }
 
             const follower = await _userModel.getAllFollowers(_state.uid);
@@ -836,13 +835,24 @@ define([
             tab.addEventListener('click', e => {
                 const currentTab = e.target;
                 View.addActive(currentTab);
+
                 const contentId = currentTab.dataset.content;
                 const tabContent = document.querySelector(`#${contentId}`);
+
                 if (contentId != _contentId) {
-                    document.querySelector(`#${_contentId}`).style.display = 'none';
+                    const oldTab = document.querySelector(`#${_contentId}`);
+                    if(oldTab.classList.contains('flex-container')){
+                        oldTab.classList.remove('flex-container');
+                    }
+                    oldTab.classList.add('remove');
+                }
+                
+                if(tabContent.classList.contains('remove')){
+                    tabContent.classList.remove('remove');
+                     tabContent.classList.add('flex-container');
                 }
 
-                tabContent.style.display = 'flex';
+               
                 _contentId = contentId;
             });
         });
