@@ -60,7 +60,7 @@ define(()=>{
 					    		</div>
 								<div id="count">
 								    <span id="current">0</span>
-								    <span id="maximum">/ 1000</span>
+								    <span id="maximum">/ 3000</span>
 								</div>
 				    		</div>
 				    		<div id="container-budget" style="display:flex;">

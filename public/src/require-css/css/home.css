@@ -190,6 +190,16 @@
   margin-bottom: 10px;
 }
 
+.post-content .view-more{
+  color: #e2202c;
+  font-size: 14px;
+}
+
+.post-content .view-more:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .post-content .post-tags{
   list-style-type: none;
 }

@@ -1,13 +1,4 @@
 define(['moment'],(moment)=>{
-	const ENTRY_LEVEL = '1';
-	const INTERMEDIATE = '2';
-	const PRO = '3';
-
-	const ONLINE = '1';
-	const ONSITE = '2';
-
-	const FIXED = '1';
-	const NEGO = '2';
 	let _state;
 	let _flag;
 	let _postId;
@@ -17,9 +8,7 @@ define(['moment'],(moment)=>{
 			_state = state;
 		}
 
-		render(posts){
-			const container = document.querySelector('#newsfeed');
-
+		render(posts, container){
 			if(posts.length){
 				const fragment = new DocumentFragment();
 				posts.forEach(post => {
@@ -36,6 +25,12 @@ define(['moment'],(moment)=>{
 			        container.appendChild(div);
 			    }
 			}
+
+			const commentTime = document.querySelectorAll('.post .post-time');
+			this.changeTime(commentTime, 'posted ');
+			setInterval(() =>{
+				this.changeTime(commentTime, 'posted ');
+			}, 1000*60);
 			
 		}
 
@@ -70,6 +65,7 @@ define(['moment'],(moment)=>{
 			div1.classList.add('clear-fix');
 			headerDiv.classList.add('float-left');
 			avatar.classList.add('float-left');
+			ago.classList.add('post-time');
 
 			let photoUrl = (post.user.photoURL)?post.user.photoURL:'src/assets/man.jpg';
 			avatar.setAttribute('src', photoUrl);
@@ -86,6 +82,8 @@ define(['moment'],(moment)=>{
 			}
 			const time = moment(date, "YYYYMMDD").fromNow();
 			ago.innerText = time;
+			ago.setAttribute('data-seconds', post.timestamp.seconds);
+			ago.setAttribute('data-nanoseconds', post.timestamp.nanoseconds);
 
 			more.setAttribute('src', 'src/assets/meatball.png');
 			
@@ -124,6 +122,7 @@ define(['moment'],(moment)=>{
 
 			header.appendChild(div1);
 			header.appendChild(div2);
+
 			return header;
 		}
 
@@ -239,6 +238,8 @@ define(['moment'],(moment)=>{
 
 			const titleContainer = document.createElement('h3');
 			const descContainer = document.createElement('p');
+			let viewMore;
+
 			const tags = document.createElement('ul');
 			const catContainer = document.createElement('li');
 			const jobTypeContainer = document.createElement('li');
@@ -275,7 +276,19 @@ define(['moment'],(moment)=>{
 			}
 
 			titleContainer.innerText =  title;
-			descContainer.innerText = description;
+
+			if(description.length > 1000){
+				viewMore = document.createElement('p');
+				viewMore.classList.add('view-more');
+				viewMore.innerText = 'view more';
+				descContainer.innerText = description.substring(0, 1000);
+				viewMore.addEventListener('click', function(){
+					viewMore.classList.add('remove');
+					descContainer.innerText = description;
+				});
+			}else{
+				descContainer.innerText = description;
+			}
 
 			catContainer.innerText = cat;
 			jobTypeContainer.innerText = job;
@@ -287,6 +300,9 @@ define(['moment'],(moment)=>{
 
 			content.appendChild(titleContainer);
 			content.appendChild(descContainer);
+			if(viewMore){
+				content.appendChild(viewMore);
+			}
 			content.appendChild(tags);
 
 			return content;
@@ -473,8 +489,10 @@ define(['moment'],(moment)=>{
 			const time = document.createElement('p');
 
 			comment.classList.add('comment');
+			comment.setAttribute('data-commenter', data.uid);
 			bubble.classList.add('bubble-container');
 			time.classList.add('time');
+			avatar.classList.add('commenter-avatar');
 
 			let photoURL = 'src/assets/man.jpg';
 			let textData = '';
@@ -523,20 +541,19 @@ define(['moment'],(moment)=>{
 			}else{
 				container.appendChild(comment);
 			}
-			
-			this.changeTime();
+			const commentTime = document.querySelectorAll('.comment-section .comment .time');
+			this.changeTime(commentTime, 'sent ');
 			setInterval(() =>{
-				this.changeTime();
+				this.changeTime(commentTime, 'sent ');
 			}, 1000*60);
 		}
 
-		changeTime(){
-			const commentTime = document.querySelectorAll('.comment-section .comment .time');
+		changeTime(commentTime, text = ''){
 			commentTime.forEach(element => {
 				let seconds = element.dataset.seconds;
 				let nanoseconds = element.dataset.nanoseconds;
 				let timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds).toDate();
-				element.innerText = 'sent '+moment(timestamp, "YYYYMMDD").fromNow();
+				element.innerText = text+moment(timestamp, "YYYYMMDD").fromNow();
 			});
 		}
 
@@ -550,6 +567,7 @@ define(['moment'],(moment)=>{
 			if(firebase.auth().currentUser.uid == post.user.uid){
 				menu.innerHTML = `
 						<li class="edit-post">Edit Post</li>
+						<li class="hide-post">Hide post</li>
 						<li class="turn-off-notif">Turn off notification</li>
 						<li class="delete">Delete</li>
 					`;

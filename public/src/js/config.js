@@ -3,6 +3,15 @@ const MSG_COUNT = 7;
 const ORDER = 'desc';
 const FOLLOWING = 'following';
 const FOLLOWER = 'follower';
+const ENTRY_LEVEL = '1';
+const INTERMEDIATE = '2';
+const PRO = '3';
+const ONLINE = '1';
+const ONSITE = '2';
+const FIXED = '1';
+const NEGO = '2';
+const COMMENT_COUNT = 2;
+
 //const DOMAIN = 'http://localhost/buddy/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2
 const DOMAIN = 'https://chat-3db56.web.app/'; // production
@@ -39,7 +48,7 @@ requirejs.config({
         'overviewComponent': 'src/js/view/component/profile/Overview',
         'profileComponent': 'src/js/view/component/profile/Profile',
         'suggestionsComponent':'src/js/view/component/home/Suggestions',
-        'postComponent':'src/js/view/component/home/Post',
+        'c_postComponent':'src/js/view/component/home/Post',
         'p_connectionsComponent': 'src/js/view/component/profile/Connections',
         'c_connectionsComponent': 'src/js/view/component/connections/Connections',
         'invitationComponent': 'src/js/view/component/chat/Invitation',
@@ -51,6 +60,7 @@ requirejs.config({
         'registerView': 'src/js/view/Register',
         'dateComponent': 'src/js/util/DateMenu',
         'modalComponent':'src/js/util/Modal',
+        'u_postComponent': 'src/js/util/Post',
         'authController': 'src/js/controller/Authenticate',
         'loginController': 'src/js/controller/Login',
         'registerController':'src/js/controller/Register',
