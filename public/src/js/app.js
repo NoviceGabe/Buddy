@@ -3,7 +3,8 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
   	document.location.href = DOMAIN;
 } 
 
-require(['router', 'userModel', 'view', 'css!css/index', 'css!css/helper'], 
+require(['router', 'userModel', 'view', 
+	'css!css/index', 'css!css/helper', 'css!css/post', 'css!css/modal'], 
 	(Router, UserModel, View) => {
 
 	firebase.auth().onAuthStateChanged(user => {

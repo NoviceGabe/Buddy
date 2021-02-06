@@ -107,8 +107,7 @@
   color: #e2202c;
 }
 
-#tab-content div{
-  margin: auto;
+#tab-content > div{
   margin-bottom: 20px;
 }
 
@@ -264,4 +263,8 @@
   font-size: 16px;
   width: 18px;
   margin-right:6px;
+}
+
+#timeline .post{
+  width:45%;
 }

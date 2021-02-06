@@ -1,11 +1,13 @@
 define(['moment'],(moment)=>{
 	let _state;
+	let _router;
 	let _flag;
 	let _postId;
 
 	return class Post{
-		constructor(state){
+		constructor(state, router){
 			_state = state;
+			_router = router;
 		}
 
 		render(posts, container){
@@ -493,6 +495,12 @@ define(['moment'],(moment)=>{
 			bubble.classList.add('bubble-container');
 			time.classList.add('time');
 			avatar.classList.add('commenter-avatar');
+			avatar.addEventListener('click', e => {
+	           	e.stopPropagation();
+	           	if(data.uid){
+	            	_router.navigate(`profile/${data.uid}`);
+	            }
+		    });
 
 			let photoURL = 'src/assets/man.jpg';
 			let textData = '';

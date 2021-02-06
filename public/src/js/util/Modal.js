@@ -1,7 +1,7 @@
 define(() => {
 	let flag = false;
 	return class Modal{
-		constructor(modal, trigger, form){
+		constructor(modal, form, trigger){
 			this.modal = modal;
 			this.trigger = trigger;
 			this.form = form;
@@ -9,9 +9,11 @@ define(() => {
 			this.save = modal.querySelector('.save');
 			this.cancel = modal.querySelector('.cancel');
 
-			 this.trigger.addEventListener('click', () => {
-			 	this.open();
-            });
+			if(this.trigger){
+				this.trigger.addEventListener('click', () => {
+				 	this.open();
+	            });	
+			}
 
 			 this.cancel.addEventListener('click', () => {
 	            this.modal.style.display = 'none';
@@ -27,7 +29,11 @@ define(() => {
 		}
 
 		onTrigger(callback){
-			this.trigger.addEventListener('click', () => {
+			if(!this.trigger){
+				return;
+			}
+			this.trigger.addEventListener('click', (e) => {
+				e.stopPropagation();
 			 	this.open(callback);
             });
 		}

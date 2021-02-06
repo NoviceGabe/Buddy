@@ -3,29 +3,33 @@ define([
     'overviewComponent',
     'profileComponent',
     'p_connectionsComponent',
+    'u_postComponent',
+    'modalComponent',
     'userModel',
     'chatModel',
+    'postModel',
     'util',
     'validator',
     'dateComponent',
-    'modalComponent',
     'authController',
     'css!css/profile',
-    'css!css/modal'
 ], (View,
     OverviewComponent,
     ProfileComponent,
     ConnectionComponent,
+    PostComponent,
+    ModalComponent,
     UserModel,
     ChatModel,
+    PostModel,
     Util,
     Validator,
     DateComponent,
-    ModalComponent,
     Auth) => {
 
     const _userModel = new UserModel(firebase.firestore(), firebase.auth());
     const _chatModel = new ChatModel(firebase.firestore());
+    const _postModel = new PostModel(firebase.firestore());
 
     let _profileView;
 
@@ -783,13 +787,14 @@ define([
         } else {
             tabs.innerHTML = `
 				<ul>
-                    <li class="active" data-content="tab-1">My Timeline</li>
+                    <li class="active" data-content="tab-1">Timeline</li>
 					<li class="active" data-content="tab-2">Profile</li>
 					<li data-content="tab-3">Connections</li>
 					<li data-content="tab-4">Services</li>
 				</ul>`;
         }
         const content = document.querySelector('#tab-content');
+        _initTimeline();
         _initProfile();
         _initConnections();
     }
@@ -911,11 +916,71 @@ define([
         }
     }
 
+    const _initTimeline = async () => {
+        PostComponent.init(_state, _router);
+        const container = document.querySelector('#profile-section');
+        PostComponent.renderModal(container);
+
+        PostComponent.initWritePost();
+
+        PostComponent.clearListeners();
+        try {
+            let posts = [];
+       
+            // get all posts user 
+            let postListener;
+            const container = document.querySelector('#timeline');
+            postListener = _postModel.prepareAllByDate(_state.uid, ORDER)
+                .onSnapshot(querySnapshot => {
+                    let posts = [];
+                    querySnapshot.docChanges().forEach(change => {
+                        if (change.type == 'added') {
+                            const post = change.doc.data();
+                             let component = new PostComponent(post);
+                            posts.push(component);
+                        }else if(change.type == 'modified'){
+                            const post = change.doc.data();
+                            PostComponent.updatePostView(post);
+                        }
+                    });
+                    if (posts.length) {
+                        try {
+                            posts.sort(function(post1, post2) {
+                                return post1.post.timestamp.toDate() - post2.post.timestamp.toDate();
+                            });
+
+                            posts.forEach(post => {
+                                post.render(container)
+                                    .likeObserver()
+                                    .commentObserver()
+                                    .unfollowObserver()
+                                    .hidePostObserver()
+                                    .deleteObserver()
+                                    .avatarObserver()
+                                    .editObserver()
+                                    .messageObserver()
+                                    
+                            });
+
+
+                        } catch(e) {
+                            console.log(e);
+                       }
+                            
+                    } 
+                });
+            PostComponent.listeners(postListener);
+
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
+
+
     return class Profile {
         constructor(state, router) {
             _state = state;
             _router = router;
-
             _contentId = HOME_TAB;
             const currentTab = document.querySelector('#tabs li');
             View.addActive(currentTab);

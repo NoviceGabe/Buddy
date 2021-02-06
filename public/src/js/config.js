@@ -11,6 +11,8 @@ const ONSITE = '2';
 const FIXED = '1';
 const NEGO = '2';
 const COMMENT_COUNT = 2;
+const PUBLIC = '1';
+const PRIVATE = '2';
 
 //const DOMAIN = 'http://localhost/buddy/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2

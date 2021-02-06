@@ -1,0 +1,319 @@
+.post{
+   border-radius: 25px;
+   min-height:365px;
+   width:80%;
+   background:#fff;
+   margin: auto;
+   margin-bottom: 20px;
+}
+
+.post .post-header{
+  padding: 15px 20px 10px 20px;
+  display: flex;
+}
+.post .post-header > div{
+  width: 50%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.post .post-header > div:first-child img{
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  border: 1px solid #efefef;
+  margin-right: 12px;
+}
+
+.post .post-header > div:last-child{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.post .post-header img:hover{
+  cursor: pointer;
+}
+
+.post .post-header div p{
+  color: #707070;
+  font-size: 14px;
+}
+
+.post-header .options{
+  position: relative;
+}
+
+.post-header .menu{
+  position: absolute;
+  top: 15px;
+  padding: 10px;
+  background: #fff;
+  z-index: 1;
+  border: 2px solid #efefef;
+}
+
+.post-header .menu ul{
+  list-style-type: none;
+  font-size: 14px;
+}
+
+.post-header .menu ul li{
+  margin-bottom: 5px;
+}
+
+.post-header .menu ul li:hover{
+  cursor: pointer;
+}
+
+.post .post-subheader{
+  padding: 0px 20px 20px 20px; 
+}
+
+.post .post-subheader > div{
+  width: 50%;
+}
+
+.post .post-subheader .header{
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.post .post-subheader .header > div{
+  height: 100%;
+   width: 50%;
+   box-sizing:border-box;
+}
+
+.post .post-subheader .header .location > *,
+.post .post-subheader .header .work > *{
+  display: block;
+}
+
+.post .post-subheader .header .location > img,
+.post .post-subheader .header .work > img{
+  width: 10%;
+}
+
+
+.post .post-subheader .header .location > span,
+.post .post-subheader .header .work > span{
+  font-size: 11px;
+  color: #707070;
+  height: 100%;
+  width: 90%;
+}
+.post .post-subheader .header .location > span:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.post .post-subheader p{
+  color: #707070;
+  font-size: 13px;
+}
+
+.post .post-content{
+  padding:10px 20px 10px 20px;
+  min-height: 150px;
+}
+
+.post-content .post-description{
+  min-height: 100px;
+}
+
+.post .post-content > *{
+  margin-bottom: 10px;
+}
+
+.post-content .view-more{
+  color: #e2202c;
+  font-size: 14px;
+}
+
+.post-content .view-more:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.post-content .post-tags{
+  list-style-type: none;
+}
+
+.post-content .post-tags li{
+  border-radius: 5px;
+  display: inline-block;
+  background: #fff;
+  padding: 3px 7px 3px 7px;
+  border: 1px solid #d3d3d3;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.post-content .post-tags li:hover{
+  cursor: pointer;
+}
+
+.post-footer .bar{
+  height: 20px;
+  padding: 5px 0;
+  border-top: 2px solid #efefef;
+}
+
+.post-footer .bar > div:first-child{
+  display: flex;
+  height: 100%;
+  width: 50%;
+  margin-left: 20px;
+}
+
+.post-footer .bar > div:first-child > div > img{
+  margin-right: 5px;
+}
+
+.post-footer .bar > div:first-child > div > *{
+  display: inline-block;
+  height: 100%;
+}
+
+.post-footer .bar > div:last-child{
+  text-align: right;
+  height: 100%;
+  width: 50%;
+  margin-right: 20px;
+}
+
+.post-footer .bar > div:last-child span:hover{
+  cursor: pointer;
+}
+
+.post-footer .actions{
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top: 2px solid #efefef;
+  border-bottom: 1px solid  #efefef;
+}
+
+.post-footer .actions > span{
+  width: 33.33%;  
+  padding: 5px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.post-footer .actions > span:hover{
+  cursor: pointer;
+}
+
+.post-footer .actions > span:not(:last-child){
+  border-right: 2px solid #efefef;
+}
+
+.post-footer .comment-section{
+  padding: 5px 10px 10px 5px;
+  flex-direction: column;
+}
+
+.post-footer .comment-section .comments{
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+}
+
+.post-footer .comment-section .comments .comment{
+  width: 100%;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.post-footer .comment .bubble-container{
+  display: inline-block;
+  min-width: 100px;
+  padding: 15px;
+  border-radius: 30px;
+  background: #eee;
+  font-family: Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.post-footer .comment .bubble-container p:first-child{
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.post-footer .comment .bubble-container + p{
+  font-size: 12px;
+  color: #707070;
+  margin-left: 3px;
+}
+
+.post-footer .comment-section .comments .comment > div:first-child{
+  width: 10%;
+   box-sizing: border-box;
+}
+
+.post-footer .comment-section .comments .comment > div:last-child{
+  width: 90%;
+  padding-left:5px;
+  padding-right: 5px;
+   box-sizing: border-box;
+}
+
+.post-footer .comment-section .comments .load-more{
+  margin-bottom: 10px;
+}
+
+.post-footer .comment-section .comments .load-more span{
+  text-decoration: underline;
+  font-size: 12px;
+}
+
+.post-footer .comment-section .comments .load-more span:hover{
+  cursor: pointer;
+}
+
+
+.post-footer .comment-section .input {
+  display: flex;
+}
+
+.post-footer .comment-section .input > div:first-child{
+  width: 9%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 5px 0 5px 5px;
+}
+
+.post-footer .comment-section .input > div:last-child{
+  width: 90%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 6px 6px 0 6px;
+}
+
+.post-footer .comment-section img{
+  border-radius: 50%;
+  border: 1px solid #efefef;
+  height: 40px;
+  width: 40px;
+  display: block;
+}
+
+.post-footer .comment-section img:hover{
+  cursor: pointer;
+}
+
+.post-footer .comment-section textarea{
+  width: 100%;
+  padding: 10px;
+  margin:  auto;
+  outline: 0;
+  font-size: 14px;
+  resize: none;
+  overflow-x:hidden;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+}
+
+.color-like{
+ color: #0275d8;
+}
