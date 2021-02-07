@@ -123,8 +123,15 @@ define(['db'], db => {
 			});
 		}
 
-		getAllFollowing(uid){
-			return this.getAll(`following/${uid}/userFollowing`).then(snapshot => {
+		getAllFollowing(uid, order, date, by){
+			let ref = this.prepareAllOrderBy(`following/${uid}/userFollowing`, 'timestamp', order);
+			if(date){
+				if(!by){
+					by = '>=';
+				}
+				ref = ref.where('timestamp', by, date);
+			}
+			return ref.get().then(snapshot => {
 			    const following = snapshot.docs.map(doc => ({
 			    ...doc.data()
 			    }));
@@ -132,13 +139,93 @@ define(['db'], db => {
 			});
 		}
 
-		getAllFollowers(uid){
-		  return this.getAll(`following/${uid}/userFollowers`).then(snapshot => {
-		       const followers = snapshot.docs.map(doc => ({
-		      ...doc.data()
-		      }));
-		      return followers;
-		  });
+		getCertainFollowing(uid, order, limit, date, by){
+			let ref = this.prepareCertainOrderBy(`following/${uid}/userFollowing`, 'timestamp', order, limit);
+			if(date){
+				if(!by){
+					by = '>=';
+				}
+				ref = ref.where('timestamp', by, date);
+			}
+			return ref.get().then(snapshot => {
+			    const following = snapshot.docs.map(doc => ({
+			    ...doc.data()
+			    }));
+			    return following;
+			});
+		}
+
+		getAllFollowers(uid, order, date, by){
+		  	let ref = this.prepareAllOrderBy(`following/${uid}/userFollowers`, 'timestamp', order);
+		  	if(date){
+				if(!by){
+					by = '>=';
+				}
+				ref = ref.where('timestamp', by, date);
+			}
+			 return ref.get().then(snapshot => {
+			    const followers = snapshot.docs.map(doc => ({
+			      ...doc.data()
+			    }));
+			    return followers;
+			});
+		}
+
+		getCertainFollowers(uid, order, limit, date, by){
+			let ref = this.prepareCertainOrderBy(`following/${uid}/userFollowers`, 'timestamp', order, limit);
+			if(date){
+				if(!by){
+					by = '>=';
+				}
+				ref = ref.where('timestamp', by, date);
+			}
+			return ref.get().then(snapshot => {
+			    const followers = snapshot.docs.map(doc => ({
+			    ...doc.data()
+			    }));
+			    return followers;
+			});
+
+		}
+
+		async fetchMembersFromFollowing(uid, order = ORDER, limit = 0){
+			let following;
+
+			if(limit > 0){
+				following = await this.getCertainFollowing(uid, order, limit);
+			}else{
+				following = await this.getAllFollowing(uid, order);
+			}
+
+			console.log(following)
+
+			const followingUsers = await this.fetchMembers(following);
+            return followingUsers;
+		}
+
+		async fetchMembersFromFollowers(uid, order = ORDER, limit = 0){
+			let follower;
+
+			if(limit > 0){
+				follower = await this.getCertainFollowers(uid, order, limit);
+			}else{
+				follower = await this.getAllFollowers(uid, order);
+			}
+
+			const followerUsers = await this.fetchMembers(follower);
+            return followerUsers;
+		}
+
+		async fetchMembersFromFollowingByDate(uid, order = ORDER, date, by){
+			let following = await this.getAllFollowing(uid, order, date, by);
+			const followingUsers = await this.fetchMembers(following);
+            return followingUsers;
+		}
+
+		async fetchMembersFromFollowersByDate(uid, order = ORDER, date, by){
+			let follower = await this.getAllFollowers(uid, order, date, by);
+			const followerUsers = await this.fetchMembers(follower);
+            return followerUsers;
 		}
 
 		follow(followerId, followedId){
@@ -146,7 +233,8 @@ define(['db'], db => {
 
 		    const following = this.prepare(`following/${followerId.trim()}/userFollowing/${followedId.trim()}`);
 		    batch.set(following, {
-		      uid:followedId
+		      uid:followedId,
+		      timestamp: firebase.firestore.Timestamp.fromDate(new Date())
 		    });
 	        
 	        const increment = firebase.firestore.FieldValue.increment(1);
@@ -158,7 +246,8 @@ define(['db'], db => {
 
 		    const follower = this.prepare(`following/${followedId.trim()}/userFollowers/${followerId.trim()}`);
 		    batch.set(follower, {
-		      uid:followerId
+		      uid:followerId,
+		      timestamp: firebase.firestore.Timestamp.fromDate(new Date())
 		    });
 
 		    const followedUser = this.prepare(`user/${followedId}`);

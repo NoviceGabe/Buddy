@@ -14,9 +14,9 @@ const COMMENT_COUNT = 2;
 const PUBLIC = '1';
 const PRIVATE = '2';
 
-//const DOMAIN = 'http://localhost/buddy/public/'; // local server 1
+const DOMAIN = 'http://localhost/buddy/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2
-const DOMAIN = 'https://chat-3db56.web.app/'; // production
+//const DOMAIN = 'https://chat-3db56.web.app/'; // production
 const EMAIL_PASSWORD_SIGN_IN_METHOD = 'password';
 const GOOGLE_PROVIDER = 'google.com';
 const FACEBOOK_PROVIDER = 'facebook.com';
@@ -58,6 +58,7 @@ requirejs.config({
         'chatView': 'src/js/view/Chat',
         'homeView': 'src/js/view/Home',
         'profileView': 'src/js/view/Profile',
+        'connectionsView':'src/js/view/Connections',
         'loginView': 'src/js/view/Login',
         'registerView': 'src/js/view/Register',
         'dateComponent': 'src/js/util/DateMenu',

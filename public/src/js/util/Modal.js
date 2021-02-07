@@ -10,21 +10,20 @@ define(() => {
 			this.cancel = modal.querySelector('.cancel');
 
 			if(this.trigger){
-				this.trigger.addEventListener('click', () => {
+				this.trigger.addEventListener('click', (e) => {
+					e.stopPropagation();
 				 	this.open();
 	            });	
 			}
 
 			 this.cancel.addEventListener('click', () => {
-	            this.modal.style.display = 'none';
-	            this.form.reset();
-	            flag = false;
+			 	this.form.reset();
+	            this.terminate();
 	        });
 
 			this.close.addEventListener('click', () => {
-	            this.modal.style.display = 'none';
-	            this.form.reset();
-	            flag = false;
+				this.form.reset();
+	           	this.terminate();
 	        });
 		}
 
@@ -48,10 +47,14 @@ define(() => {
 			}
 		}
 
+		terminate(){
+			this.modal.style.display = 'none';
+	        flag = false;
+		}
+
 		onCancel(onFinish){
 			 this.cancel.addEventListener('click', () => {
-	            this.modal.style.display = 'none';
-	            flag = false;
+	           this.terminate();
 	            if (typeof onFinish == 'function') {
 	                if (onFinish()) {
 	                    this.form.reset();
@@ -63,40 +66,35 @@ define(() => {
 		}
 
 		onSave(onSave, onFinish){
-			  this.save.addEventListener('click', () => {
-	            (async () => {
-	                const status = await onSave();
+			this.save.addEventListener('click', async () => {
+	         	const status = await onSave();
 	                
-	                if (status) {
+	            if (status) {
+	               this.terminate();
 
-	                    this.modal.style.display = 'none';
-	                    flag = false;
+	                if (typeof onFinish == 'function') {
+	                    let finish = onFinish();
 
-	                    if (typeof onFinish == 'function') {
-	                        let finish = onFinish();
-
-	                        if (typeof finish == 'function') {
-	                            const result = finish();
-	                           if(result === undefined || result === true){
-	                                this.form.reset();
-	                           }
-	                        }else if(finish === undefined || finish === true){
+	                    if (typeof finish == 'function') {
+	                        const result = finish();
+	                        if(result === undefined || result === true){
 	                            this.form.reset();
 	                        }
-	                         
-	                    } else{
+	                    }else if(finish === undefined || finish === true){
 	                        this.form.reset();
 	                    }
-	                    
+	                         
+	                } else{
+	                    this.form.reset();
 	                }
-	            })();
+	                    
+	             }
 	        });
 		}
 
 		onClose(onFinish){
 			this.close.addEventListener('click', () => {
-	            this.modal.style.display = 'none';
-	            flag = false;
+	           this.terminate();
 	            if (typeof onFinish == 'function') {
 	                if (onFinish()) {
 	                    this.form.reset();
@@ -110,9 +108,8 @@ define(() => {
 		onWindowClick(){
 			 window.onclick = function(event) {
 	            if (event.target == this.modal) {
-	                this.modal.style.display = 'none';
 	                this.form.reset();
-	                flag = false;
+	               	this.terminate();
 	            }
 	        }
 		}

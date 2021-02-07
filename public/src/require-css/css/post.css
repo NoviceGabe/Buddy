@@ -12,9 +12,17 @@
   display: flex;
 }
 .post .post-header > div{
-  width: 50%;
   height: 100%;
   box-sizing: border-box;
+  display: flex;
+}
+
+.post .post-header > div:first-child{
+  width: 70%;
+}
+
+.post .post-header > div:last-child{
+  width: 30%;
 }
 
 .post .post-header > div:first-child img{
@@ -73,36 +81,36 @@
   width: 50%;
 }
 
-.post .post-subheader .header{
+.post .post-subheader > div:first-child{
   width: 100%;
   margin-bottom: 10px;
 }
 
-.post .post-subheader .header > div{
+.post .post-subheader > div:first-child > div{
   height: 100%;
    width: 50%;
    box-sizing:border-box;
 }
 
-.post .post-subheader .header .location > *,
-.post .post-subheader .header .work > *{
+.post .post-subheader > div:first-child .location > *,
+.post .post-subheader > div:first-child .work > *{
   display: block;
 }
 
-.post .post-subheader .header .location > img,
-.post .post-subheader .header .work > img{
+.post .post-subheader > div:first-child .location > img,
+.post .post-subheader > div:first-child .work > img{
   width: 10%;
 }
 
 
-.post .post-subheader .header .location > span,
-.post .post-subheader .header .work > span{
+.post .post-subheader > div:first-child .location > span,
+.post .post-subheader > div:first-child .work > span{
   font-size: 11px;
   color: #707070;
   height: 100%;
   width: 90%;
 }
-.post .post-subheader .header .location > span:hover{
+.post .post-subheader > div:first-child .location > span:hover{
   text-decoration: underline;
   cursor: pointer;
 }

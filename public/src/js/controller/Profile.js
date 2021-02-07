@@ -32,10 +32,8 @@ define([
     const _postModel = new PostModel(firebase.firestore());
 
     let _profileView;
-
-    const HOME_TAB = 'tab-1';
-    let _contentId;
     let _selected;
+    const HOME_TAB = 'tab-1';
 
     let _router;
     let _state
@@ -46,7 +44,7 @@ define([
         const ref = document.querySelector('#modal-bio');
         const edit = document.querySelector('#edit-bio');
         const form = document.querySelector('#form-bio');
-        const modal = new ModalComponent(ref, edit, form);
+        const modal = new ModalComponent(ref, form, edit);
 
         const text = document.querySelector("#form-bio textarea");
         let oldText = _state.bio.trim();
@@ -68,8 +66,8 @@ define([
             }
         });
 
-        modal.onSave(function(){
-             return (async () => {
+        modal.onSave(function() {
+            return (async () => {
                 if (text.value.trim().length == 0) {
                     console.log('Empty field');
                     return false;
@@ -102,14 +100,14 @@ define([
             return false;
         });
 
-        modal.onCancel( function() {
+        modal.onCancel(function() {
             if (text.value.trim().length == 0 && oldText.trim().length) {
                 text.value = oldText.trim();
             }
             return false;
         });
 
-        modal.onClose( function() {
+        modal.onClose(function() {
             if (text.value.trim().length == 0 && oldText.trim().length) {
                 text.value = oldText.trim();
             }
@@ -183,7 +181,7 @@ define([
         const ref = document.querySelector('#modal-education');
         const edit = document.querySelector('#edit-education');
         const form = document.querySelector('#form-education');
-        const modal = new ModalComponent(ref, edit, form);
+        const modal = new ModalComponent(ref, form, edit);
 
         modal.onSave(function() {
 
@@ -321,7 +319,7 @@ define([
         const ref = document.querySelector('#modal-workplace');
         const edit = document.querySelector('#edit-workplace');
         const form = document.querySelector('#form-workplace');
-        const modal = new ModalComponent(ref, edit, form);
+        const modal = new ModalComponent(ref, form, edit);
 
         modal.onSave(function() {
             let data = {
@@ -408,7 +406,7 @@ define([
         const ref = document.querySelector('#modal-address');
         const edit = document.querySelector('#edit-address');
         const form = document.querySelector('#form-address');
-        const modal = new ModalComponent(ref, edit, form);
+        const modal = new ModalComponent(ref, form, edit);
 
         modal.onSave(function() {
             let data = {};
@@ -461,16 +459,16 @@ define([
         let oldMobilePrimary = mobilePrimary.value;
         let oldMobileSecondary = mobileSecondary.value;
 
-       /* if (provider != EMAIL_PASSWORD_SIGN_IN_METHOD) {
-            emailPrimary.readOnly = true;
-        } else {
-            isPrimaryEmailReadOnly = false;
-        }
-        */
+        /* if (provider != EMAIL_PASSWORD_SIGN_IN_METHOD) {
+             emailPrimary.readOnly = true;
+         } else {
+             isPrimaryEmailReadOnly = false;
+         }
+         */
         const ref = document.querySelector('#modal-contact');
         const edit = document.querySelector('#edit-contact');
         const form = document.querySelector('#form-contact');
-        const modal = new ModalComponent(ref, edit, form);
+        const modal = new ModalComponent(ref, form, edit);
 
         modal.onSave(function() {
             let data = {};
@@ -517,7 +515,7 @@ define([
                 data.mobile[1] = mobileSecondary.value;
             }
 
-            if (/*oldEmailPrimary == emailPrimary.value &&*/
+            if ( /*oldEmailPrimary == emailPrimary.value &&*/
                 oldEmailSecondary == emailSecondary.value &&
                 oldMobilePrimary == mobilePrimary.value &&
                 oldMobileSecondary == mobileSecondary.value
@@ -525,12 +523,12 @@ define([
                 console.log('No changes!!');
                 return false;
             }
-/*
-            if (emailPrimary.value.length && emailSecondary.value.length &&
-                emailPrimary.value == emailSecondary.value) {
-                console.log('Primary email and secondary email must not be the same')
-                return false;
-            }*/
+            /*
+                        if (emailPrimary.value.length && emailSecondary.value.length &&
+                            emailPrimary.value == emailSecondary.value) {
+                            console.log('Primary email and secondary email must not be the same')
+                            return false;
+                        }*/
 
             if (!data.email.length && !data.mobile.length) {
                 console.log('no valid data')
@@ -598,18 +596,18 @@ define([
                             });
 
                         } else {*/
-                            const status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
+                        const status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
 
-                            if (status) {
-                              //  oldEmailPrimary = emailPrimary.value;
-                                oldEmailSecondary = emailSecondary.value;
-                                oldMobilePrimary = mobilePrimary.value;
-                                oldMobileSecondary = mobileSecondary.value;
-                                console.log('Update successful');
-                                _profileView.updateContact(data);
-                                return true;
-                            }
-                       // }
+                        if (status) {
+                            //  oldEmailPrimary = emailPrimary.value;
+                            oldEmailSecondary = emailSecondary.value;
+                            oldMobilePrimary = mobilePrimary.value;
+                            oldMobileSecondary = mobileSecondary.value;
+                            console.log('Update successful');
+                            _profileView.updateContact(data);
+                            return true;
+                        }
+                        // }
 
                         return false;
 
@@ -665,10 +663,10 @@ define([
 
         modal.onCancel(function() {
 
-           /*
-            if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
-                emailPrimary.value = oldEmailPrimary;
-            }*/
+            /*
+             if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
+                 emailPrimary.value = oldEmailPrimary;
+             }*/
 
             if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
                 emailSecondary.value = oldEmailSecondary;
@@ -713,7 +711,7 @@ define([
         const ref = document.querySelector('#modal-basic');
         const edit = document.querySelector('#edit-basic');
         const form = document.querySelector('#form-basic');
-        const modal = new ModalComponent(ref, edit, form);
+        const modal = new ModalComponent(ref, form, edit);
         modal.onSave(function() {
             let data = {};
 
@@ -747,8 +745,8 @@ define([
             }
 
             if (oldValue == data.gender &&
-               (data.birthday != undefined &&
-                Object.keys(data.birthday).length === 0 && data.birthday.constructor === Object)) {
+                (data.birthday != undefined &&
+                    Object.keys(data.birthday).length === 0 && data.birthday.constructor === Object)) {
                 console.log('No changes');
                 return false;
             } else {
@@ -777,23 +775,22 @@ define([
         const tabs = document.querySelector('#tabs');
         if (firebase.auth().currentUser.uid == _state.uid) {
             tabs.innerHTML = `
-				<ul>
+                <ul>
                     <li class="active" data-content="tab-1">My Timeline</li>
-					<li data-content="tab-2">My Profile</li>
-					<li data-content="tab-3">My Connections</li>
-					<li data-content="tab-4">Services</li>
-					<li data-content="tab-5">Account Settings</li>
-				</ul>`;
+                    <li data-content="tab-2">My Profile</li>
+                    <li data-content="tab-3">My Connections</li>
+                    <li data-content="tab-4">Services</li>
+                    <li data-content="tab-5">Account Settings</li>
+                </ul>`;
         } else {
             tabs.innerHTML = `
-				<ul>
+                <ul>
                     <li class="active" data-content="tab-1">Timeline</li>
-					<li class="active" data-content="tab-2">Profile</li>
-					<li data-content="tab-3">Connections</li>
-					<li data-content="tab-4">Services</li>
-				</ul>`;
+                    <li data-content="tab-2">Profile</li>
+                    <li data-content="tab-3">Connections</li>
+                    <li data-content="tab-4">Services</li>
+                </ul>`;
         }
-        const content = document.querySelector('#tab-content');
         _initTimeline();
         _initProfile();
         _initConnections();
@@ -814,19 +811,29 @@ define([
 
     const _initConnections = async () => {
         try {
-            const p_connectionsView = new ConnectionComponent(_state);
-            const following = await _userModel.getAllFollowing(_state.uid);
-            const followingUsers = await _userModel.fetchMembers(following);
 
-            if (followingUsers.length) {
-               p_connectionsView.render('following', followingUsers);
+            const following = await _userModel.fetchMembersFromFollowing(_state.uid, ORDER, 7);
+            const follower = await _userModel.fetchMembersFromFollowers(_state.uid, ORDER, 7);
+            const view = new ConnectionComponent(_state);
+
+            if (following.length) {
+                view.setFollowing(following);
+                view.render();
             }
 
-            const follower = await _userModel.getAllFollowers(_state.uid);
-            const followerUsers = await _userModel.fetchMembers(follower);
+            if (follower.length) {
+                view.setFollower(follower);
+                view.render();
+            }
 
-            if (followerUsers.length) {
-                p_connectionsView.render('follower', followerUsers);
+            if (!following.length && !follower.length) {
+                const container = document.querySelector('#connections');
+                if (_state.uid == firebase.auth().currentUser.uid) {
+                    container.innerHTML = `<p>You haven't connected to anyone</p>`;
+                } else {
+                    container.innerHTML = `<p>${_state.name} hasn't connected to anyone</p>`;
+                }
+
             }
 
         } catch (e) {
@@ -835,10 +842,15 @@ define([
     }
 
     const _initTabEvents = () => {
+        let _contentId = HOME_TAB;
+
+        let currentTab = document.querySelector('#tabs li');
+        View.addActive(currentTab);
+
         const tabs = document.querySelectorAll('#tabs li');
         tabs.forEach(tab => {
             tab.addEventListener('click', e => {
-                const currentTab = e.target;
+                currentTab = e.target;
                 View.addActive(currentTab);
 
                 const contentId = currentTab.dataset.content;
@@ -846,18 +858,16 @@ define([
 
                 if (contentId != _contentId) {
                     const oldTab = document.querySelector(`#${_contentId}`);
-                    if(oldTab.classList.contains('flex-container')){
+                    if (oldTab.classList.contains('flex-container')) {
                         oldTab.classList.remove('flex-container');
                     }
                     oldTab.classList.add('remove');
                 }
-                
-                if(tabContent.classList.contains('remove')){
-                    tabContent.classList.remove('remove');
-                     tabContent.classList.add('flex-container');
-                }
 
-               
+                if (tabContent.classList.contains('remove')) {
+                    tabContent.classList.remove('remove');
+                    tabContent.classList.add('flex-container');
+                }
                 _contentId = contentId;
             });
         });
@@ -882,33 +892,31 @@ define([
             }
 
             if (chat) {
-                chat.addEventListener('click', e => {
-                    (async () => {
-                        try {
-                            if (chat.dataset.chat == 'invite') {
-                                let status = await _chatModel.invite(firebase.auth().currentUser.uid, user.uid);
-                                if (status) {
-                                    chat.setAttribute('src', 'src/assets/pending.png');
-                                    chat.dataset.chat = 'pending';
-                                }
-                            } else if (chat.dataset.chat == 'chat') {
-                                if (firebase.auth().currentUser.uid != user.uid) {
-                                    const currentUser = await _userModel.getUser(firebase.auth().currentUser.uid);
-                                    if (currentUser &&
-                                        (currentUser.groups || currentUser.groups.length) &&
-                                        (user.groups || user.groups.length)) {
-                                        const groups = Util.getMatchesFromArray(currentUser.groups, user.groups);
-                                        if (groups.length > 0) {
-                                            const groupId = groups[0];
-                                            _router.navigate(`chat/${groupId}`);
-                                        }
+                chat.addEventListener('click', async (e) => {
+                    try {
+                        if (chat.dataset.chat == 'invite') {
+                            let status = await _chatModel.invite(firebase.auth().currentUser.uid, user.uid);
+                            if (status) {
+                                chat.setAttribute('src', 'src/assets/pending.png');
+                                chat.dataset.chat = 'pending';
+                            }
+                        } else if (chat.dataset.chat == 'chat') {
+                            if (firebase.auth().currentUser.uid != user.uid) {
+                                const currentUser = await _userModel.getUser(firebase.auth().currentUser.uid);
+                                if (currentUser &&
+                                    (currentUser.groups || currentUser.groups.length) &&
+                                    (user.groups || user.groups.length)) {
+                                    const groups = Util.getMatchesFromArray(currentUser.groups, user.groups);
+                                    if (groups.length > 0) {
+                                        const groupId = groups[0];
+                                        _router.navigate(`chat/${groupId}`);
                                     }
                                 }
                             }
-                        } catch (e) {
-                            console.log(e);
                         }
-                    })();
+                    } catch (e) {
+                        console.log(e);
+                    }
                 });
             }
         } catch (e) {
@@ -926,49 +934,76 @@ define([
         PostComponent.clearListeners();
         try {
             let posts = [];
-       
+
             // get all posts user 
             let postListener;
             const container = document.querySelector('#timeline');
-            postListener = _postModel.prepareAllByDate(_state.uid, ORDER)
-                .onSnapshot(querySnapshot => {
-                    let posts = [];
-                    querySnapshot.docChanges().forEach(change => {
-                        if (change.type == 'added') {
-                            const post = change.doc.data();
-                             let component = new PostComponent(post);
-                            posts.push(component);
-                        }else if(change.type == 'modified'){
-                            const post = change.doc.data();
-                            PostComponent.updatePostView(post);
-                        }
-                    });
-                    if (posts.length) {
-                        try {
-                            posts.sort(function(post1, post2) {
-                                return post1.post.timestamp.toDate() - post2.post.timestamp.toDate();
-                            });
+            let ref;
+            if (_state.uid == firebase.auth().currentUser.uid) {
+                ref = _postModel.prepareAllByDate(_state.uid, ORDER)
+            } else {
+                ref = _postModel.prepareAllByDate(_state.uid, ORDER)
+                    .where('privacy', '==', PUBLIC);
+            }
 
-                            posts.forEach(post => {
-                                post.render(container)
-                                    .likeObserver()
-                                    .commentObserver()
-                                    .unfollowObserver()
-                                    .hidePostObserver()
-                                    .deleteObserver()
-                                    .avatarObserver()
-                                    .editObserver()
-                                    .messageObserver()
-                                    
-                            });
-
-
-                        } catch(e) {
-                            console.log(e);
-                       }
-                            
-                    } 
+            postListener = ref.onSnapshot(querySnapshot => {
+                let posts = [];
+                let flag;
+                querySnapshot.docChanges().forEach(change => {
+                    if (change.type == 'added') {
+                        const post = change.doc.data();
+                        let component = new PostComponent(post);
+                        posts.push(component);
+                    } else if (change.type == 'modified') {
+                        const post = change.doc.data();
+                        PostComponent.updatePostView(post);
+                    }
+                    flag = change.type;
                 });
+
+                if (posts.length) {
+                    try {
+                        posts.sort(function(post1, post2) {
+                            return post1.post.timestamp.toDate() - post2.post.timestamp.toDate();
+                        });
+
+                        posts.forEach(post => {
+                            post.render(container)
+                                .likeObserver()
+                                .commentObserver()
+                                .unfollowObserver()
+                                .hidePostObserver()
+                                .deleteObserver()
+                                .avatarObserver()
+                                .editObserver()
+                                .messageObserver()
+
+                        });
+
+
+                    } catch (e) {
+                        console.log(e);
+                    }
+
+                } else {
+                    if (flag != 'modified') {
+                        if (_state.uid == firebase.auth().currentUser.uid) {
+                            container.innerHTML = `<p>You haven't post anything on your timeline</p>`;
+
+                        } else {
+                            let gender;
+                            if (_state.gender == 'male') {
+                                gender = 'his';
+                            } else if (_state.gender == 'female') {
+                                gender = 'her';
+                            }
+
+                            container.innerHTML = `<p>${_state.name} hasn't post anything on
+                                ${(gender)?gender:'its'} timeline</p>`;
+                        }
+                    }
+                }
+            });
             PostComponent.listeners(postListener);
 
         } catch (e) {
@@ -981,23 +1016,20 @@ define([
         constructor(state, router) {
             _state = state;
             _router = router;
-            _contentId = HOME_TAB;
-            const currentTab = document.querySelector('#tabs li');
-            View.addActive(currentTab);
 
             const logout = document.querySelector('#logout');
             logout.addEventListener('click', () => {
-            	firebase.auth().signOut()
-            	.then(() => {
-            		const path = 'login';
-            		View.removeMenu();
-            		_router.navigate('login');
-                    location.reload(true);
-            		localStorage.clear();
-            		sessionStorage.clear();
-            	}).catch(err => {
-            		console.log(err.message);
-            	});
+                firebase.auth().signOut()
+                    .then(() => {
+                        const path = 'login';
+                        View.removeMenu();
+                        _router.navigate('login');
+                        location.reload(true);
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    }).catch(err => {
+                        console.log(err.message);
+                    });
             });
 
             _initViews();

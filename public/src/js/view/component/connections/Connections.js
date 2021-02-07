@@ -3,46 +3,42 @@ define(['util'],(Util)=>{
 
 	return class Connections{
 		constructor(state){
-			this.ref;
 			this.state = state;
-			_init = false;
+			this.ref;
 		}
 
-		render(ref, users, filter){
+		render(ref, users, filter = 'all'){
+			const header = document.querySelector('#ref');
 			this.ref = ref;
-			const container = document.querySelector('#connections-container');
-			const count = (users.length > 0)? users.length: 0;
-
-			let template = '';
-
-			if(!_init){
-				template = `<h4>${Util.toCapitalizeString(ref)} (${count})</h4>`;
+			if(ref == FOLLOWER){
+				header.innerText = `Followers (${users.length})`;
+			}else{
+				header.innerText = `Following (${users.length})`;
 			}
-
-			template += `
-				<div class="label clear-fix">
-					<p class="float-left">${filter.toUpperCase()}</p>
-					<hr class="float-left">
-				</div>
-				<div id="${ref}">
-					<ul class="recent-dialog"></ul>
-					<ul class="all-dialog"></ul>
-				</div>
-			`;
-
-			container.innerHTML += template;
-
-			const allDialog = document.querySelector(`#${ref} .all-dialog`);
 			
-			let all = '';
+			if(filter == 'recent'){
+				const recentDialog = document.querySelector('#recent ul');
 
-			users.forEach(user => {
-				all += this.template(user);
-			});
+				let recent = '';
+
+				users.forEach(user => {
+					recent += this.template(user);
+				});
+
+				recentDialog.innerHTML = recent;	
+				
+			}else{
+				const allDialog = document.querySelector('#all ul');
+				
+				let all = '';
+
+				users.forEach(user => {
+					all += this.template(user);
+				});
+
+				allDialog.innerHTML = all;	
+			}
 			
-			allDialog.innerHTML = all;
-
-			_init = true;
 		}
 
 /*
@@ -105,37 +101,26 @@ define(['util'],(Util)=>{
 				chat = '<img src="src/assets/invite_chat.png" height="30" width="30" class="chat">';
 			}
 
-			let li = '';
-			let content = `
-				<div class="col-1 float-left" style="display:flex; gap: 10px;">
-					<img src="${imgPath}">
-					<div>
-						<h5 >${user.name}</h5>
-						<p>${service}</p>
+			let li = `
+				<li class="${user.uid}"  data-chat="invite">
+					<div class="col-1">
+						<img src="${imgPath}">
+						<div>
+							<h5 >${user.name}</h5>
+							<p>${service}</p>
+						</div>
+						<div>
+							${chat}
+						</div>
 					</div>
-					${chat}
-				</div>`;
-
-			let buttons = '<button class="view">View Profile</button>';
-			
-			if(firebase.auth().currentUser.uid == this.state.uid){
-				if(this.ref == FOLLOWING){
-					buttons += `<button class="unfollow">Unfollow</button>`;
-				}
-			}else{
-				if(firebase.auth().currentUser.uid != user.uid){
-					buttons += `<button class="follow">Follow</button>`;
-				}
-			}
-
-			content += `
-					<div class="col-2 float-right">
-						${buttons}
-					</div>`;
-
-			li = `
-				<li id="${user.uid}" class="clear-fix" data-chat="invite">
-					${content}
+					<div class="col-2">
+						<div>
+							<button class="view">View Profile</button>
+							${(firebase.auth().currentUser.uid == this.state.uid && 
+								this.ref == FOLLOWING)?'<button class="unfollow">Unfollow</button>':
+							'<button class="follow">Follow</button>'}
+						</div>
+					</div>
 				</li>`;
 
 			return li;

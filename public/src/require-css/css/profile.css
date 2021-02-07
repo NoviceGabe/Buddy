@@ -111,12 +111,6 @@
   margin-bottom: 20px;
 }
 
-#tab-1{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 #profile{
   background: #fff;
   padding: 30px;
@@ -139,23 +133,20 @@
   border-bottom: 1px solid #d9d9d9;
 }
 
-#about .header{
+#about > div > div:first-child{
   display: -webkit-flex;
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
 }
 
-#about .header h4{
 
-}
-
-#about .header span{
+#about > div > div:first-child span{
   font-size: 14px;
   color: #0275d8;
 }
 
-#about .header span:hover{
+#about > div > div:first-child span:hover{
   cursor: pointer;
 }
 
@@ -263,6 +254,12 @@
   font-size: 16px;
   width: 18px;
   margin-right:6px;
+}
+
+#timeline{
+  width: 100%;
+  height: auto;
+  box-sizing:border-box;
 }
 
 #timeline .post{

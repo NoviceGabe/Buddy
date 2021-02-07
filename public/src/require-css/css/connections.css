@@ -1,6 +1,6 @@
 
 #connections-section{
-  height: 100%;
+  height: auto;
   width: 80%;
   padding-top: 20px;
   margin:auto;
@@ -16,6 +16,7 @@
   width: 100%;
   min-height: 310px;
   box-sizing:border-box;
+  margin-bottom: 20px;
 }
 
 #connections-container > h4{
@@ -30,15 +31,6 @@
   font-weight: bold;
 }
 
-#connections-container .label hr{
-  width:94%;
-  box-sizing:border-box;
-  margin: 8px 0px;
-  padding: 0;
-  background: #efefef;
-  border: 1px solid #efefef; 
-}
-
 #connections-container #follower, #connections-container #following{
   margin-top:20px;
   width:100%;
@@ -48,24 +40,56 @@
   width:50%; 
   padding-left:20px;
   box-sizing: border-box;
+  display: flex;
+}
+
+#connections-container .col-1 > img:first-of-type{
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  border: 1px solid #efefef;
+  margin-right: 12px;
+}
+
+#connections-container .col-1 > div:last-child{
+   width: 10%;
+   position: relative;
+}
+
+#connections-container .col-1 > div:last-child img{
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
 }
 
 #connections-container .col-2{
   width:50%; 
   box-sizing: border-box;
+  display: flex;
 }
 
+#connections-container .col-2 > div{
+   margin: auto;
+}
+
+#connections-container ul{
+  display: flex;
+  flex-direction: column;
+}
 
 #connections-container li{
-  display:block;
+  display:flex;
   margin-bottom: 20px;
 }
 
 #connections-container li button{
   display:inline-block; 
   border-radius: 4px;
+  height: 30px;
   width:110px;
   padding:8px 10px;
+  margin-right: 5px;
 }
 
 #connections-container li button:hover{
@@ -84,14 +108,27 @@
   border:1px solid #222
 }
 
-#connections-container li img:first-of-type{
-  border-radius: 50%;
-  height: 70px;
-  width: 70px;
-  border: 1px solid #efefef;
-  margin-right: 12px;
-}
-
 #connections-container .chat:hover{
   cursor: pointer;
+}
+
+.header{
+  display: flex;
+  font-weight: 200;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.header:after {
+  background: #d3d3d3;
+  height: 1px;
+  flex: 1;
+  content: '';
+
+}
+
+.header span{
+  margin-right: 10px;
 }

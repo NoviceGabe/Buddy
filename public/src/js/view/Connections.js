@@ -3,12 +3,22 @@ define(()=>{
 		return `
 			<div id="connections-section">
 
-				<ul class="breadcrumb" >
-				  <li><a href="#/">Buddy</a></li>
-				  <li>Connections</li>
+				<ul class="breadcrumb" class="clear-fix">
+				  <li class="item"><a href="#/">Buddy</a></li>
+				  <li class="item">Connections</li>
 				</ul>
 				
-				<div id="connections-container" class="clear-fix">
+				<div id="connections-container">
+					<h3 id="ref"></h3>
+					<div id="recent">
+						<h4 class="header"><span>Recent</span></h4>
+						<ul></ul>
+					</div>
+					
+					<div id="all">
+						<h4 class="header"><span>All</span></h4>
+						<ul></ul>
+					</div>
 				</div>
 
 			</div>

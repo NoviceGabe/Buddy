@@ -64,9 +64,6 @@ define(['moment'],(moment)=>{
 			more.classList.add('more');
 			
 			header.classList.add('post-header');
-			div1.classList.add('clear-fix');
-			headerDiv.classList.add('float-left');
-			avatar.classList.add('float-left');
 			ago.classList.add('post-time');
 
 			let photoUrl = (post.user.photoURL)?post.user.photoURL:'src/assets/man.jpg';
@@ -135,7 +132,6 @@ define(['moment'],(moment)=>{
 			subheader.classList.add('clear-fix');
 
 			const header = document.createElement('div');
-			header.classList.add('header');
 			header.classList.add('clear-fix');
 					
 			if(post.user.work){
@@ -362,7 +358,6 @@ define(['moment'],(moment)=>{
 			}else{
 				barDiv1Child.style.display = 'none';
 			}
-
 			if(post.commentCount){
 				commentCountContainer.style.display = 'block';
 			}else{

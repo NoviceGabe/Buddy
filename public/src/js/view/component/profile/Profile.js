@@ -74,7 +74,7 @@ define(['util'],(Util) => {
 			const template = `
 				<div id="about">
 					<div id="bio">
-						<div class="header">
+						<div>
 							<h4>BIO</h4>
 							${(firebase.auth().currentUser.uid == this.state.uid)?'<span id="edit-bio">Edit</span>':''}
 						</div>
@@ -83,7 +83,7 @@ define(['util'],(Util) => {
 						</div>
 					</div>
 					<div id="workplace">
-						<div class="header">
+						<div>
 							<h4>WORKPLACE</h4>
 							${(firebase.auth().currentUser.uid == this.state.uid)?'<span id="edit-workplace">Edit</span>':''}
 						</div>
@@ -93,7 +93,7 @@ define(['util'],(Util) => {
 						</div>
 					</div>
 					<div id="education">
-						<div class="header">
+						<div>
 							<h4>EDUCATION</h4>
 							${(firebase.auth().currentUser.uid == this.state.uid)?'<span id="edit-education">Edit</span>':''}
 						</div>
@@ -111,7 +111,7 @@ define(['util'],(Util) => {
 						</div>
 					</div>
 					<div id="address">
-						<div class="header">
+						<div>
 							<h4>ADDRESS</h4>
 							${(firebase.auth().currentUser.uid == this.state.uid)?'<span id="edit-address">Edit</span>':''}
 						</div>
@@ -122,7 +122,7 @@ define(['util'],(Util) => {
 						</div>
 					</div>
 					<div id="contact">
-						<div class="header">
+						<div>
 							<h4>CONTACT INFO</h4>
 							${(firebase.auth().currentUser.uid == this.state.uid)?'<span id="edit-contact">Edit</span>':''}
 						</div>
@@ -150,7 +150,7 @@ define(['util'],(Util) => {
 						</div>
 					</div>
 					<div id="basic-info">
-						<div class="header">
+						<div>
 							<h4>BASIC INFO</h4>
 							${(firebase.auth().currentUser.uid == this.state.uid)?'<span id="edit-basic">Edit</span>':''}
 						</div>

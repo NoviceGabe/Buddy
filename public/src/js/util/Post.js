@@ -27,7 +27,7 @@ define([
     let _modal;
     let _map;
     let _add = true;
-    let _id;
+    let _post;
       
     return class Post {
         constructor(post) {
@@ -40,12 +40,12 @@ define([
         }
 
         static init(state, router){
+        	_state = state;
+
         	if(!_router){
         		_router = router;
         	}
-        	if(!_state){
-        		_state = state;
-        	}
+
         	if(!_postComponent && _state && _router){
         		_postComponent = new PostComponent(_state, _router);
         	}   
@@ -244,7 +244,7 @@ define([
             const ref = document.getElementById(this.post.id);
             const unfollow = ref.querySelector('.unfollow');
             const self = this;
-            if (unfollow) {
+            if (unfollow && this.post.user.uid != firebase.auth().currentUser.uid) {
                 unfollow.addEventListener('click', async function() {
                     _userModel.unfollow(firebase.auth().currentUser.uid, self.post.user.uid)
                     .then(() => {
@@ -343,7 +343,7 @@ define([
             const ref = document.getElementById(this.post.id);
             const deletePost = ref.querySelector('.delete');
             const self = this;
-            if (deletePost) {
+            if (deletePost && this.post.user.uid == firebase.auth().currentUser.uid) {
                 deletePost.addEventListener('click', async function() {
                     const result = confirm("Delete post?");
                     if (result == true) {
@@ -375,7 +375,13 @@ define([
                         header.innerText = 'Edit post';
                         
                         _add = false;
-                        _id = self.post.id;
+                        if(!_post){
+                        	_post = self.post;
+                        }else if(_post.user.uid == firebase.auth().currentUser.uid && 
+                        	_post.id == self.post.id){
+                        	self.post = _post;
+                        }
+                        
 
                         const form = document.querySelector('#form-post');
                         if(!form.querySelector('#privacy')){
@@ -407,7 +413,7 @@ define([
 	                            }
 	                        }
                         }
-                       	
+
 					    for (let i = 0; i < role.options.length; i++) {
                             if (role.options[i].value == self.post.user.role) {
                                         role.options[i].selected = true;
@@ -478,7 +484,7 @@ define([
                             });
                         }
 
-                        if (Object.keys(_map.location).length === 0 && _map.location.constructor === Object
+                        if (_map && Object.keys(_map.location).length === 0 && _map.location.constructor === Object
                         	&& self.post.location) {
                             _map.location = {
                                         label: self.post.location.label,
@@ -486,9 +492,6 @@ define([
                                         y: self.post.location.y
                                     }
                         }
-
-                       	
-
                     });
                 });
             }
@@ -507,7 +510,6 @@ define([
         static initWritePost(trigger){
             const post = {};
 
-            const self = this;
             const ref = document.querySelector('#modal-post');
             const form = document.querySelector('#form-post');
             _modal = new ModalComponent(ref, form, trigger);
@@ -523,6 +525,10 @@ define([
             const location = document.querySelector('#container-location');
 
             budget.setAttribute('placeholder', String.fromCharCode(0x20b1) + '0');
+
+            if(_state.uid != firebase.auth().currentUser.uid){
+            	return false;
+            }
 
             if (_state.roles && _state.roles.server && _state.roles.server === true) {
                 const option = document.createElement('option');
@@ -554,7 +560,7 @@ define([
                 }
             });
 
-            _modal.onSave(function() {
+            _modal.onSave(() => {
             	const privacy = form.querySelector('#privacy');
 
                 if (job.value == 2 && _map) {
@@ -641,18 +647,21 @@ define([
 
                 }else{
                     post.updatedAt = firebase.firestore.Timestamp.fromDate(new Date());
-                    post.id = _id;
+                    post.id = _post.id;
                     post.privacy = privacy.value;
 
                     if(!post.id){
                         return false;
                     }
+
+                    if(_post.user.uid != firebase.auth().currentUser.uid){
+                    	return false;
+                    }
                     
                     return _postModel.update(post)
                     .then(() => {
                         console.log('Post updated');
-                        self.post = post;
-
+                        _post = post;
                         if (_map) {
                             _map.clear();
                             _map = null;
@@ -670,11 +679,19 @@ define([
                 }
                
                 return false;
-            }, function(){
+            },function(){
                 _add = true;
                 const header = document.querySelector('#modal-post h3');
                 header.innerText = 'Post a service';
             });
+
+			_modal.onCancel(() => {
+				_post = null;
+			});
+
+			_modal.onClose(() => {
+				_post = null;
+			});
 
             const wordCount = (count, text, limit = 600) => {
                 count.innerText = text.value.length;
@@ -814,9 +831,12 @@ define([
             const description = ref.querySelector('.post-content .post-description');
             const tags = ref.querySelector('.post-tags');
 
-            avatar.setAttribute('src', this.post.user.photoURL);
+            if(this.post.user.photoURL){
+            	avatar.setAttribute('src', this.post.user.photoURL);
+            }
+           
             name.innerText = this.post.user.name;
-            if(this.post.location){
+            if(address && this.post.location){
                 address.innerText = this.post.location.label;
             }
            

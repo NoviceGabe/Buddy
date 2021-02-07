@@ -106,7 +106,7 @@ define([
                                 console.log(e.message);
                             }
                             
-                        } 
+                        }
                     });
                 PostComponent.listeners(postListener);
             }

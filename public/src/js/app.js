@@ -141,23 +141,21 @@ const main = (Router, userModel, data) => {
 				};
 			}
 		})
-		.add(/connections\/following\/(.*)/, function(segment){
+		.add(/connections\/following\/(.*)/, async function(segment){
 			const id = segment.split('/').pop();
-			let state = data;
-			 
 			if(id != firebase.auth().currentUser.uid){
-				return userModel.getUser(id).then(state => {
-					return {
-						view:'c_connectionsComponent',
-						controller:'connectionsController',
-						state: state
-					};
-				});
+				let user = await userModel.getUser(id);
+				return {
+					view:'connectionsView',
+					controller:'connectionsController',
+					state: user
+				};
+
 			}else{
 				return {
-					view:'c_connectionsComponent',
+					view:'connectionsView',
 					controller:'connectionsController',
-					state: state
+					state: data
 				};
 			}
 		})
