@@ -66,7 +66,8 @@ define(() => {
 		}
 
 		onSave(onSave, onFinish){
-			this.save.addEventListener('click', async () => {
+			this.save.addEventListener('click', async (e) => {
+				e.stopPropagation();
 	         	const status = await onSave();
 	                
 	            if (status) {

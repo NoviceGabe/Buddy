@@ -25,6 +25,20 @@
   align-items: center;
   padding-left: 30px;
   gap:10px;
+  position: relative;
+}
+
+#profile-overview #col-1 #edit-profile{
+  position: absolute;
+  top: 40px;
+  right: 20px;
+  text-decoration: underline;
+  color: #0275d8;
+  font-size: 14px;
+}
+
+#profile-overview #col-1 #edit-profile:hover{
+  cursor: pointer;
 }
 
 #profile-overview #col-1 .chat{
@@ -99,7 +113,7 @@
 }
 
 #profile-overview .profile-image{
-  border: 1px solid #efefef;
+  border: 8px solid #efefef;
 }
 
 #profile-overview #overview-general{
@@ -319,4 +333,27 @@
 }
 .checked {
   color: orange;
+}
+
+
+.file-upload {
+    display: none;
+}
+.p-image {
+  position: absolute;
+  top: 147px;
+  left: 127px;
+  color: #666666;
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+}
+.p-image:hover {
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+}
+.upload-button {
+  font-size: 1.2em;
+}
+
+.upload-button:hover {
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+  color: #999;
 }

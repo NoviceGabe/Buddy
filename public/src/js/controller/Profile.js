@@ -12,6 +12,7 @@ define([
     'validator',
     'dateComponent',
     'authController',
+    'uuid',
     'css!css/profile',
 ], (View,
     OverviewComponent,
@@ -25,7 +26,8 @@ define([
     Util,
     Validator,
     DateComponent,
-    Auth) => {
+    Auth,
+    uuid) => {
 
     const _userModel = new UserModel(firebase.firestore(), firebase.auth());
     const _chatModel = new ChatModel(firebase.firestore());
@@ -39,6 +41,7 @@ define([
     let _state
 
     ////////////////////// edit events
+
 
     const _initBioModalEvents = () => {
         const ref = document.querySelector('#modal-bio');
@@ -66,8 +69,8 @@ define([
             }
         });
 
-        modal.onSave(function() {
-            return (async () => {
+        modal.onSave(async() => {
+            return 
                 if (text.value.trim().length == 0) {
                     console.log('Empty field');
                     return false;
@@ -92,7 +95,7 @@ define([
                         return false;
                     }
                 }
-            })();
+  
         }, function() {
             if (text.value.trim().length == 0 && oldText.trim().length) {
                 text.value = oldText.trim();
@@ -428,19 +431,11 @@ define([
     }
 
     const _initContactModalEvents = () => {
-        //const emailPrimary = document.querySelector('#email-primary');
         const emailSecondary = document.querySelector('#email-secondary');
         const mobilePrimary = document.querySelector('#mobile-primary');
         const mobileSecondary = document.querySelector('#mobile-secondary');
 
-        //let isPrimaryEmailReadOnly = true;
-        //let emailUpdateCount = _state.emailUpdateCount;
-
         const provider = firebase.auth().currentUser.providerData[0].providerId;
-
-        /*if (firebase.auth().currentUser.email) {
-            emailPrimary.value = firebase.auth().currentUser.email;
-        }*/
 
         if (_state.email[1]) {
             emailSecondary.value = _state.email[1];
@@ -454,50 +449,21 @@ define([
             mobileSecondary.value = _state.mobile[1];
         }
 
-        //let oldEmailPrimary = emailPrimary.value;
         let oldEmailSecondary = emailSecondary.value;
         let oldMobilePrimary = mobilePrimary.value;
         let oldMobileSecondary = mobileSecondary.value;
 
-        /* if (provider != EMAIL_PASSWORD_SIGN_IN_METHOD) {
-             emailPrimary.readOnly = true;
-         } else {
-             isPrimaryEmailReadOnly = false;
-         }
-         */
         const ref = document.querySelector('#modal-contact');
         const edit = document.querySelector('#edit-contact');
         const form = document.querySelector('#form-contact');
         const modal = new ModalComponent(ref, form, edit);
 
-        modal.onSave(function() {
+        modal.onSave(async () => {
             let data = {};
             data.email = ['', ''];
             data.mobile = ['', ''];
 
-            /*if((isPrimaryEmailReadOnly && 
-                !emailSecondary.value.length &&
-                !mobilePrimary.value.length && 
-                !mobileSecondary.value.length) ||
-                (!isPrimaryEmailReadOnly && 
-                !emailPrimary.value.length &&
-                !emailSecondary.value.length && 
-                !mobilePrimary.value.length &&
-                !mobileSecondary.value.length)
-
-                ){
-                
-                console.log('No contact info to update');
-                return false;
-                
-            }else{
-            if (emailPrimary.value.length && !Validator.isEmailValid(emailPrimary.value)) {
-                console.log('Invalid email address');
-                return false;
-            } else {
-                data.email[0] = emailPrimary.value;
-            }*/
-
+           
             data.email[0] = firebase.auth().currentUser.email;
 
             if (emailSecondary.value.length && !Validator.isEmailValid(emailSecondary.value)) {
@@ -515,114 +481,41 @@ define([
                 data.mobile[1] = mobileSecondary.value;
             }
 
-            if ( /*oldEmailPrimary == emailPrimary.value &&*/
-                oldEmailSecondary == emailSecondary.value &&
+            if (oldEmailSecondary == emailSecondary.value &&
                 oldMobilePrimary == mobilePrimary.value &&
                 oldMobileSecondary == mobileSecondary.value
             ) {
                 console.log('No changes!!');
                 return false;
             }
-            /*
-                        if (emailPrimary.value.length && emailSecondary.value.length &&
-                            emailPrimary.value == emailSecondary.value) {
-                            console.log('Primary email and secondary email must not be the same')
-                            return false;
-                        }*/
 
             if (!data.email.length && !data.mobile.length) {
                 console.log('no valid data')
                 return false;
             } else {
-                (async () => {
-                    try {
-                        /*
-                        if (!isPrimaryEmailReadOnly && emailPrimary.value.length &&
-                            emailPrimary.value != oldEmailPrimary) {
+           
+                try {
+                    const status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
 
-                            const increment = firebase.firestore.FieldValue.increment(1);
-                            data.emailUpdateCount = increment;
-
-                            const overlay = document.querySelector('.overlay');
-                            overlay.style.display = 'block';
-
-                            let password = document.querySelector('#password');
-
-
-                            _initModalEvents('#modal-password', '', '#form-password', async function() {
-                                if(!password.value.length){
-                                    console.log('Enter your password');
-                                    return false;
-                                }
-                                                                
-                                let id = await Auth.changeEmail(password.value, emailPrimary.value);
-
-                                if (id) {
-                                    if (emailUpdateCount) {
-                                        if (emailUpdateCount == 1) {
-                                            console.log('You only have two more chances left to change your current email')
-                                        } else if (emailUpdateCount == 2) {
-                                            console.log('You only 1 more chance left to change your current email');
-                                        } else {
-                                            console.log(`You reached the limit of changing email address. 
-                                                                You can\'t change your email address anymore'`);
-                                            return false;
-                                        }
-                                    }
-
-                                    const status = await _userModel.mergeUpdateUser(id, data);
-                                    if (status) {
-                                        oldEmailPrimary = emailPrimary.value;
-                                        oldEmailSecondary = emailSecondary.value;
-                                        oldMobilePrimary = mobilePrimary.value;
-                                        oldMobileSecondary = mobileSecondary.value;
-                                        console.log('Update successful');
-                                         _profileView.updateContact(data);
-                                        return true;
-                                    }
-
-                                }
-
-                                return false;
-                            }, function(){
-                                overlay.style.display = 'none';
-
-                                return function(){
-                                     const modal = document.querySelector('#modal-contact');
-                                     modal.style.display = 'none';
-                                     return false;
-                                }
-
-                            });
-
-                        } else {*/
-                        const status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
-
-                        if (status) {
-                            //  oldEmailPrimary = emailPrimary.value;
-                            oldEmailSecondary = emailSecondary.value;
-                            oldMobilePrimary = mobilePrimary.value;
-                            oldMobileSecondary = mobileSecondary.value;
-                            console.log('Update successful');
-                            _profileView.updateContact(data);
-                            return true;
-                        }
-                        // }
-
-                        return false;
-
-                    } catch (e) {
-                        console.log(e.message);
-                        return false;
+                    if (status) {
+                        oldEmailSecondary = emailSecondary.value;
+                        oldMobilePrimary = mobilePrimary.value;
+                        oldMobileSecondary = mobileSecondary.value;
+                        console.log('Update successful');
+                        _profileView.updateContact(data);
+                        return true;
                     }
-                })();
+
+                    return false;
+
+                } catch (e) {
+                    console.log(e.message);
+                    return false;
+                 }
+           
             }
-            //}
         }, function() {
-            /*
-            if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
-                emailPrimary.value = oldEmailPrimary;
-            }*/
+          
 
             if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
                 emailSecondary.value = oldEmailSecondary;
@@ -641,11 +534,6 @@ define([
 
         modal.onClose(function() {
 
-            /*
-            if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
-                emailPrimary.value = oldEmailPrimary;
-            }*/
-
             if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
                 emailSecondary.value = oldEmailSecondary;
             }
@@ -662,11 +550,6 @@ define([
         });
 
         modal.onCancel(function() {
-
-            /*
-             if (emailPrimary.value.length == 0 && oldEmailPrimary.length) {
-                 emailPrimary.value = oldEmailPrimary;
-             }*/
 
             if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
                 emailSecondary.value = oldEmailSecondary;
@@ -777,7 +660,7 @@ define([
             tabs.innerHTML = `
                 <ul>
                     <li class="active" data-content="tab-1">My Timeline</li>
-                    <li data-content="tab-2">My Profile</li>
+                    <li data-content="tab-2">About</li>
                     <li data-content="tab-3">My Connections</li>
                     <li data-content="tab-4">Services</li>
                     <li data-content="tab-5">Account Settings</li>
@@ -786,7 +669,7 @@ define([
             tabs.innerHTML = `
                 <ul>
                     <li class="active" data-content="tab-1">Timeline</li>
-                    <li data-content="tab-2">Profile</li>
+                    <li data-content="tab-2">About</li>
                     <li data-content="tab-3">Connections</li>
                     <li data-content="tab-4">Services</li>
                 </ul>`;
@@ -1034,6 +917,58 @@ define([
 
             _initViews();
             _initTabEvents();
+
+            const uploadBtn = document.querySelector('.p-image');
+            const uploadImage = document.querySelector('.file-upload');
+            uploadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                 uploadImage.click();
+            });
+
+            uploadImage.addEventListener('change', () => {
+                if (uploadImage.files && uploadImage.files[0]) {
+                    const images = document.querySelectorAll('.profile-image');
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        images.forEach(image => {
+                            image.setAttribute('src',  e.target.result);
+                        });
+
+                        upload(uploadImage.files[0]);
+                    }
+                     
+                    reader.readAsDataURL(uploadImage.files[0]);
+                }
+            });
+
+            const upload = (file) => {
+                const imageId = uuid();
+                const task = firebase.storage().ref(`profile/${imageId}.png`).put(file);
+
+                task.on('state_changed', function(snapshot){
+                    const progress = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
+                    console.log(progress)
+                }, function(error){
+                    console.log(error.message)
+                }, function(){
+                    task.snapshot.ref.getDownloadURL().then(async (url) =>{
+                        let id = await _userModel.setProfileImage(firebase.auth().currentUser.uid, url);
+                        if(id){
+                            const status = await _userModel
+                            .mergeUpdateUser(firebase.auth().currentUser.uid, { photoId: id});
+
+                            if(status){
+                                console.log('Profile image updated.');
+                            }else{
+                                console.log('Unable to update image.');
+                            }
+                        }else{
+                            console.log('Unable to upload image.');
+                        }
+    
+                    });
+                });
+            }
 
         }
     }

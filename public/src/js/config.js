@@ -39,6 +39,7 @@ requirejs.config({
     enforceDefine: true,
     waitSeconds: 0,
     paths: {
+        'uuid': 'https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min',
     	'moment':'https://momentjs.com/downloads/moment.min',
         'db': 'src/js/db',
         'userModel': 'src/js/model/User',

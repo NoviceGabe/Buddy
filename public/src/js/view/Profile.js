@@ -38,6 +38,22 @@ define(()=>{
 					</div>
 				</div>
 
+				<div id="modal-profile" class="modal vertical-center-fixed" style="min-height:200px;width:70%">
+					<div class="modal-header">
+				    	<h3>Edit Profile</h3>
+				    	<span class="close">&times;</span>
+				    </div>
+				    <div class="modal-content">
+				    	<form id="form-profile" >
+				    		
+						</form>
+				    </div>
+				   <div class="modal-footer">
+				  	  	<button class="save">Save</button>
+				    	<button class="cancel">Cancel</button>
+				  </div>
+				</div>
+
 				<div id="modal-bio" class="modal vertical-center-fixed" style="min-height:200px;width:70%">
 					<div class="modal-header">
 				    	<h3>Edit Bio</h3>

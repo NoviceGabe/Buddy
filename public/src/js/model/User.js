@@ -83,6 +83,49 @@ define(['db'], db => {
 			});
 		}
 
+		async setProfileImage(uid, url){
+			const image = await this.getUserImage(uid);
+			let data;
+
+			if(image && image.length){
+				data = {
+					id: image[0].id,
+					uid: uid,
+					url: url
+				}
+				return this.set(`images/${data.id}`, data).then(() => {
+					return data.id;
+				});
+			}else{
+				const ref = this.prepareCollection('images').doc();
+				data = {
+					id: ref.id,
+					uid: uid,
+					url: url
+				}
+
+				return ref.set(data)
+				.then(() => {
+					return ref.id;
+				});
+			}
+		}
+
+		getUserImage(uid){
+			return this.getByCustom('images', {
+				attribute: 'uid',
+				operator: '==',
+				value: uid
+			}).then(snapshot => {
+			    const image = snapshot.docs.map(doc => ({
+			    ...doc.data(),
+			    }));
+			    return image;
+			});
+		}
+
+
+
 		async fetchMembers(group) {
 			const members = [];
 			for (const g of group) {

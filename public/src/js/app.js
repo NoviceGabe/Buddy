@@ -7,7 +7,7 @@ require(['router', 'userModel', 'view',
 	'css!css/index', 'css!css/helper', 'css!css/post', 'css!css/modal'], 
 	(Router, UserModel, View) => {
 
-	firebase.auth().onAuthStateChanged(user => {
+	firebase.auth().onAuthStateChanged(async (user) => {
 		
 	    if(user){
 	    	console.log('logged in user as '+user.uid);
@@ -35,17 +35,20 @@ require(['router', 'userModel', 'view',
 						Router.navigate('login');
 					}
 				}
+	    		
+	    		const userModel = new UserModel(firebase.firestore(), firebase.auth());
 
-	    		(async () => {
-	    			const userModel = new UserModel(firebase.firestore(), firebase.auth());
-					const data = await userModel.getUser(user.uid);
+				const data = await userModel.getUser(user.uid);
+				const image = await userModel.getUserImage(user.uid);
 
-					View.instance(data);
-					View.renderMenu();
-					View.onToggleMenu();
+				data.photoURL = image[0].url;
 
-		    		main(Router, userModel,  data);
-	    		})();
+				View.instance(data);
+				View.renderMenu();
+				View.onToggleMenu();
+
+		    	main(Router, userModel,  data);
+	
 	    		
 	    	}
 	    }else{

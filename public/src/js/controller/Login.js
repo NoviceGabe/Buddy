@@ -38,6 +38,9 @@ define(['authController', 'css!css/login-register'], (AuthController) => {
 							userData.timestamp = result.user.metadata.creationTime;
 
 							const isUserAdded = await userModel.addUser(userData.uid, userData);
+							if(isUserAdded){
+								const status = await userModel.setProfileImage(userData.uid, data.photoURL);
+							}
 						}
 
 					} catch(e) {
