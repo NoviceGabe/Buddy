@@ -19,7 +19,7 @@ define([
         if (fragment[1] == FOLLOWING) {
             _initFollowing();
         } else if (fragment[1] == FOLLOWER) {
-           // _initFollower();
+            _initFollower();
         }
     }
 
@@ -69,6 +69,137 @@ define([
 
         _initChatStatus(all);
 
+         _initFollowingStatus(all);
+
+       const unfollow = document.querySelectorAll('#connections-container .unfollow');
+
+        unfollow.forEach(element => {
+            element.addEventListener('click', e => {
+                const li = e.target.parentElement.parentElement.parentElement;
+                const parent = li.parentElement;
+                const id = li.getAttribute('class').trim();
+                const name = li.querySelector('.col-1 > div h5').textContent;
+
+                _userModel.getFollowing(firebase.auth().currentUser.uid, id)
+                .then(data => {
+                	if(data){
+                		return _userModel.unfollow(firebase.auth().currentUser.uid, id).then(() => {
+		                    const ul = document.querySelectorAll('#connections-container ul');
+
+			                ul.forEach(element => {
+			                	 const toBeRemoved = element.querySelector(`.${id}`);
+			                	 element.removeChild(toBeRemoved);
+			                });
+
+		                    count--;
+		                    header.innerText = `Followers (${count})`;
+		                });
+                	}
+
+                	throw new Error('Unable to process action.');
+                })
+                .then(() => {
+                	console.log(`You have unfollowed ${name}`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });              
+            });
+        });
+
+        const follow = document.querySelectorAll('#connections-container .follow');
+
+        follow.forEach(element => {
+            element.addEventListener('click', e => {
+                const li = e.target.parentElement.parentElement.parentElement;
+                const parent = li.parentElement;
+                const id = li.getAttribute('class').trim();
+                const name = li.querySelector('.col-1 > div h5').textContent;
+
+                _userModel.getFollowing(firebase.auth().currentUser.uid, id)
+                .then(data => {
+                	if(!data){
+                		return _userModel.follow(firebase.auth().currentUser.uid, id).then(() => {
+		                    const li = document.querySelectorAll(`#connections-container .${id}`);
+
+		                    li.forEach(element => {
+		                    	let followBtn = element.querySelector('.follow');
+		                    	if(following && followBtn){
+				                	followBtn.classList.remove('follow');
+				                	followBtn.classList.add('unfollow');
+				                	followBtn.innerText = 'Unfollow';
+				                }
+
+		                    });
+
+		                    count++;
+		                    header.innerText = `Followers (${count})`;
+		                });
+                	}
+
+                	throw new Error('Unable to process action.');
+                })
+                .then(() => {
+                	console.log(`You have followed ${name}`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });              
+            });
+        });
+    }
+
+
+    const _initFollower = async () => {
+         const header = document.querySelector('#ref');
+
+       	const today = new Date()
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const week = new Date(today);
+        week.setDate(week.getDate() - 7);
+
+       const recent = await _userModel.fetchMembersFromFollowersByDate(_state.uid, ORDER, week);
+       console.log(recent)
+        if (recent && recent.length) {
+            _connectionsComponent.render(FOLLOWER, recent, 'recent');
+        }
+
+        const view1 = document.querySelectorAll('#recent .view');
+        view1.forEach(element => {
+            element.addEventListener('click', e => {
+                const id = e.target.parentElement.parentElement.parentElement.getAttribute('class').trim();
+                if (id) {
+                    _router.navigate(`profile/${id}`);
+                }
+            });
+        });
+
+        _initChatStatus(recent, 'recent');
+        _initFollowingStatus(recent, 'recent');
+
+        const all = await _userModel.fetchMembersFromFollowers(_state.uid, ORDER);
+        let count = all.length || 0;
+        header.innerText = `Followers (${count})`;
+
+        if (all && all.length) {
+            _connectionsComponent.render(FOLLOWER, all);
+        }
+
+        const view2 = document.querySelectorAll('#all .view');
+        view2.forEach(element => {
+            element.addEventListener('click', e => {
+                const id = e.target.parentElement.parentElement.parentElement.getAttribute('class').trim();
+                if (id) {
+                    _router.navigate(`profile/${id}`);
+                }
+            });
+        });
+
+        _initChatStatus(all);
+
+        _initFollowingStatus(all);
+
         const unfollow = document.querySelectorAll('#connections-container .unfollow');
 
         unfollow.forEach(element => {
@@ -76,43 +207,94 @@ define([
                 const li = e.target.parentElement.parentElement.parentElement;
                 const parent = li.parentElement;
                 const id = li.getAttribute('class').trim();
-          
-                _userModel.unfollow(firebase.auth().currentUser.uid, id).then(() => {
-                    const ul = document.querySelectorAll('#connections-container ul');
+                const name = li.querySelector('.col-1 > div h5').textContent;
 
-	                ul.forEach(element => {
-	                	 const toBeRemoved = element.querySelector(`.${id}`);
-	                	 element.removeChild(toBeRemoved);
-	                });
+                _userModel.getFollowing(firebase.auth().currentUser.uid, id)
+                .then(data => {
+                	if(data){
+                		return _userModel.unfollow(firebase.auth().currentUser.uid, id).then(() => {
+		                    const ul = document.querySelectorAll('#connections-container ul');
 
-                    count--;
-                    header.innerText = `Following (${count})`;
-                }).catch(err => {
+			                ul.forEach(element => {
+			                	 const toBeRemoved = element.querySelector(`.${id}`);
+			                	 element.removeChild(toBeRemoved);
+			                });
+
+		                    count--;
+		                    header.innerText = `Followers (${count})`;
+		                });
+                	}
+
+                	throw new Error('Unable to process action.');
+                })
+                .then(() => {
+                	console.log(`You have unfollowed ${name}`);
+                })
+                .catch(err => {
                     console.log(err);
-                });
+                });              
             });
         });
+
+        const follow = document.querySelectorAll('#connections-container .follow');
+
+        follow.forEach(element => {
+            element.addEventListener('click', e => {
+                const li = e.target.parentElement.parentElement.parentElement;
+                const parent = li.parentElement;
+                const id = li.getAttribute('class').trim();
+                const name = li.querySelector('.col-1 > div h5').textContent;
+
+                _userModel.getFollowing(firebase.auth().currentUser.uid, id)
+                .then(data => {
+                	if(!data){
+                		return _userModel.follow(firebase.auth().currentUser.uid, id).then(() => {
+		                    const li = document.querySelectorAll(`#connections-container .${id}`);
+
+		                    li.forEach(element => {
+		                    	let followBtn = element.querySelector('.follow');
+		                    	if(followBtn){
+				                	followBtn.classList.remove('follow');
+				                	followBtn.classList.add('unfollow');
+				                	followBtn.innerText = 'Unfollow';
+				                }
+
+		                    });
+
+		                    count++;
+		                    header.innerText = `Followers (${count})`;
+		                });
+                	}
+
+                	throw new Error('Unable to process action.');
+                })
+                .then(() => {
+                	console.log(`You have followed ${name}`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });              
+            });
+        });
+
     }
 
+    const _initFollowingStatus = async(users, filter = 'all') =>{
+    	try {
+    		for(let user of users){
+    			let following = await _userModel.getFollowing(firebase.auth().currentUser.uid, user.uid);
+    			let listItem = document.querySelector(`#${filter} .${user.uid}`);
+                let followBtn = listItem.querySelector('.follow');
 
-    const _initFollower = async () => {
-        const followers = await _userModel.getAllFollowers(this.state.uid);
-        const followerUsers = await _userModel.fetchMembers(followers);
-
-        if (followerUsers) {
-            const connectionsView = new ConnectionsComponent(this.state);
-            connectionsView.render('follower', followerUsers, 'all');
-        }
-
-        const list = document.querySelectorAll('#follower li .view');
-        list.forEach(element => {
-            element.addEventListener('click', e => {
-                const id = e.target.parentElement.parentElement.getAttribute('id');
-                this.router.changePath(`/profile/${id}`);
-            });
-        });
-
-        this.initChatStatus(followerUsers);
+                if(following && followBtn){
+                	followBtn.classList.remove('follow');
+                	followBtn.classList.add('unfollow');
+                	followBtn.innerText = 'Unfollow';
+                }
+    		}
+    	} catch(e) {
+    		console.log(e);
+    	}
     }
 
     const _initChatStatus = async (users, filter = 'all') => {
@@ -172,14 +354,6 @@ define([
                     });
                 }
             }
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    const initFollowingStatus = async (users) => {
-        try {
-
         } catch (e) {
             console.log(e);
         }

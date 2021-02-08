@@ -41,6 +41,58 @@
    flex: 1;
 }
 
+#profile-overview #col-2 #ratings,
+#profile-overview #col-2 #count{
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+#profile-overview #col-2 #ratings{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#profile-overview #col-2 #ratings > div > *{
+  margin-bottom: 5px;
+}
+
+#profile-overview #col-2 #ratings > div > h3{
+  margin-bottom: 5px;
+  color: #707070;
+}
+
+#profile-overview #col-2 #ratings > div > div > span{
+  display: inline-block;
+  color: #d3d3d3;
+}
+
+#profile-overview #col-2 #ratings > div > div > #rating-value{
+  color: #222;
+  margin-right: 10px;
+}
+
+#profile-overview #col-2 #ratings > div > #review{
+  font-size: 12px;
+}
+
+#profile-overview #col-2 #count > div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#profile-overview #col-2 #count > div > div{
+  margin-right: 10px;
+  text-align: center;
+}
+
+
+#profile-overview #col-2 #count h1{
+  margin-bottom: 10px;
+}
+
 #profile-overview #col-1, #profile-overview #col-2{
   height:100%;
   box-sizing:border-box;
@@ -264,4 +316,7 @@
 
 #timeline .post{
   width:45%;
+}
+.checked {
+  color: orange;
 }

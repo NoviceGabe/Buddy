@@ -101,6 +101,18 @@ define(['util'],(Util)=>{
 				chat = '<img src="src/assets/invite_chat.png" height="30" width="30" class="chat">';
 			}
 
+			let buttons = '';
+			if(this.ref == FOLLOWING){
+				if(firebase.auth().currentUser.uid == this.state.uid){
+					buttons = '<button class="unfollow">Unfollow</button>';
+				}else if(user.uid != firebase.auth().currentUser.uid){
+					buttons = '<button class="follow">Follow</button>';
+				}
+			}else if(this.ref == FOLLOWER && user.uid != firebase.auth().currentUser.uid){
+				buttons = '<button class="follow">Follow</button>';
+			}
+			
+
 			let li = `
 				<li class="${user.uid}"  data-chat="invite">
 					<div class="col-1">
@@ -116,9 +128,7 @@ define(['util'],(Util)=>{
 					<div class="col-2">
 						<div>
 							<button class="view">View Profile</button>
-							${(firebase.auth().currentUser.uid == this.state.uid && 
-								this.ref == FOLLOWING)?'<button class="unfollow">Unfollow</button>':
-							'<button class="follow">Follow</button>'}
+							${buttons}
 						</div>
 					</div>
 				</li>`;

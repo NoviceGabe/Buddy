@@ -14,6 +14,7 @@ define(['db'], db => {
 				followerCount: 0,
 				followingCount: 0,
 				emailUpdateCount: 0,
+				reportCount: 0,
 				roles:{
 					client:true
 				} 

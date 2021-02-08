@@ -681,16 +681,41 @@ define([
                 return false;
             },function(){
                 _add = true;
+                _post = null;
                 const header = document.querySelector('#modal-post h3');
+                const privacy = form.querySelector('#container-privacy');
+                
                 header.innerText = 'Post a service';
+
+                if(privacy){
+                    form.removeChild(privacy);
+                }
             });
 
 			_modal.onCancel(() => {
+                _add = true;
 				_post = null;
+                const header = document.querySelector('#modal-post h3');
+                const privacy = form.querySelector('#container-privacy');
+
+                header.innerText = 'Post a service';
+
+                if(privacy){
+                    form.removeChild(privacy);
+                }
 			});
 
 			_modal.onClose(() => {
-				_post = null;
+				_add = true;
+                _post = null;
+                const header = document.querySelector('#modal-post h3');
+                const privacy = form.querySelector('#container-privacy');
+                
+                header.innerText = 'Post a service';
+
+                if(privacy){
+                    form.removeChild(privacy);
+                }
 			});
 
             const wordCount = (count, text, limit = 600) => {
@@ -825,7 +850,7 @@ define([
             const avatar = ref.querySelector('.post-header div:first-child img');
             const name = ref.querySelector('.post-header div:first-child h3');
             const address = ref.querySelector('.post-subheader .location .address');
-            const budget = ref.querySelector('.post-subheader .header + div h4');
+            const budget = ref.querySelector('.post-subheader div:first-child + div h4');
             const exp = ref.querySelector('.post-subheader div:last-child h4');
             const title = ref.querySelector('.post-content .post-title');
             const description = ref.querySelector('.post-content .post-description');
@@ -840,7 +865,7 @@ define([
                 address.innerText = this.post.location.label;
             }
            
-            budget.innerText = this.post.budget;
+            budget.innerText = `${String.fromCharCode(0x20b1)}${this.post.budget}`;
            
             title.innerText = this.post.title;
             description.innerText = this.post.description;

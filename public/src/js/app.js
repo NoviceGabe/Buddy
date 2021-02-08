@@ -159,8 +159,23 @@ const main = (Router, userModel, data) => {
 				};
 			}
 		})
-		.add(/connections\/follower\/(.*)/, function(segment){
-			console.log(segment)
+		.add(/connections\/follower\/(.*)/, async function(segment){
+			const id = segment.split('/').pop();
+			if(id != firebase.auth().currentUser.uid){
+				let user = await userModel.getUser(id);
+				return {
+					view:'connectionsView',
+					controller:'connectionsController',
+					state: user
+				};
+
+			}else{
+				return {
+					view:'connectionsView',
+					controller:'connectionsController',
+					state: data
+				};
+			}
 		})
 		.add(function() {
 		   return {

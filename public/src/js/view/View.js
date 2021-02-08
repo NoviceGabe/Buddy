@@ -49,11 +49,14 @@ define(['css!css/app'],() => {
 				  <li><a href="#/chat">Message</a></li>
 				  <li>
 				  <a href="#/profile/${firebase.auth().currentUser.uid}">
-				  <img src="${imagePath}" alt="profile image" class="profile-image" heigh="30" width="30">
+				  <img src="src/assets/man.jpg" alt="profile image" class="profile-image" heigh="30" width="30">
 				  </a></li>
 				</ul>
 			</nav>`;
 			container.insertAdjacentHTML('afterbegin', menu);
+
+			const profileImage = document.querySelector('.profile-image');
+			profileImage.setAttribute('src', imagePath)
 		}
 
 		static removeMenu(){

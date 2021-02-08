@@ -38,7 +38,36 @@ define(()=>{
 					${chat}
 				</div>
 				<div id="col-2">
-					
+					<div id="ratings">
+						<div>
+							<h3>Rating</h3>
+							<div>
+								<span id="rating-value">0.0</span>
+								<span class="fa fa-star"></span>
+								<span class="fa fa-star"></span>
+								<span class="fa fa-star"></span>
+								<span class="fa fa-star"></span>
+								<span class="fa fa-star"></span>
+							</div>
+							<p id="review">0 review</p>
+						</div>
+					</div>
+					<div id="count">
+						<div>
+							<div id="followers">
+								<h1>${this.state.followerCount || 0}</h1>
+								<p>Followers</p>
+							</div>
+							<div id="followings">
+								<h1>${this.state.followingCount || 0}</h1>
+								<p>Following</p>
+							</div>
+							<div id="reports">
+								<h1>${this.state.reportCount || 0}</h1>
+								<p>Reports</p>
+							</div>
+						</div>
+					</div>
 				</div>
 			`;
 			container.innerHTML = template;
