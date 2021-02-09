@@ -49,7 +49,7 @@ define(['css!css/app'],() => {
 				  <li><a href="#/chat">Message</a></li>
 				  <li>
 				  <a href="#/profile/${firebase.auth().currentUser.uid}">
-				  <img src="src/assets/man.jpg" alt="profile image" class="profile-image" heigh="30" width="30">
+				  <img src="src/assets/man.jpg" alt="profile image" class="profile-image" heigh="35" width="35">
 				  </a></li>
 				</ul>
 			</nav>`;

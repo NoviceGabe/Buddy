@@ -118,7 +118,7 @@ define(['util'],(Util)=>{
 					<div class="col-1">
 						<img src="${imgPath}">
 						<div>
-							<h5 >${user.name}</h5>
+							<h5 >${user.name} ${(user.uid == firebase.auth().currentUser.uid)?'(You)':''}</h5>
 							<p>${service}</p>
 						</div>
 						<div>

@@ -37,7 +37,7 @@ define(['userModel', 'validator', 'authController', 'util', 'css!css/login-regis
 								try {
 									const userModel = new UserModel(firebase.firestore(), firebase.auth());
 									const name = Util.toCapitalizeString(fname+' '+surname);
-									const userdata = userModel.createUser(name, email, '', []);
+									const userdata = userModel.createUser(name, email);
 
 									const account = await userModel.createAccount(userdata.email[0], password);
 

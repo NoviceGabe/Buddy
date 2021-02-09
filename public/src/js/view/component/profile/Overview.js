@@ -36,12 +36,11 @@ define(()=>{
 						</div>	
 					</div>
 					${chat}
-					
+					${(this.state.uid == firebase.auth().currentUser.uid)?`
 					<div class="p-image">
 				       <i class="fa fa-camera upload-button"></i>
 				        <input class="file-upload" type="file" accept="image/*"/>
-				     </div>
-					
+				     </div>`:''}
 				</div>
 				<div id="col-2">
 					<div id="ratings">

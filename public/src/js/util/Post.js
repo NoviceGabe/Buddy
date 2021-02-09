@@ -107,7 +107,12 @@ define([
             const ref = document.getElementById(this.post.id);
             const opAvatar = ref.querySelector('.post-header img');
             const userAvatar = ref.querySelector('.post-footer .comment-section .input img');
-           
+            
+            _userModel.getUserImage(firebase.auth().currentUser.uid).then(image => {
+                 if(image.length && image[0].url){
+                    userAvatar.setAttribute('src', image[0].url);
+                }
+            });
 
             opAvatar.addEventListener('click', e => {
             	e.stopPropagation();
@@ -122,7 +127,7 @@ define([
             return this;
         }
 
-        commentObserver(){
+        async commentObserver(){
             const ref = document.getElementById(this.post.id);
             const commentCount = ref.querySelector('.comment-count');
             const text = ref.querySelector('.input textarea');
@@ -158,15 +163,20 @@ define([
 
             commentListener = _postModel
             .prepareCertainCommentsByDate(this.post.id, this.post.user.uid, ORDER, COMMENT_COUNT)
-            .onSnapshot(querySnapshot => {
+            .onSnapshot(async (querySnapshot) => {
                 let comments = [];
-                querySnapshot.docChanges().forEach(change => {
+
+                for(let change of  querySnapshot.docChanges()){
                     if (change.type == "added") {
                         const comment = change.doc.data();
+                        const image = await _userModel.getUserImage(comment.uid);
+                        if(image.length){
+                            comment.photoURL = image[0].url;
+                        }
                         comments.push(comment);
                     }
-                });
-
+                }
+               
                if (!flag){
                    	if (comments.length == COMMENT_COUNT) {
                         this.lastVisible = querySnapshot.docs[querySnapshot.docs.length - 2];
@@ -212,6 +222,13 @@ define([
 	                                    ...doc.data()
 	                                }));
 
+                                     for(let comment of oldComments){
+                                        const image = await _userModel.getUserImage(comment.uid);
+                                        if(image.length){
+                                            comment.photoURL = image[0].url;
+                                        }
+                                     }
+
 	                               	if(snapshot.docs.length == 10) {
 	                                    this.lastVisible = snapshot.docs[snapshot.docs.length - 2];
 	                                    oldComments.pop();
@@ -237,6 +254,7 @@ define([
 	                }
                 });
             }
+
             return this;
         }
 
@@ -868,7 +886,19 @@ define([
             budget.innerText = `${String.fromCharCode(0x20b1)}${this.post.budget}`;
            
             title.innerText = this.post.title;
-            description.innerText = this.post.description;
+
+            if(this.post.description.length > 1000){
+                const viewMore = document.querySelector('.view-more');
+                if(viewMore){
+                    description.innerText = this.post.description.substring(0, 1000);
+                    viewMore.addEventListener('click', function(){
+                        viewMore.classList.add('remove');
+                        description.innerText = this.post.description;
+                    });
+                }
+            }else{
+                description.innerText = this.post.description;
+            }
 
             let workExp = 'Entry level';
 

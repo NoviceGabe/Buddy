@@ -26,6 +26,12 @@ define([
             const suggestionsView = new SuggestionsComponent();
             const users = await _userModel.getAllUsersExcept(firebase.auth().currentUser.uid);
             const suggestions = await _userModel.fetchNotFollowingUsers(users);
+            for(let user of suggestions){
+                const image = await _userModel.getUserImage(user.uid);
+                if(image.length){
+                    user.photoURL = image[0].url;
+                }
+            }
             suggestionsView.render(suggestions);
             _initSuggestionsEvents();
         }
@@ -88,16 +94,21 @@ define([
                                   return post1.post.timestamp.toDate() - post2.post.timestamp.toDate();
                                 });
 
-                                posts.forEach(post => {
+                                posts.forEach(async (post) => {
+                                    const image = await _userModel.getUserImage(post.post.user.uid);
+                                    if(image.length){
+                                        post.post.user.photoURL = image[0].url;
+                                    }
+
                                     post.render(container)
                                     .likeObserver()
-                                    .commentObserver()
                                     .unfollowObserver()
                                     .hidePostObserver()
                                     .deleteObserver()
                                     .avatarObserver()
                                     .editObserver()
-                                    .messageObserver()
+                                    .messageObserver();
+                                    await post.commentObserver();
                                     
                                 });
 

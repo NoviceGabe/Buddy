@@ -5,11 +5,10 @@ define(['db'], db => {
 			this.auth = auth;
 		}
 
-		createUser(name, email, photoURL = '', groups = []){
+		createUser(name, email, groups = []){
 			return {
 				name: name,
 				email: [email],
-				photoURL: photoURL,
 				groups: groups,
 				followerCount: 0,
 				followingCount: 0,
@@ -83,7 +82,7 @@ define(['db'], db => {
 			});
 		}
 
-		async setProfileImage(uid, url){
+		async setProfileImage(uid, map){
 			const image = await this.getUserImage(uid);
 			let data;
 
@@ -91,9 +90,12 @@ define(['db'], db => {
 				data = {
 					id: image[0].id,
 					uid: uid,
-					url: url
+					url: map.url,
+					name: map.name
 				}
-				return this.set(`images/${data.id}`, data).then(() => {
+				return this.set(`images/${data.id}`, data)
+				.then(async () => {
+					const task = await firebase.storage().ref(`profile/${uid}/${image[0].name}.png`).delete();
 					return data.id;
 				});
 			}else{
@@ -101,7 +103,8 @@ define(['db'], db => {
 				data = {
 					id: ref.id,
 					uid: uid,
-					url: url
+					url: map.url,
+					name: map.name
 				}
 
 				return ref.set(data)
@@ -123,8 +126,6 @@ define(['db'], db => {
 			    return image;
 			});
 		}
-
-
 
 		async fetchMembers(group) {
 			const members = [];

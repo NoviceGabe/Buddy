@@ -1,4 +1,4 @@
-define(['authController', 'css!css/login-register'], (AuthController) => {
+define(['authController', 'uuid', 'css!css/login-register'], (AuthController, uuid) => {
 	let _router;
 
 	return class Login{
@@ -29,17 +29,18 @@ define(['authController', 'css!css/login-register'], (AuthController) => {
 							(result.additionalUserInfo.providerId == FACEBOOK_PROVIDER))){
 									
 							const data = result.user.providerData[0];
-							const userData = userModel.createUser(
-										data.displayName, 
-										data.email, 
-										data.photoURL);
+							const userData = userModel.createUser(data.displayName, data.email);
 
 							userData.uid = result.user.uid;
 							userData.timestamp = result.user.metadata.creationTime;
 
 							const isUserAdded = await userModel.addUser(userData.uid, userData);
 							if(isUserAdded){
-								const status = await userModel.setProfileImage(userData.uid, data.photoURL);
+								const imageId = uuid();
+								const status = await userModel.setProfileImage(userData.uid, {
+									url:data.photoURL,
+									name: imageId 
+								});
 							}
 						}
 

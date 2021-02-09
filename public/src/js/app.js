@@ -41,7 +41,9 @@ require(['router', 'userModel', 'view',
 				const data = await userModel.getUser(user.uid);
 				const image = await userModel.getUserImage(user.uid);
 
-				data.photoURL = image[0].url;
+				if(image.length){
+					data.photoURL = image[0].url;
+				}
 
 				View.instance(data);
 				View.renderMenu();

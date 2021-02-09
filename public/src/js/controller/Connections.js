@@ -32,7 +32,13 @@ define([
         const week = new Date(today);
         week.setDate(week.getDate() - 7);
 
-       const recent = await _userModel.fetchMembersFromFollowingByDate(_state.uid, ORDER, week);
+        const recent = await _userModel.fetchMembersFromFollowingByDate(_state.uid, ORDER, week);
+        for(let user of recent){
+            const image = await _userModel.getUserImage(user.uid);
+            if(image.length){
+                    user.photoURL = image[0].url;
+            }
+        }
         if (recent && recent.length) {
             _connectionsComponent.render(FOLLOWING, recent, 'recent');
         }
@@ -52,6 +58,13 @@ define([
         const all = await _userModel.fetchMembersFromFollowing(_state.uid, ORDER);
         let count = all.length || 0;
         header.innerText = `Following (${count})`;
+
+        for(let user of all){
+            const image = await _userModel.getUserImage(user.uid);
+            if(image.length){
+                    user.photoURL = image[0].url;
+            }
+        }
 
         if (all && all.length) {
             _connectionsComponent.render(FOLLOWING, all);
@@ -160,7 +173,12 @@ define([
         week.setDate(week.getDate() - 7);
 
        const recent = await _userModel.fetchMembersFromFollowersByDate(_state.uid, ORDER, week);
-       console.log(recent)
+        for(let user of recent){
+            const image = await _userModel.getUserImage(user.uid);
+            if(image.length){
+                    user.photoURL = image[0].url;
+            }
+        }
         if (recent && recent.length) {
             _connectionsComponent.render(FOLLOWER, recent, 'recent');
         }
@@ -181,6 +199,13 @@ define([
         const all = await _userModel.fetchMembersFromFollowers(_state.uid, ORDER);
         let count = all.length || 0;
         header.innerText = `Followers (${count})`;
+
+        for(let user of all){
+            const image = await _userModel.getUserImage(user.uid);
+            if(image.length){
+                    user.photoURL = image[0].url;
+            }
+        }
 
         if (all && all.length) {
             _connectionsComponent.render(FOLLOWER, all);

@@ -699,6 +699,20 @@ define([
             const follower = await _userModel.fetchMembersFromFollowers(_state.uid, ORDER, 7);
             const view = new ConnectionComponent(_state);
 
+            for(let user of following){
+                const image = await _userModel.getUserImage(user.uid);
+                if(image.length){
+                    user.photoURL = image[0].url;
+                }
+            }
+
+            for(let user of follower){
+                const image = await _userModel.getUserImage(user.uid);
+                if(image.length){
+                    user.photoURL = image[0].url;
+                }
+            }
+
             if (following.length) {
                 view.setFollowing(following);
                 view.render();
@@ -850,17 +864,20 @@ define([
                             return post1.post.timestamp.toDate() - post2.post.timestamp.toDate();
                         });
 
-                        posts.forEach(post => {
+                        posts.forEach(async (post) => {
+                            const image = await _userModel.getUserImage(post.post.user.uid);
+                            if(image.length){
+                                post.post.user.photoURL = image[0].url;
+                            }
                             post.render(container)
                                 .likeObserver()
-                                .commentObserver()
                                 .unfollowObserver()
                                 .hidePostObserver()
                                 .deleteObserver()
                                 .avatarObserver()
                                 .editObserver()
-                                .messageObserver()
-
+                                .messageObserver();
+                            await post.commentObserver();
                         });
 
 
@@ -869,7 +886,8 @@ define([
                     }
 
                 } else {
-                    if (flag != 'modified') {
+             
+                    if (flag != 'modified' && flag != 'removed') {
                         if (_state.uid == firebase.auth().currentUser.uid) {
                             container.innerHTML = `<p>You haven't post anything on your timeline</p>`;
 
@@ -920,30 +938,39 @@ define([
 
             const uploadBtn = document.querySelector('.p-image');
             const uploadImage = document.querySelector('.file-upload');
-            uploadBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                 uploadImage.click();
-            });
 
-            uploadImage.addEventListener('change', () => {
-                if (uploadImage.files && uploadImage.files[0]) {
-                    const images = document.querySelectorAll('.profile-image');
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        images.forEach(image => {
-                            image.setAttribute('src',  e.target.result);
-                        });
-
-                        upload(uploadImage.files[0]);
+            if(uploadBtn){
+                uploadBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if(_state.uid == firebase.auth().currentUser.uid){
+                        uploadImage.click();
+                    }else{
+                        console.log('You have no permission to upload image');
                     }
-                     
-                    reader.readAsDataURL(uploadImage.files[0]);
-                }
-            });
+                });
+            }
+            
+            if(uploadImage){
+                uploadImage.addEventListener('change', () => {
+                    if (uploadImage.files && uploadImage.files[0]) {
+                        const images = document.querySelectorAll('.profile-image');
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            images.forEach(image => {
+                                image.setAttribute('src',  e.target.result);
+                            });
+
+                            upload(uploadImage.files[0]);
+                        }
+                         
+                        reader.readAsDataURL(uploadImage.files[0]);
+                    }
+                });
+            }
 
             const upload = (file) => {
                 const imageId = uuid();
-                const task = firebase.storage().ref(`profile/${imageId}.png`).put(file);
+                const task = firebase.storage().ref(`profile/${firebase.auth().currentUser.uid}/${imageId}.png`).put(file);
 
                 task.on('state_changed', function(snapshot){
                     const progress = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
@@ -952,7 +979,10 @@ define([
                     console.log(error.message)
                 }, function(){
                     task.snapshot.ref.getDownloadURL().then(async (url) =>{
-                        let id = await _userModel.setProfileImage(firebase.auth().currentUser.uid, url);
+                        let id = await _userModel.setProfileImage(firebase.auth().currentUser.uid, {
+                            url:url,
+                            name:imageId
+                            });
                         if(id){
                             const status = await _userModel
                             .mergeUpdateUser(firebase.auth().currentUser.uid, { photoId: id});
