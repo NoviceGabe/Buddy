@@ -127,7 +127,7 @@ define([
             return this;
         }
 
-        async commentObserver(){
+        async commentObserver(user){
             const ref = document.getElementById(this.post.id);
             const commentCount = ref.querySelector('.comment-count');
             const text = ref.querySelector('.input textarea');
@@ -136,13 +136,21 @@ define([
             let commentListener;
             const self = this;
 
-            text.addEventListener('keyup', (e) => {
+            text.addEventListener('keyup', async (e) => {
                 const key = e.keyCode;
                 if (key === 13 && text.value.length) {
+                    let currentUser = _state;
+                    if(firebase.auth().currentUser.uid != currentUser.uid){
+                        currentUser = await _userModel.getUser(firebase.auth().currentUser.uid);
+                        const image = await _userModel.getUserImage(currentUser.uid);
+                        if(image.length){
+                            currentUser.photoURL = image[0].url;
+                        }
+                    }
                     const comment = {
                         uid: firebase.auth().currentUser.uid,
-                        name: _state.name,
-                        photoURL: _state.photoURL,
+                        name: currentUser.name,
+                        photoURL: currentUser.photoURL,
                         postId: self.post.id,
                         postUserId: self.post.user.uid,
                         text: text.value.trim(),
@@ -335,10 +343,14 @@ define([
                                 }
                             } else if (flag == 'chat') {
                                 if (firebase.auth().currentUser.uid != self.post.user.uid) {
-                                    const user = await _userModel.getUser(self.post.user.uid);
-                                    if (user && (user.groups || user.groups.length) &&
-                                       (_state.groups || _state.groups.length)) {
-                                        const groups = Util.getMatchesFromArray(_state.groups, user.groups);
+                                    const op = await _userModel.getUser(self.post.user.uid);
+                                    let currentUser = _state;
+                                    if(firebase.auth().currentUser.uid != currentUser.uid){
+                                        currentUser = await _userModel.getUser(firebase.auth().currentUser.uid);
+                                    }
+                                    if (op && (op.groups || op.groups.length) &&
+                                       (currentUser.groups || currentUser.groups.length)) {
+                                        const groups = Util.getMatchesFromArray(currentUser.groups, op.groups);
                                         if (groups.length > 0) {
                                             const groupId = groups[0];
                                             _router.navigate(`chat/${groupId}`);

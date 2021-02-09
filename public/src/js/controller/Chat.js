@@ -33,8 +33,9 @@ define([
 	let _invitations;
 
 	let _router;
+	let _state;
 
-	const _initChatWindow = async (groups, user) => {
+	const _initChatWindow = async (groups) => {
 		// reset messageListener
 		if(messageListener != undefined){
 			messageListener();
@@ -42,6 +43,15 @@ define([
 		}
 
 		const groups2 = await _userModel.mergeMemberDataFromGroup(groups);
+
+		for(let group of groups2){
+			let user = group.members.find(member => member.uid != firebase.auth().currentUser.uid);
+			const image = await _userModel.getUserImage(user.uid);
+	        if(image.length){
+	            user.photoURL = image[0].url;
+	        }
+		}
+		
 		_chatView.render(groups2);
 
 		let currentChat = localStorage.getItem('currentChat');
@@ -53,11 +63,11 @@ define([
 		groups.forEach(group => {
 			if(currentChat != null && currentChat == group.id.trim()){
 				if(messageListener == undefined){
-					_listenToNewMessages(group.id, user); // register message listener
+					_listenToNewMessages(group.id); // register message listener
 				}
 				_chatView.select(group.id.trim());
 				selected = true;
-				_initMessages(localStorage.getItem('currentChat'), user); // initialize chat messages
+				_initMessages(localStorage.getItem('currentChat')); // initialize chat messages
 			}
 			let chat = document.getElementById(group.id.trim());
 			let avatar = chat.querySelector('img');
@@ -69,7 +79,7 @@ define([
 					messageListener = undefined;
 				}
 
-				_listenToNewMessages(group.id.trim(), user); // register message listener
+				_listenToNewMessages(group.id.trim()); // register message listener
 
 				const currentChat = localStorage.getItem('currentChat');
 				if(currentChat != null){
@@ -78,7 +88,7 @@ define([
 				_chatView.select(group.id.trim());
 				localStorage.setItem("currentChat", group.id.trim());
 				selected = true;
-				_initMessages(group.id.trim(), user); // initialize chat messages
+				_initMessages(group.id.trim()); // initialize chat messages
 			});
 
 			avatar.addEventListener('click', e => {
@@ -93,7 +103,7 @@ define([
 			_chatView.select(groups[0].id.trim());
 			localStorage.setItem("currentChat", groups[0].id.trim());
 			selected = true;
-			_initMessages(groups[0].id.trim(), user);
+			_initMessages(groups[0].id.trim());
 		}
 	}
 
@@ -187,7 +197,7 @@ define([
 		});
 	}
 
-	const _initMessages = async (id, user) => {
+	const _initMessages = async (id) => {
 		// resets
 		messageCount = 0
 		prevCount = 0;
@@ -230,7 +240,7 @@ define([
 		}	
 	}
 
-	const _listenToNewMessages = (id, user) => {
+	const _listenToNewMessages = (id) => {
 		try {
 			const bubbleDialog = document.querySelector('#bubble-dialog');
 			messageListener = _chatModel.prepareMessagesByGroupId(id, ORDER, MSG_COUNT).onSnapshot((querySnapshot) => {
@@ -364,7 +374,7 @@ define([
 			});
 		}
 
-	const _initChatGroups = async (state) => {
+	const _initChatGroups = async () => {
 
 			try {
 
@@ -386,7 +396,7 @@ define([
 				chatListener = _chatModel
 				.prepareGroupByUser({
 					'uid': firebase.auth().currentUser.uid, 
-					'name': state.name})
+					'name': _state.name})
 				.onSnapshot(querySnapshot => {
 					const groups = [];
 					const notifs = [];
@@ -404,7 +414,7 @@ define([
 			    	});
 
 			    	if(groups.length > 0){
-			    		_initChatWindow(groups, state);
+			    		_initChatWindow(groups);
 					}else if(notifs.length > 0){
 						notifs.forEach(notif => {
 							_chatView.update(notif);
@@ -424,13 +434,13 @@ define([
 	return class Chat{
 		constructor(state, router){
 
-			this.state = state;
+			_state = state;
 			_router = router;
 			_chatView = new ChatComponent(state);
 			_messageView = new MessageComponent(state);
 			_invitationView = new InvitationComponent();
 
-			_initChatGroups(this.state);
+			_initChatGroups();
 			_initChatMessageEvents();
 		}
 	}

@@ -649,7 +649,13 @@ define([
 
     //////////////////////
 
-    const _initViews = () => {
+    const _initViews = async () => {
+        const image = await _userModel.getUserImage(_state.uid);
+
+        if(image.length){
+            _state.photoURL = image[0].url;
+        }
+        
         const overView = new OverviewComponent(_state);
         overView.render();
 
@@ -677,6 +683,8 @@ define([
         _initTimeline();
         _initProfile();
         _initConnections();
+
+        _initTabEvents();
     }
 
     const _initProfile = () => {
@@ -747,6 +755,7 @@ define([
         const tabs = document.querySelectorAll('#tabs li');
         tabs.forEach(tab => {
             tab.addEventListener('click', e => {
+                e.stopPropagation();
                 currentTab = e.target;
                 View.addActive(currentTab);
 
@@ -829,6 +838,7 @@ define([
         PostComponent.initWritePost();
 
         PostComponent.clearListeners();
+     
         try {
             let posts = [];
 
@@ -934,7 +944,6 @@ define([
             });
 
             _initViews();
-            _initTabEvents();
 
             const uploadBtn = document.querySelector('.p-image');
             const uploadImage = document.querySelector('.file-upload');

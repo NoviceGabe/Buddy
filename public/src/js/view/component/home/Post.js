@@ -103,14 +103,17 @@ define(['moment'],(moment)=>{
 
 			window.onclick = function(event) {
 				const ref = document.getElementById(_postId);
-				const menu = ref.querySelector('.menu');
+				if(ref){
+					const menu = ref.querySelector('.menu');
 
-			  	if (menu && event.target != menu && _flag) {
-			  		if(!menu.classList.contains('remove')){
-						 menu.classList.add('remove');
-					}
-				    _flag = false;
-			  	}
+				  	if (menu && event.target != menu && _flag) {
+				  		if(!menu.classList.contains('remove')){
+							 menu.classList.add('remove');
+						}
+					    _flag = false;
+				  	}
+				}
+				
 			}
 
 			headerDiv.appendChild(name);
