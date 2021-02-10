@@ -308,9 +308,9 @@ define([
     	try {
     		for(let user of users){
     			let following = await _userModel.getFollowing(firebase.auth().currentUser.uid, user.uid);
-    			let listItem = document.querySelector(`#${filter} .${user.uid}`);
+    			let ref = document.querySelector(`#${filter}`);
+                let listItem = ref.getElementsByClassName(user.uid)[0];
                 let followBtn = listItem.querySelector('.follow');
-
                 if(following && followBtn){
                 	followBtn.classList.remove('follow');
                 	followBtn.classList.add('unfollow');
@@ -327,7 +327,8 @@ define([
             for (let user of users) {
                 let invitation = await _chatModel.getInvitation(firebase.auth().currentUser.uid, user.uid);
 
-                let listItem = document.querySelector(`#${filter} .${user.uid}`);
+                let ref = document.querySelector(`#${filter}`);
+                let listItem = ref.getElementsByClassName(user.uid)[0];
                 let listItemIcon = listItem.querySelector('.chat');
 
                 if (invitation.length > 0) {

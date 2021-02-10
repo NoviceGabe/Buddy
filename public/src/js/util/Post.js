@@ -129,7 +129,8 @@ define([
 
         async commentObserver(user){
             const ref = document.getElementById(this.post.id);
-            const commentCount = ref.querySelector('.comment-count');
+            const bar = ref.querySelector('.post-footer .bar');
+            const commentCount = bar.querySelector('.comment-count');
             const text = ref.querySelector('.input textarea');
 
             let flag = false;
@@ -160,6 +161,8 @@ define([
 	                _postModel.addComment(comment).then(() => {
 	                	let suffix = (self.post.commentCount > 1) ? 's' : '';
 	                    self.post.commentCount++;
+                        bar.style.display = 'flex';
+                        commentCount.style.display = 'block';
 	                    commentCount.innerText = `${self.post.commentCount} comment${suffix}`;
 	                    text.value = '';
 	                    e.target.style.height = '38px';
@@ -204,63 +207,89 @@ define([
 
            	listeners.push(commentListener);
 
-            if(this.post.commentCount > 1) {
+            if(this.post.commentCount >= 1) {
+                let commentCounter = 1;
                 const container = ref.querySelector('.comment-section .comments');
-                const loadMore = document.createElement('div');
-                const span = document.createElement('span');
+                const header = document.createElement('div');
+                const count = document.createElement('p');
+                count.style.width = '100%';
+                count.style.textAlign = 'right';
+                count.innerText = `1 of ${this.post.commentCount}`;
 
-                loadMore.classList.add('load-more');
-                span.innerText = 'Show more comments';
+                header.classList.add('load-more');
+                header.classList.add('flex-container');
 
-                loadMore.appendChild(span);
+                if(this.post.commentCount > 1){
+                    const loadMore = document.createElement('span');
+                    const loader = document.createElement('img');
+                    loader.classList.add('loader');
+                    loader.classList.add('remove');
+                    loader.setAttribute('src', 'src/assets/Rolling-1s-200px.gif');
+                    loader.setAttribute('height', '15');
+                    loader.setAttribute('width','15');
+                    loadMore.innerText = 'Show more comments';
+                    loadMore.style.width='35%';
+                    header.appendChild(loadMore);
+                    header.appendChild(loader);
 
-                container.insertBefore(loadMore, container.firstChild);
-                loadMore.addEventListener('click', async (e) => {
-                // load previous comments
-	                if(this.lastVisible && !this.lastPage) {
-	                    try {
-	                        const prev = _postModel
-	                        .prepareCertainCommentsByDate(this.post.id, this.post.user.uid, ORDER, 10)
-	                        .startAfter(this.lastVisible);
-	                            const snapshot = await prev.get();
-	                            this.prevCount = snapshot.docs.length;
 
-	                            if (this.prevCount > 0) {
-	                                const oldComments = snapshot.docs.map(doc => ({
-	                                    ...doc.data()
-	                                }));
 
-                                     for(let comment of oldComments){
-                                        const image = await _userModel.getUserImage(comment.uid);
-                                        if(image.length){
-                                            comment.photoURL = image[0].url;
+                    loadMore.addEventListener('click', async (e) => {
+                        // load previous comments
+                        if(loader.classList.contains('remove')){
+                            loader.classList.remove('remove');
+                        }
+                        if(this.lastVisible && !this.lastPage) {
+                            try {
+                                const prev = _postModel
+                                .prepareCertainCommentsByDate(this.post.id, this.post.user.uid, ORDER, 10)
+                                .startAfter(this.lastVisible);
+                                    const snapshot = await prev.get();
+                                    this.prevCount = snapshot.docs.length;
+                                   
+                                    if (this.prevCount > 0) {
+                                        const oldComments = snapshot.docs.map(doc => ({
+                                            ...doc.data()
+                                        }));
+
+                                         for(let comment of oldComments){
+                                            const image = await _userModel.getUserImage(comment.uid);
+                                            if(image.length){
+                                                comment.photoURL = image[0].url;
+                                            }
+                                         }
+                                        if(this.prevCount == 10) {
+                                            this.lastVisible = snapshot.docs[snapshot.docs.length - 2];
+                                            oldComments.pop();
+                                        }else{
+                                            this.lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                                            loadMore.classList.add('remove');
+                                            this.lastPage = true;
                                         }
-                                     }
 
-	                               	if(snapshot.docs.length == 10) {
-	                                    this.lastVisible = snapshot.docs[snapshot.docs.length - 2];
-	                                    oldComments.pop();
-	                                }else{
-	                                    this.lastVisible = snapshot.docs[snapshot.docs.length - 1];
-	                                    loadMore.classList.add('remove');
-	                                    this.lastPage = true;
-	                                }
+                                        if (oldComments.length) {
+                                            _postComponent.comments(oldComments, 'first');
+                                            commentCounter += oldComments.length;
+                                            count.innerText = `${commentCounter} of ${this.post.commentCount}`;
+                                        }
 
-	                                if (oldComments.length) {
-	                                    _postComponent.comments(oldComments, 'first');
-	                                }
+                                    }else{
+                                        loadMore.classList.add('remove');
+                                        this.lastPage = true;
+                                    }
 
-	                            }else{
-	                                loadMore.classList.add('remove');
-	                                this.lastPage = true;
-	                            }
+                            }catch(e){
+                                console.log(e.message);
+                            }
+                        }
 
-	                    }catch(e){
-	                        console.log(e.message);
-	                   	}
-
-	                }
-                });
+                        loader.classList.add('remove');
+                    });
+                }
+                           
+                header.appendChild(count);
+                container.insertBefore(header, container.firstChild);
+                
             }
 
             return this;

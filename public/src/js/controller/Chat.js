@@ -45,21 +45,24 @@ define([
 		const groups2 = await _userModel.mergeMemberDataFromGroup(groups);
 
 		for(let group of groups2){
-			let user = group.members.find(member => member.uid != firebase.auth().currentUser.uid);
-			const image = await _userModel.getUserImage(user.uid);
-	        if(image.length){
-	            user.photoURL = image[0].url;
-	        }
+			if(group.member.uid != firebase.auth().currentUser.uid){
+				const image = await _userModel.getUserImage(group.member.uid);
+			    if(image.length){
+			        group.member.photoURL = image[0].url;
+			    }
+			}
 		}
 		
 		_chatView.render(groups2);
 
+		const fragment = _router.getFragment();
 		let currentChat = localStorage.getItem('currentChat');
 
-		if(sessionStorage.getItem('method')){
-			currentChat = sessionStorage.getItem('method');
-			sessionStorage.removeItem('method');
+		if(fragment != 'chat'){
+			currentChat = fragment.split('/').pop();
 		}
+		console.log(currentChat)
+
 		groups.forEach(group => {
 			if(currentChat != null && currentChat == group.id.trim()){
 				if(messageListener == undefined){
@@ -98,13 +101,13 @@ define([
 				_router.navigate(`profile/${user.uid}`);
 			});
 		});
-
 		if(!selected){
 			_chatView.select(groups[0].id.trim());
 			localStorage.setItem("currentChat", groups[0].id.trim());
 			selected = true;
 			_initMessages(groups[0].id.trim());
 		}
+		selected = false;
 	}
 
 	const _initInvitation = async (invitations) => {

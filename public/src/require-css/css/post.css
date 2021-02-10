@@ -298,7 +298,8 @@
   padding: 6px 6px 0 6px;
 }
 
-.post-footer .comment-section img{
+.post-footer .comment-section .comment img,
+.post-footer .comment-section .input img{
   border-radius: 50%;
   border: 1px solid #efefef;
   height: 40px;
