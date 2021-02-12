@@ -13,6 +13,7 @@ define([
     'dateComponent',
     'authController',
     'uuid',
+    'swal',
     'css!css/profile',
 ], (View,
     OverviewComponent,
@@ -27,7 +28,8 @@ define([
     Validator,
     DateComponent,
     Auth,
-    uuid) => {
+    uuid,
+    swal) => {
 
     const _userModel = new UserModel(firebase.firestore(), firebase.auth());
     const _chatModel = new ChatModel(firebase.firestore());
@@ -70,12 +72,11 @@ define([
         });
 
         modal.onSave(async() => {
-            return 
                 if (text.value.trim().length == 0) {
-                    console.log('Empty field');
+                    swal("Empty field", "", "error");
                     return false;
                 } else if (oldText.trim() == text.value.trim()) {
-                    console.log('No changes');
+                    swal("No changes", "", "error");
                     return false;
                 } else {
                     try {
@@ -83,7 +84,7 @@ define([
                             .mergeUpdateUser(firebase.auth().currentUser.uid, { bio: text.value.trim() });
 
                         if (status) {
-                            console.log('Update successful');
+                            swal("Update successful", "", "success");
                             _profileView.updateBio(text.value.trim());
                             oldText = text.value.trim();
                             return true;
@@ -91,7 +92,7 @@ define([
 
                         return false;
                     } catch (e) {
-                        console.log(e);
+                        swal("Unable to process action", e.message, "error");
                         return false;
                     }
                 }
@@ -195,17 +196,17 @@ define([
             };
 
             if (_selected == undefined) {
-                console.log('Please select an education level');
+                swal("Please select an education level", "", "error");
                 return false;
             } else if (_selected == 'college') {
                 if (name.value.length == 0) {
-                    console.log('Empty school name');
+                    swal("Empty school name", "", "error");
                     return false;
                 } else if (degree.value == 'empty') {
-                    console.log('Select a degree');
+                    swal("Select a degree", "", "error");
                     return false;
                 } else if (course.value.length == 0) {
-                    console.log('Empty course');
+                    swal("Empty course", "", "error");
                     return false;
                 }
 
@@ -215,8 +216,7 @@ define([
                         (selectStartYear.value != 'empty' &&
                             selectStartMonth.value != 'empty' &&
                             selectStartDay.value != 'empty'))) {
-
-                    console.log('Incomplete fields');
+                    swal("Incomplete fields", "", "error");
                     return false;
 
                 } else {
@@ -240,7 +240,7 @@ define([
                             selectEndtMonth.value != 'empty' &&
                             selectEndDay.value != 'empty'))) {
 
-                    console.log('Incomplete fields');
+                    swal("Incomplete fields", "", "error");
                     return false;
 
                 } else {
@@ -262,11 +262,11 @@ define([
 
                 return _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data)
                     .then(() => {
-                        console.log('Update successful');
+                        swal("Update successful", "", "success");
                         _profileView.updateCollege(data);
                         return true;
                     }).catch(err => {
-                        console.log(err.message);
+                      swal("Unable to process action", err.message, "error");
                         return false;
                     });
 
@@ -278,7 +278,7 @@ define([
                 };
 
                 if (name.value.length == 0) {
-                    console.log('Empty school name');
+                    swal("Empty school name", "", "error");
                     return false;
                 }
 
@@ -292,11 +292,11 @@ define([
                 data.education.highschool.name = name.value;
 
                 return _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data).then(() => {
-                    console.log('Update successful');
+                    swal("Update successful", "", "success");
                     _profileView.updateHighSchool(data);
                     return true;
                 }).catch(err => {
-                    console.log(err.message);
+                    swal("Unable to process action", err.message, "error");
                     return false;
                 });
             }
@@ -332,7 +332,7 @@ define([
             };
 
             if (name.value.length == 0) {
-                console.log('Empty workplace name');
+                swal("Empty workplace name", "", "error");
                 return false;
             }
 
@@ -352,7 +352,7 @@ define([
                     (selectStartYear.value != 'empty' &&
                         selectStartMonth.value != 'empty' &&
                         selectStartDay.value != 'empty'))) {
-                console.log('Incomplete fields');
+                        swal("Incomplete fields", "", "error");
                 return false;
             } else {
                 if (selectStartYear.value != 'empty' &&
@@ -374,7 +374,7 @@ define([
                         selectEndtMonth.value != 'empty' &&
                         selectEndDay.value != 'empty'))) {
 
-                console.log('Incomplete fields');
+                swal("Incomplete fields", "", "error");
                 return false;
 
             } else {
@@ -393,11 +393,11 @@ define([
 
             return _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data)
                 .then(() => {
-                    console.log('Update successful');
+                    swal("Update successful", "", "success");
                     _profileView.updateWorkplace(data);
                     return true;
                 }).catch(err => {
-                    console.log(err.message);
+                    swal("Unable to process action", err.message, "error");
                     return false;
                 });
         });
@@ -414,13 +414,13 @@ define([
         modal.onSave(function() {
             let data = {};
             if (name.value.length == 0) {
-                console.log('Empty address name');
+                swal("Empty address name", "", "error");
                 return false;
             }
 
             return _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, { address: name.value })
                 .then(() => {
-                    console.log('Update successful');
+                    swal("Update successful", "", "success");
                     _profileView.updateAddress(name.value);
                     return true;
                 }).catch(err => {
@@ -467,7 +467,7 @@ define([
             data.email[0] = firebase.auth().currentUser.email;
 
             if (emailSecondary.value.length && !Validator.isEmailValid(emailSecondary.value)) {
-                console.log('Invalid email address');
+                swal("Invalid email address", "", "error");
                 return false;
             } else {
                 data.email[1] = emailSecondary.value;
@@ -485,12 +485,12 @@ define([
                 oldMobilePrimary == mobilePrimary.value &&
                 oldMobileSecondary == mobileSecondary.value
             ) {
-                console.log('No changes!!');
+                swal("No changes!!", "", "error");
                 return false;
             }
 
             if (!data.email.length && !data.mobile.length) {
-                console.log('no valid data')
+                 swal("No valid data", "", "error");
                 return false;
             } else {
            
@@ -501,7 +501,7 @@ define([
                         oldEmailSecondary = emailSecondary.value;
                         oldMobilePrimary = mobilePrimary.value;
                         oldMobileSecondary = mobileSecondary.value;
-                        console.log('Update successful');
+                         swal("Update successful", "", "success");
                         _profileView.updateContact(data);
                         return true;
                     }
@@ -509,7 +509,7 @@ define([
                     return false;
 
                 } catch (e) {
-                    console.log(e.message);
+                    swal("Unable to process action", e.message, "error");
                     return false;
                  }
            
@@ -612,7 +612,7 @@ define([
                     (selectStartYear.value != 'empty' &&
                         selectStartMonth.value != 'empty' &&
                         selectStartDay.value != 'empty'))) {
-                console.log('Incomplete fields');
+                swal("Incomplete fields", "", "error");
                 return false;
             } else {
 
@@ -630,12 +630,13 @@ define([
             if (oldValue == data.gender &&
                 (data.birthday != undefined &&
                     Object.keys(data.birthday).length === 0 && data.birthday.constructor === Object)) {
-                console.log('No changes');
+                 swal("No changes", "", "error");
                 return false;
             } else {
                 return _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data)
                     .then(() => {
-                        console.log('Update successful');
+
+                        swal("Update successful", "", "success");
                         _profileView.updateBday(data.birthday);
                         return true;
                     }).catch(err => {
@@ -685,6 +686,70 @@ define([
         _initConnections();
 
         _initTabEvents();
+
+        const uploadBtn = document.querySelector('.p-image');
+            const uploadImage = document.querySelector('.file-upload');
+
+            if(uploadBtn){
+                uploadBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if(_state.uid == firebase.auth().currentUser.uid){
+                        uploadImage.click();
+                    }else{
+                        swal("Unable to process action", "You have no permission to upload image", "error");
+                    }
+                });
+            }
+            
+            if(uploadImage){
+                uploadImage.addEventListener('change', () => {
+                    if (uploadImage.files && uploadImage.files[0]) {
+                        const images = document.querySelectorAll('.profile-image');
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            images.forEach(image => {
+                                image.setAttribute('src',  e.target.result);
+                            });
+
+                            upload(uploadImage.files[0]);
+                        }
+                         
+                        reader.readAsDataURL(uploadImage.files[0]);
+                    }
+                });
+            }
+
+            const upload = (file) => {
+                const imageId = uuid();
+                const task = firebase.storage().ref(`profile/${firebase.auth().currentUser.uid}/${imageId}.png`).put(file);
+
+                task.on('state_changed', function(snapshot){
+                    const progress = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
+                    console.log(progress)
+                }, function(error){
+                    console.log(error.message)
+                }, function(){
+                    task.snapshot.ref.getDownloadURL().then(async (url) =>{
+                        let id = await _userModel.setProfileImage(firebase.auth().currentUser.uid, {
+                            url:url,
+                            name:imageId
+                            });
+                        if(id){
+                            const status = await _userModel
+                            .mergeUpdateUser(firebase.auth().currentUser.uid, { photoId: id});
+
+                            if(status){
+                                swal("Profile image updated.", "", "success");
+                            }else{
+                                 swal("Unable to update image.", "", "error");
+                            }
+                        }else{
+                           swal("Unable to update image.", "", "error");
+                        }
+    
+                    });
+                });
+            }
     }
 
     const _initProfile = () => {
@@ -944,71 +1009,6 @@ define([
             });
 
             _initViews();
-
-            const uploadBtn = document.querySelector('.p-image');
-            const uploadImage = document.querySelector('.file-upload');
-
-            if(uploadBtn){
-                uploadBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if(_state.uid == firebase.auth().currentUser.uid){
-                        uploadImage.click();
-                    }else{
-                        console.log('You have no permission to upload image');
-                    }
-                });
-            }
-            
-            if(uploadImage){
-                uploadImage.addEventListener('change', () => {
-                    if (uploadImage.files && uploadImage.files[0]) {
-                        const images = document.querySelectorAll('.profile-image');
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            images.forEach(image => {
-                                image.setAttribute('src',  e.target.result);
-                            });
-
-                            upload(uploadImage.files[0]);
-                        }
-                         
-                        reader.readAsDataURL(uploadImage.files[0]);
-                    }
-                });
-            }
-
-            const upload = (file) => {
-                const imageId = uuid();
-                const task = firebase.storage().ref(`profile/${firebase.auth().currentUser.uid}/${imageId}.png`).put(file);
-
-                task.on('state_changed', function(snapshot){
-                    const progress = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
-                    console.log(progress)
-                }, function(error){
-                    console.log(error.message)
-                }, function(){
-                    task.snapshot.ref.getDownloadURL().then(async (url) =>{
-                        let id = await _userModel.setProfileImage(firebase.auth().currentUser.uid, {
-                            url:url,
-                            name:imageId
-                            });
-                        if(id){
-                            const status = await _userModel
-                            .mergeUpdateUser(firebase.auth().currentUser.uid, { photoId: id});
-
-                            if(status){
-                                console.log('Profile image updated.');
-                            }else{
-                                console.log('Unable to update image.');
-                            }
-                        }else{
-                            console.log('Unable to upload image.');
-                        }
-    
-                    });
-                });
-            }
-
         }
     }
 });

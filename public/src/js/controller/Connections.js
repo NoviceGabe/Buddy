@@ -100,7 +100,7 @@ define([
 		                    const ul = document.querySelectorAll('#connections-container ul');
 
 			                ul.forEach(element => {
-			                	 const toBeRemoved = element.querySelector(`.${id}`);
+			                	 const toBeRemoved = element.getElementsByClassName(id)[0];
 			                	 element.removeChild(toBeRemoved);
 			                });
 

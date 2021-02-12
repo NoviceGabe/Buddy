@@ -1,4 +1,5 @@
-define(['userModel', 'validator', 'authController', 'util', 'css!css/login-register'], (UserModel, Validator,  AuthController, Util) => {
+define(['userModel', 'validator', 'authController', 'util', 'swal','css!css/login-register'], 
+	(UserModel, Validator,  AuthController, Util, swal) => {
 	let _router;
 
 	return class Register{
@@ -21,17 +22,30 @@ define(['userModel', 'validator', 'authController', 'util', 'css!css/login-regis
 
 						if((fname.length > 0 && surname.length > 0) && (email.length > 0 && password.length > 0)){
 							if(!Validator.isNameValid(fname)){
-								console.log('Invalid First Name');
+								swal("Register unsuccessful!", 
+									"Invalid First Name",
+											 "error");
 							}else if(!Validator.isNameValid(surname)){
-								console.log('Invalid Surname');
+								swal("Register unsuccessful!", 
+									"Invalid Surname",
+											 "error");
 							}else if(!Validator.isEmailValid(email)){
-								console.log('Invalid Email Address');
+								swal("Register unsuccessful!", 
+									"Invalid Email Address",
+											 "error");
 							}else if(password.length < 8){
-								console.log('Password must be at least 8 characters');
+								swal("Register unsuccessful!", 
+									"Password must be at least 8 characters",
+											 "error");
 							}else if(password.length > 25){
-								console.log('Password must not exceed 25 characters');
+								
+								swal("Register unsuccessful!", 
+									"Password must not exceed 25 characters",
+											 "error");
 							}else if(!Validator.isPasswordValid(password)){
-								console.log('Password must start with a capital letter and contains at least one number')
+								swal("Register unsuccessful!", 
+									"Password must start with a capital letter and contains at least one number",
+											 "error");
 							}else{
 								// register
 								try {
@@ -47,21 +61,26 @@ define(['userModel', 'validator', 'authController', 'util', 'css!css/login-regis
 										const isUserAdded = await userModel.addUser(userdata.uid, userdata);
 
 										if(isUserAdded){
-											console.log('Register successful');
+											swal("Register successful!", "Check your email for verification",
+											 "success");
 											firebase.auth().signOut().then(() => {
 												_router.navigate('/login');
 											});
 										}else{
-											console.log('Unable to register user to the database');
+											swal("Register unsuccessful", "Try again",
+											 "error");
 										}
 									}
 					
 								} catch(e) {
+									swal("Register unsuccessful", e.message,
+											 "error");
 									console.log(e.message);
 								}
 							}
 						}else{
-							console.log('Please fill out the the required fields.');
+							swal("Register unsuccessful", "Please fill out the the required fields.",
+											 "error");
 						}
 					})();
 

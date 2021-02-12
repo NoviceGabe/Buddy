@@ -5,7 +5,8 @@ define([
     'c_postComponent',
     'modalComponent',
     'map',
-    'util'
+    'util',
+    'swal'
     ], 
     (UserModel,
      PostModel,
@@ -13,7 +14,8 @@ define([
      PostComponent,
      ModalComponent,
      Map,
-     Util
+     Util,
+     swal
      ) => {
     
     let _router;
@@ -308,8 +310,9 @@ define([
                         posts.forEach(post => {
                            post.classList.add('remove');
                         });
-                    }).catch(err => {
-                        console.log(err.message);
+                    }).catch(e => {
+                        swal("Unable to process action", e.message,
+                                    "error");
                     });
                 });
             }
@@ -404,20 +407,34 @@ define([
             const self = this;
             if (deletePost && this.post.user.uid == firebase.auth().currentUser.uid) {
                 deletePost.addEventListener('click', async function() {
-                    const result = confirm("Delete post?");
-                    if (result == true) {
-                        try {
-                            const isDelete = _postModel.delete(self.post.id);
-                            if (isDelete) {
-                                ref.classList.add('remove');
-                            } else {
-                                console.log('Unable to delete post');
-                            }
+                    swal({
+                      title: "Delete post?",
+                      text: "Once deleted, you will not be able to recover this post!",
+                      icon: "warning",
+                      buttons: true,
+                      dangerMode: true,
+                    })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            try {
+                                const isDelete = _postModel.delete(self.post.id);
+                                if (isDelete) {
+                                    ref.classList.add('remove');
+                                     swal("Post deleted!", {
+                                      icon: "success",
+                                    });
+                                } else {
+                                     swal("Unable to process action", "Cannot delete post",
+                                        "error");
+                                }
 
-                        } catch (e) {
-                            console.log(e.message);
+                            } catch (e) {
+                                swal("Unable to process action", e.message,
+                                        "error");
+                            }
                         }
-                    }
+                    });
+                   
                 });
             }
             return this;
@@ -629,35 +646,45 @@ define([
                 }
 
                 if (role.value == 'empty') {
-                    console.log('No role was selected.');
+                     swal("No role was selected", "",
+                                    "error");
                     return false;
                 } else if (service.value == 'empty') {
-                    console.log('No service category was selected.');
+                    swal("No service category was selected.", "",
+                                    "error");
                     return false;
                 } else if (!title.value.length) {
-                    console.log('Empty title.');
+                    swal("Empty title.", "",
+                                    "error");
                     return false;
                 } else if (!description.value.length) {
-                    console.log('Empty description.');
+                    swal("Empty description.", "",
+                                    "error");
                     return false;
                 } else if (!budget.value.length) {
-                    console.log('No budget included.');
+                    swal("No budget included.", "",
+                                    "error");
                     return false;
                 } else if (!budget.value.match(/^\d*(\.\d+)?$/)) {
-                    console.log('Invalid budget format.');
+                    swal("Invalid budget format.", "",
+                                    "error");
                     return false;
                 } else if (budgetType.value == 'empty') {
-                    console.log('No budget type was selected.');
+                    swal("No budget type was selected.", "",
+                                    "error");
                     return false;
                 } else if (work.value == 'empty') {
-                    console.log('No work experience was selected.');
+                    swal("No work experience was selected.", "",
+                                    "error");
                     return false;
                 } else if (job.value == 'empty') {
-                    console.log('No job type was selected.');
+                    swal("No job type was selected.", "",
+                                    "error");
                     return false;
                 } else if (job.value == 2 && post.location &&
                     Object.keys(post.location).length === 0 && post.location.constructor === Object) {
-                    console.log('No location was selected.');
+                    swal("No location was selected.", "",
+                                    "error");
                     return false;
                 }
 
@@ -689,7 +716,8 @@ define([
                     post.timestamp = firebase.firestore.Timestamp.fromDate(new Date());
                    return _postModel.add(post)
                     .then(() => {
-                        console.log('Post uploaded');
+                        swal("Post uploaded", "",
+                                    "success");
                         if (_map) {
                             _map.clear();
                             _map = null;
@@ -700,6 +728,8 @@ define([
                         }
                         return true;
                     }).catch(err => {
+                         swal("Unable to add post", "",
+                                    "error");
                         console.log(err.message);
                         return false;
                     });  
@@ -719,7 +749,8 @@ define([
                     
                     return _postModel.update(post)
                     .then(() => {
-                        console.log('Post updated');
+                         swal("Post updated", "",
+                                    "success");
                         _post = post;
                         if (_map) {
                             _map.clear();
@@ -731,8 +762,10 @@ define([
                         }
 
                         return true;
-                    }).catch(err => {
-                        console.log(err);
+                    }).catch(e => {
+                        swal("Unable to process action", e.message,
+                                    "error");
+                        console.log(e);
                         return false;
                     });  
                 }

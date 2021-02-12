@@ -1,4 +1,4 @@
-define(() => {
+define(['swal'],(swal) => {
 	return class Authenticate{
 		
 		static async signIn(email, password){
@@ -6,16 +6,17 @@ define(() => {
 			try {
 				const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
 
-			   	if(cred.user.emailVerified){
+			   	if(cred && cred.user.emailVerified){
 				   	return true;
 				}
 
-				firebase.auth().signOut().then(() => {
-					throw new Error('Email is not verified');
-				});
+				firebase.auth().signOut();
+				throw new Error('Email is not verified');
 				
 			} catch(e) {
-				throw e;
+				swal("Unable to login", e.message,
+                                    "error");
+				return false;
 			}		
 		}
 

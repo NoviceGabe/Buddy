@@ -25,7 +25,7 @@ define([
         const _initSuggestions = async () => {
             const suggestionsView = new SuggestionsComponent();
             const users = await _userModel.getAllUsersExcept(firebase.auth().currentUser.uid);
-            const suggestions = await _userModel.fetchNotFollowingUsers(users);
+            const suggestions = await _userModel.fetchNotFollowingUsers(users, 5);
             for(let user of suggestions){
                 const image = await _userModel.getUserImage(user.uid);
                 if(image.length){
@@ -48,12 +48,15 @@ define([
             follow.forEach(user => {
                 user.addEventListener('click', e => {
                     e.preventDefault();
-                    const id = e.target.parentElement.getAttribute('id');
+                    const parent = e.target.parentElement;
+                    const id = parent.getAttribute('id');
+                    const name = parent.querySelector('h5').textContent;
                     _userModel.follow(firebase.auth().currentUser.uid.trim(), id.trim()).then(() => {
                         user.setAttribute('src', '');
-                        console.log('followed ' + id)
+                        swal(`You have followed ${name}`);
+                        
                     }).catch(err => {
-                        console.log(err.message);
+                         swal("Unable to process action", err.message, "error");
                     });
                 });
             });

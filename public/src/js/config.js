@@ -14,9 +14,9 @@ const COMMENT_COUNT = 2;
 const PUBLIC = '1';
 const PRIVATE = '2';
 
-//const DOMAIN = 'http://localhost/buddy/public/'; // local server 1
+const DOMAIN = 'http://localhost/buddy/public/'; // local server 1
 //const DOMAIN = 'http://localhost:5000/'; // local server 2
-const DOMAIN = 'https://chat-3db56.web.app/'; // production
+//const DOMAIN = 'https://chat-3db56.web.app/'; // production
 const EMAIL_PASSWORD_SIGN_IN_METHOD = 'password';
 const GOOGLE_PROVIDER = 'google.com';
 const FACEBOOK_PROVIDER = 'facebook.com';
@@ -41,6 +41,7 @@ requirejs.config({
     paths: {
         'uuid': 'https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min',
     	'moment':'https://momentjs.com/downloads/moment.min',
+        'swal': 'https://unpkg.com/sweetalert/dist/sweetalert.min',
         'db': 'src/js/db',
         'userModel': 'src/js/model/User',
         'chatModel': 'src/js/model/Chat',

@@ -149,14 +149,18 @@ define(['db'], db => {
 			return _groups;
 		}
 
-		async fetchNotFollowingUsers(suggestions){
+		async fetchNotFollowingUsers(suggestions, limit){
 			const members = [];
-
+			let counter = 0;
 			for (const user of suggestions) {
 				let following = await this.getFollowing(firebase.auth().currentUser.uid.trim(), user.uid);
 			  	if(following == undefined){
 			  		members.push(user);
+			  		if(limit && counter == limit){
+			  			break;
+			  		}
 		        }
+		        counter++;
 			}
 			return members;
 		}

@@ -5,10 +5,11 @@ define([
 	'chatComponent', 
 	'messageComponent',
 	'invitationComponent',
+	'swal',
 	'css!css/chat',
 	'css!css/bubble'
 
-	], (Util, UserModel, ChatModel, ChatComponent, MessageComponent, InvitationComponent) => {
+	], (Util, UserModel, ChatModel, ChatComponent, MessageComponent, InvitationComponent, swal) => {
 
 	let lastVisible = null;
 	let loaded = false;
@@ -163,11 +164,11 @@ define([
 							});
 
 						}else{
-							console.log('Unknown error occured');
+							swal("Unknown error occured", "","error");
 						}
 
 					} catch(e) {
-						console.log(e);
+						swal("Unknown error occured", e.message,"error");
 					}
 				})();
 				
@@ -303,7 +304,7 @@ define([
 				_messageView.hideLoadMore();
 				showPreviousLink = false;
 			} catch(e) {
-				console.log(e);
+				swal("Unknown error occured", e.message,"error");
 			}
 		}
 	}
@@ -339,7 +340,7 @@ define([
 	      			const groupId = localStorage.getItem('currentChat').trim();
 	      			if(groupId){
 	      				if(input.value.trim() == 0){
-		      				console.log('empty message.');
+	      					swal("Empty message.", "","error");
 		      			}else{
 		      				try {
 		      					const status = await _chatModel.commitMessage(groupId, firebase.auth().currentUser.uid, input.value);
@@ -347,7 +348,7 @@ define([
 									messageForm.reset();
 								}
 		      				} catch(e) {
-		      					console.log(e);
+		      					swal("Unknown error occured", e.message,"error");
 		      				}
 		      			}
 					}
@@ -429,7 +430,7 @@ define([
 
 				});
 			} catch(e) {
-				console.log(e);
+				swal("Unknown error occured", e.message,"error");
 				_messageView.hidePreloader();
 			}
 		}
