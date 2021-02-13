@@ -41,7 +41,7 @@ define(['db'], db => {
 			return this.prepareAllOrderBy(`posts/${id}/userPost`, 'timestamp', order);
 		}
 
-		update(post){
+		updateOwnPost(post){
 			return this.hasPost(post.id, firebase.auth().currentUser.uid).then(p => {
 				if(p.docs.length > 0){
 		           return super.update(`posts/${firebase.auth().currentUser.uid}/userPost/${post.id}`, post)
@@ -52,6 +52,23 @@ define(['db'], db => {
 		           });
 		        }
 		        return false;
+			}).catch(() => {
+				return false;
+			});
+		}
+
+		updatePost(post){
+			return super.update(`posts/${post.user.uid}/userPost/${post.id}`, post)
+		        .then(() => {
+		           	return true;
+		        }).catch(error => {
+		            return false;
+		        });
+		}
+
+		mergeUpdatePost(uid, pid, data){
+			return this.set(`posts/${uid}/userPost/${pid}`, data, true).then(() =>{
+				return true;
 			}).catch(() => {
 				return false;
 			});
@@ -122,8 +139,6 @@ define(['db'], db => {
 		}
 
 		hasPost(postId, userId){
-			console.log(postId)
-			console.log(userId)
 			return this.getByCustom(`posts/${userId}/userPost`, {
 				attribute: 'id',
 				operator: '==',

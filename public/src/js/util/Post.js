@@ -139,10 +139,55 @@ define([
             let commentListener;
             const self = this;
 
+            text.addEventListener('blur', async (e) => {
+
+                 try {
+                   
+                    this.post.isTyping = false;
+                    const status = await _postModel.updatePost(this.post);
+                    if(status){
+                        console.log(`Indicator disabled in post ${this.post.id}`)
+                    }
+
+                } catch(e) {
+                    console.log(e);
+                }
+
+            });
+
             text.addEventListener('keyup', async (e) => {
+                
+                try {
+                    
+                    if(text.value.length == 0){
+                        this.post.isTyping = false;
+                        const status = await _postModel.updatePost(this.post);
+                        if(status){
+                            console.log(`Indicator disabled in post ${this.post.id}`)
+                        }
+                        
+                    }else{
+                        this.post.isTyping = true;
+                        const status = await _postModel.updatePost(this.post);
+                        if(status){
+                            console.log(`Indicator enabled in post ${this.post.id}`)
+                        }
+                    }
+
+                } catch(e) {
+                    console.log(e);
+                }
+               
                 const key = e.keyCode;
                 if (key === 13 && text.value.length) {
                     let currentUser = _state;
+
+                    this.post.isTyping = false;
+                    const status = await _postModel.updatePost(this.post);
+                    if(status){
+                        console.log(`Indicator disabled in post ${this.post.id}`)
+                    }
+
                     if(firebase.auth().currentUser.uid != currentUser.uid){
                         currentUser = await _userModel.getUser(firebase.auth().currentUser.uid);
                         const image = await _userModel.getUserImage(currentUser.uid);
@@ -233,8 +278,6 @@ define([
                     loadMore.style.width='35%';
                     header.appendChild(loadMore);
                     header.appendChild(loader);
-
-
 
                     loadMore.addEventListener('click', async (e) => {
                         // load previous comments
@@ -709,6 +752,7 @@ define([
 
                 if(_add){
                 	post.notification = true;
+                    post.isTyping = false;
                 	post.privacy = '1';
                     post.commentCount = 0;
                     post.likeCount = 0;
@@ -747,7 +791,7 @@ define([
                     	return false;
                     }
                     
-                    return _postModel.update(post)
+                    return _postModel.updateOwnPost(post)
                     .then(() => {
                          swal("Post updated", "",
                                     "success");

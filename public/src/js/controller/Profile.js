@@ -71,7 +71,7 @@ define([
             }
         });
 
-        modal.onSave(async() => {
+        modal.onSave(async () => {
                 if (text.value.trim().length == 0) {
                     swal("Empty field", "", "error");
                     return false;
@@ -96,13 +96,14 @@ define([
                         return false;
                     }
                 }
-  
-        }, function() {
-            if (text.value.trim().length == 0 && oldText.trim().length) {
-                text.value = oldText.trim();
-            }
-            return false;
-        });
+
+            },
+            function() {
+                if (text.value.trim().length == 0 && oldText.trim().length) {
+                    text.value = oldText.trim();
+                }
+                return false;
+            });
 
         modal.onCancel(function() {
             if (text.value.trim().length == 0 && oldText.trim().length) {
@@ -266,7 +267,7 @@ define([
                         _profileView.updateCollege(data);
                         return true;
                     }).catch(err => {
-                      swal("Unable to process action", err.message, "error");
+                        swal("Unable to process action", err.message, "error");
                         return false;
                     });
 
@@ -352,7 +353,7 @@ define([
                     (selectStartYear.value != 'empty' &&
                         selectStartMonth.value != 'empty' &&
                         selectStartDay.value != 'empty'))) {
-                        swal("Incomplete fields", "", "error");
+                swal("Incomplete fields", "", "error");
                 return false;
             } else {
                 if (selectStartYear.value != 'empty' &&
@@ -459,78 +460,79 @@ define([
         const modal = new ModalComponent(ref, form, edit);
 
         modal.onSave(async () => {
-            let data = {};
-            data.email = ['', ''];
-            data.mobile = ['', ''];
+                let data = {};
+                data.email = ['', ''];
+                data.mobile = ['', ''];
 
-           
-            data.email[0] = firebase.auth().currentUser.email;
 
-            if (emailSecondary.value.length && !Validator.isEmailValid(emailSecondary.value)) {
-                swal("Invalid email address", "", "error");
-                return false;
-            } else {
-                data.email[1] = emailSecondary.value;
-            }
+                data.email[0] = firebase.auth().currentUser.email;
 
-            if (mobilePrimary.value.length) {
-                data.mobile[0] = mobilePrimary.value;
-            }
+                if (emailSecondary.value.length && !Validator.isEmailValid(emailSecondary.value)) {
+                    swal("Invalid email address", "", "error");
+                    return false;
+                } else {
+                    data.email[1] = emailSecondary.value;
+                }
 
-            if (mobileSecondary.value.length) {
-                data.mobile[1] = mobileSecondary.value;
-            }
+                if (mobilePrimary.value.length) {
+                    data.mobile[0] = mobilePrimary.value;
+                }
 
-            if (oldEmailSecondary == emailSecondary.value &&
-                oldMobilePrimary == mobilePrimary.value &&
-                oldMobileSecondary == mobileSecondary.value
-            ) {
-                swal("No changes!!", "", "error");
-                return false;
-            }
+                if (mobileSecondary.value.length) {
+                    data.mobile[1] = mobileSecondary.value;
+                }
 
-            if (!data.email.length && !data.mobile.length) {
-                 swal("No valid data", "", "error");
-                return false;
-            } else {
-           
-                try {
-                    const status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
+                if (oldEmailSecondary == emailSecondary.value &&
+                    oldMobilePrimary == mobilePrimary.value &&
+                    oldMobileSecondary == mobileSecondary.value
+                ) {
+                    swal("No changes!!", "", "error");
+                    return false;
+                }
 
-                    if (status) {
-                        oldEmailSecondary = emailSecondary.value;
-                        oldMobilePrimary = mobilePrimary.value;
-                        oldMobileSecondary = mobileSecondary.value;
-                         swal("Update successful", "", "success");
-                        _profileView.updateContact(data);
-                        return true;
+                if (!data.email.length && !data.mobile.length) {
+                    swal("No valid data", "", "error");
+                    return false;
+                } else {
+
+                    try {
+                        const status = await _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data);
+
+                        if (status) {
+                            oldEmailSecondary = emailSecondary.value;
+                            oldMobilePrimary = mobilePrimary.value;
+                            oldMobileSecondary = mobileSecondary.value;
+                            swal("Update successful", "", "success");
+                            _profileView.updateContact(data);
+                            return true;
+                        }
+
+                        return false;
+
+                    } catch (e) {
+                        swal("Unable to process action", e.message, "error");
+                        return false;
                     }
 
-                    return false;
+                }
+            },
+            function() {
 
-                } catch (e) {
-                    swal("Unable to process action", e.message, "error");
-                    return false;
-                 }
-           
-            }
-        }, function() {
-          
 
-            if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
-                emailSecondary.value = oldEmailSecondary;
-            }
+                if (emailSecondary.value.length == 0 && oldEmailSecondary.length) {
+                    emailSecondary.value = oldEmailSecondary;
+                }
 
-            if (mobilePrimary.value.length == 0 && oldMobilePrimary.length) {
-                mobilePrimary.value = oldMobilePrimary;
-            }
+                if (mobilePrimary.value.length == 0 && oldMobilePrimary.length) {
+                    mobilePrimary.value = oldMobilePrimary;
+                }
 
-            if (mobileSecondary.value.length == 0 && oldMobileSecondary.length) {
-                mobileSecondary.value = oldMobileSecondary;
-            }
+                if (mobileSecondary.value.length == 0 && oldMobileSecondary.length) {
+                    mobileSecondary.value = oldMobileSecondary;
+                }
 
-            return false;
-        });
+                return false;
+            });
 
         modal.onClose(function() {
 
@@ -630,7 +632,7 @@ define([
             if (oldValue == data.gender &&
                 (data.birthday != undefined &&
                     Object.keys(data.birthday).length === 0 && data.birthday.constructor === Object)) {
-                 swal("No changes", "", "error");
+                swal("No changes", "", "error");
                 return false;
             } else {
                 return _userModel.mergeUpdateUser(firebase.auth().currentUser.uid, data)
@@ -653,10 +655,10 @@ define([
     const _initViews = async () => {
         const image = await _userModel.getUserImage(_state.uid);
 
-        if(image.length){
+        if (image.length) {
             _state.photoURL = image[0].url;
         }
-        
+
         const overView = new OverviewComponent(_state);
         overView.render();
 
@@ -688,68 +690,68 @@ define([
         _initTabEvents();
 
         const uploadBtn = document.querySelector('.p-image');
-            const uploadImage = document.querySelector('.file-upload');
+        const uploadImage = document.querySelector('.file-upload');
 
-            if(uploadBtn){
-                uploadBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if(_state.uid == firebase.auth().currentUser.uid){
-                        uploadImage.click();
-                    }else{
-                        swal("Unable to process action", "You have no permission to upload image", "error");
+        if (uploadBtn) {
+            uploadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (_state.uid == firebase.auth().currentUser.uid) {
+                    uploadImage.click();
+                } else {
+                    swal("Unable to process action", "You have no permission to upload image", "error");
+                }
+            });
+        }
+
+        if (uploadImage) {
+            uploadImage.addEventListener('change', () => {
+                if (uploadImage.files && uploadImage.files[0]) {
+                    const images = document.querySelectorAll('.profile-image');
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        images.forEach(image => {
+                            image.setAttribute('src', e.target.result);
+                        });
+
+                        upload(uploadImage.files[0]);
                     }
-                });
-            }
-            
-            if(uploadImage){
-                uploadImage.addEventListener('change', () => {
-                    if (uploadImage.files && uploadImage.files[0]) {
-                        const images = document.querySelectorAll('.profile-image');
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            images.forEach(image => {
-                                image.setAttribute('src',  e.target.result);
-                            });
 
-                            upload(uploadImage.files[0]);
-                        }
-                         
-                        reader.readAsDataURL(uploadImage.files[0]);
-                    }
-                });
-            }
+                    reader.readAsDataURL(uploadImage.files[0]);
+                }
+            });
+        }
 
-            const upload = (file) => {
-                const imageId = uuid();
-                const task = firebase.storage().ref(`profile/${firebase.auth().currentUser.uid}/${imageId}.png`).put(file);
+        const upload = (file) => {
+            const imageId = uuid();
+            const task = firebase.storage().ref(`profile/${firebase.auth().currentUser.uid}/${imageId}.png`).put(file);
 
-                task.on('state_changed', function(snapshot){
-                    const progress = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
-                    console.log(progress)
-                }, function(error){
-                    console.log(error.message)
-                }, function(){
-                    task.snapshot.ref.getDownloadURL().then(async (url) =>{
-                        let id = await _userModel.setProfileImage(firebase.auth().currentUser.uid, {
-                            url:url,
-                            name:imageId
-                            });
-                        if(id){
-                            const status = await _userModel
-                            .mergeUpdateUser(firebase.auth().currentUser.uid, { photoId: id});
-
-                            if(status){
-                                swal("Profile image updated.", "", "success");
-                            }else{
-                                 swal("Unable to update image.", "", "error");
-                            }
-                        }else{
-                           swal("Unable to update image.", "", "error");
-                        }
-    
+            task.on('state_changed', function(snapshot) {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(progress)
+            }, function(error) {
+                console.log(error.message)
+            }, function() {
+                task.snapshot.ref.getDownloadURL().then(async (url) => {
+                    let id = await _userModel.setProfileImage(firebase.auth().currentUser.uid, {
+                        url: url,
+                        name: imageId
                     });
+                    if (id) {
+                        const status = await _userModel
+                            .mergeUpdateUser(firebase.auth().currentUser.uid, { photoId: id });
+
+                        if (status) {
+                            swal("Profile image updated.", "", "success");
+                        } else {
+                            swal("Unable to update image.", "", "error");
+                        }
+                    } else {
+                        swal("Unable to update image.", "", "error");
+                    }
+
                 });
-            }
+            });
+        }
     }
 
     const _initProfile = () => {
@@ -772,16 +774,16 @@ define([
             const follower = await _userModel.fetchMembersFromFollowers(_state.uid, ORDER, 7);
             const view = new ConnectionComponent(_state);
 
-            for(let user of following){
+            for (let user of following) {
                 const image = await _userModel.getUserImage(user.uid);
-                if(image.length){
+                if (image.length) {
                     user.photoURL = image[0].url;
                 }
             }
 
-            for(let user of follower){
+            for (let user of follower) {
                 const image = await _userModel.getUserImage(user.uid);
-                if(image.length){
+                if (image.length) {
                     user.photoURL = image[0].url;
                 }
             }
@@ -903,65 +905,75 @@ define([
         PostComponent.initWritePost();
 
         PostComponent.clearListeners();
-     
-        try {
-            let posts = [];
+        let posts = [];
+        let flag;
 
+        try {
             // get all posts user 
             let postListener;
             const container = document.querySelector('#timeline');
             let ref;
             if (_state.uid == firebase.auth().currentUser.uid) {
-                ref = _postModel.prepareAllByDate(_state.uid, ORDER)
+                ref = _postModel.prepareAllByDate(_state.uid, 'asc')
             } else {
-                ref = _postModel.prepareAllByDate(_state.uid, ORDER)
+                ref = _postModel.prepareAllByDate(_state.uid, 'asc')
                     .where('privacy', '==', PUBLIC);
             }
 
             postListener = ref.onSnapshot(querySnapshot => {
-                let posts = [];
-                let flag;
-                querySnapshot.docChanges().forEach(change => {
+                querySnapshot.docChanges().forEach(async (change) => {
                     if (change.type == 'added') {
                         const post = change.doc.data();
                         let component = new PostComponent(post);
+
+                        const image = await _userModel.getUserImage(component.post.user.uid);
+                        if (image.length) {
+                            component.post.user.photoURL = image[0].url;
+                        }
+
+                        component.render(container)
+                            .likeObserver()
+                            .unfollowObserver()
+                            .hidePostObserver()
+                            .deleteObserver()
+                            .avatarObserver()
+                            .editObserver()
+                            .messageObserver();
+                        await component.commentObserver();
+
                         posts.push(component);
+
                     } else if (change.type == 'modified') {
                         const post = change.doc.data();
                         PostComponent.updatePostView(post);
+
+                        let index = -1;
+                        posts.forEach(p => {
+                            if (p.post.id == post.id) {
+                                index = p.post.id;
+                            }
+                        });
+
+                        if (index > -1) {
+                            posts[index] = post;
+                        }
+
+                        const ref = document.getElementById(post.id);
+                        const indicator = ref.querySelector('.comment-section .comment-indicator');
+
+                        if (!post.isTyping) {
+                            indicator.classList.remove('flex-container');
+                            indicator.classList.add('remove');
+                        } else {
+                            indicator.classList.add('flex-container');
+                            indicator.classList.remove('remove');
+                        }
                     }
                     flag = change.type;
                 });
 
-                if (posts.length) {
-                    try {
-                        posts.sort(function(post1, post2) {
-                            return post1.post.timestamp.toDate() - post2.post.timestamp.toDate();
-                        });
 
-                        posts.forEach(async (post) => {
-                            const image = await _userModel.getUserImage(post.post.user.uid);
-                            if(image.length){
-                                post.post.user.photoURL = image[0].url;
-                            }
-                            post.render(container)
-                                .likeObserver()
-                                .unfollowObserver()
-                                .hidePostObserver()
-                                .deleteObserver()
-                                .avatarObserver()
-                                .editObserver()
-                                .messageObserver();
-                            await post.commentObserver();
-                        });
-
-
-                    } catch (e) {
-                        console.log(e);
-                    }
-
-                } else {
-             
+                if (!querySnapshot.docs.length) {
                     if (flag != 'modified' && flag != 'removed') {
                         if (_state.uid == firebase.auth().currentUser.uid) {
                             container.innerHTML = `<p>You haven't post anything on your timeline</p>`;

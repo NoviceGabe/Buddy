@@ -71,39 +71,30 @@ define([
             PostComponent.initWritePost(write);
 
             PostComponent.clearListeners();
+            let posts = [];
 
             const postObserver = (userId, timestamp, by = '>=') => {
                 let postListener;
                 const container = document.querySelector('#newsfeed');
-                postListener = _postModel.prepareAllByDate(userId, ORDER)
+                let changeType;
+               
+
+                postListener = _postModel.prepareAllByDate(userId, 'asc')
                     .where('timestamp', by, timestamp)
                     .where('privacy','==', PUBLIC)
                     .onSnapshot(querySnapshot => {
-                        let posts = [];
-                        querySnapshot.docChanges().forEach(change => {
+                       
+                        querySnapshot.docChanges().forEach(async(change) => {
                             if (change.type == 'added') {
                                 const post = change.doc.data();
                                 let component = new PostComponent(post);
-                                posts.push(component);
-                            }else if(change.type == 'modified'){
-                                const post = change.doc.data();
-                                PostComponent.updatePostView(post);
-                            }
-                        });
 
-                        if (posts.length) {
-                            try {
-                                posts.sort(function(post1, post2) {
-                                  return post1.post.timestamp.toDate() - post2.post.timestamp.toDate();
-                                });
+                                const image = await _userModel.getUserImage(component.post.user.uid);
+                                if(image.length){
+                                    component.post.user.photoURL = image[0].url;
+                                }
 
-                                posts.forEach(async (post) => {
-                                    const image = await _userModel.getUserImage(post.post.user.uid);
-                                    if(image.length){
-                                        post.post.user.photoURL = image[0].url;
-                                    }
-
-                                    post.render(container)
+                                component.render(container)
                                     .likeObserver()
                                     .unfollowObserver()
                                     .hidePostObserver()
@@ -111,17 +102,40 @@ define([
                                     .avatarObserver()
                                     .editObserver()
                                     .messageObserver();
-                                    await post.commentObserver();
-                                    
+                                    await component.commentObserver();
+
+                                posts.push(component);
+
+                            }else if(change.type == 'modified'){
+                                const post = change.doc.data();
+                                PostComponent.updatePostView(post);
+
+                                let index = -1;
+                                posts.forEach(p => {
+                                    if(p.post.id == post.id){
+                                        index = p.post.id;
+                                    }
                                 });
 
+                               if(index > -1){
+                                    posts[index] = post;
+                                }
 
-                            } catch(e) {
-                                console.log(e.message);
+                                const ref = document.getElementById(post.id);
+                                const indicator = ref.querySelector('.comment-section .comment-indicator');
+
+                                if(!post.isTyping){
+                                    indicator.classList.remove('flex-container');
+                                    indicator.classList.add('remove');
+                                }else{
+                                    indicator.classList.add('flex-container');
+                                    indicator.classList.remove('remove');
+                                }
                             }
-                            
-                        }
+                        });
+                      
                     });
+
                 PostComponent.listeners(postListener);
             }
            

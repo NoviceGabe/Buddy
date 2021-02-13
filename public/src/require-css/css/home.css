@@ -85,12 +85,12 @@
   margin-right: 12px;
 }
 
-#suggestions li {
-  padding: 10px;
+#suggestions li img.avatar:hover{
+  cursor: pointer;
 }
 
-#suggestions li:hover{
-  cursor: pointer;
+#suggestions li {
+  padding: 10px;
 }
 
 
